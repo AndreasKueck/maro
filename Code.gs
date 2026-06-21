@@ -163,7 +163,7 @@ function addLink(shortStack) {
   var povumokontrolorws = false;
   var apartaaldono = '';
 
-  if (/gesla4\.WSV/.test(povumozeichen)) {
+  if (/deu\-wsv/.test(povumozeichen) && /LAT/.test(povumozeichen)) {
     povumokontroloutk = true;
   }
 
