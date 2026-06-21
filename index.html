@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Wasserstands- und Gezeitenprognosen auf Basis von TICON-4-Daten. Water level and tidal predictions based on TICON-4 data. Prévisions des niveaux d'eau et des marées basées sur les données TICON-4. Prognozoj de akvoniveloj kaj tajdoj surbaze de TICON-4-datumoj.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <base target="_top">
+    <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&display=swap&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Open Sans', Arial, sans-serif;
+        }
+
+        .klarigoj h5 {
+            margin-top: 2rem;
+            font-weight: 700;
+        }
+
+        .klarigoj h6 {
+            margin-top: 1.4rem;
+            font-weight: 700;
+        }
+
+        .klarigoj .card-panel {
+            padding: 1.2rem 1.4rem;
+        }
+
+        .klarigoj ul {
+            margin-left: 1.2rem;
+        }
+
+        .klarigoj li {
+            margin-bottom: 0.35rem;
+        }
+
+        .klarigoj code {
+            background: #f3f3f3;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+        }
+
+        .small-note {
+            font-size: 0.95rem;
+        }
+
+        table.striped td,
+        table.striped th {
+            vertical-align: top;
+        }
+    </style>
+
+    <script>
+        function onSuccess1(data) {
+            var element = document.getElementById('customDomain');
+            element.innerHTML = data;
+        }
+        google.script.run.withSuccessHandler(onSuccess1).getCustomDomain();
+    </script>
+
+    <script>
+        function uploadData() {
+            var shortStack = {
+                sendoloko: $("#sendoloko").val(),
+                ricevoloko: $("#ricevoloko").val(),
+                povumo: $("#povumo").val()
+            }
+            $("#create").attr("disabled", "disabled");
+            google.script.run.withSuccessHandler((id) => {
+                M.toast({
+                    html: "Preta!"
+                });
+                $("#create").removeAttr("disabled");
+                google.script.run.withSuccessHandler(function(data) {
+                    var element = document.getElementById('result');
+                    element.innerHTML = '<pre >' + id + '</pre>';
+                }).getCustomDomain();
+
+                google.script.run.withSuccessHandler(function(curveData) {
+                    drawWaterCurve(curveData);
+                }).getCurve(shortStack);
+
+            }).addLink(shortStack);
+
+        }
+
+        function clearForm() {
+            $(document).ready(function() {
+                $("#urlShortener")[0].reset();
+            });
+        }
+    </script>
+
+    <script>
+        function drawWaterCurve(curveData) {
+            var box = document.getElementById('curveBox');
+            var canvas = document.getElementById('waterCurve');
+            var ctx = canvas.getContext('2d');
+
+            if (!curveData || !curveData.points || curveData.points.length < 2) {
+                box.style.display = 'none';
+                return;
+            }
+
+            box.style.display = 'block';
+
+            var points = curveData.points;
+            var w = canvas.width;
+            var h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+
+            var left = 60;
+            var right = 20;
+            var top = 25;
+            var bottom = 55;
+
+            var minH = points[0].h;
+            var maxH = points[0].h;
+
+            for (var i = 1; i < points.length; i++) {
+                if (points[i].h < minH) { minH = points[i].h; }
+                if (points[i].h > maxH) { maxH = points[i].h; }
+            }
+
+            if (maxH == minH) {
+                maxH = maxH + 0.5;
+                minH = minH - 0.5;
+            }
+
+            var rand = (maxH - minH) * 0.08;
+            maxH = maxH + rand;
+            minH = minH - rand;
+
+            var minT = points[0].t;
+            var maxT = points[points.length - 1].t;
+
+            function x(t) {
+                return left + (t - minT) / (maxT - minT) * (w - left - right);
+            }
+
+            function y(v) {
+                return top + (maxH - v) / (maxH - minH) * (h - top - bottom);
+            }
+
+            ctx.font = "13px Open Sans, Arial, sans-serif";
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "#dddddd";
+            ctx.fillStyle = "#333333";
+
+            for (var j = 0; j <= 5; j++) {
+                var val = minH + j / 5 * (maxH - minH);
+                var yy = y(val);
+
+                ctx.beginPath();
+                ctx.moveTo(left, yy);
+                ctx.lineTo(w - right, yy);
+                ctx.stroke();
+
+                ctx.fillText((Math.round(val * 10) / 10).toString().replace(".", ",") + " m", 8, yy + 4);
+            }
+
+            ctx.strokeStyle = "#777777";
+            ctx.beginPath();
+            ctx.moveTo(left, top);
+            ctx.lineTo(left, h - bottom);
+            ctx.lineTo(w - right, h - bottom);
+            ctx.stroke();
+
+            ctx.strokeStyle = "#1565c0";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            for (var i = 0; i < points.length; i++) {
+                var xx = x(points[i].t);
+                var yy = y(points[i].h);
+
+                if (i == 0) {
+                    ctx.moveTo(xx, yy);
+                } else {
+                    ctx.lineTo(xx, yy);
+                }
+            }
+
+            ctx.stroke();
+
+            ctx.fillStyle = "#333333";
+            ctx.fillText(curveData.startLabel, left, h - 25);
+            ctx.fillText(curveData.endLabel, w - right - 120, h - 25);
+
+            ctx.fillStyle = "#1565c0";
+            ctx.fillText("Vertikale: akvonivelo; horizontale: tempo (la du indikoj rilatas al la komenca kaj fina punkto de la kurbo)", left, 16);
+        }
+    </script>
+
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="row" align="center">
+            <div class="col s12">
+                <h4 style="font-family: 'Bree Serif', serif;">Prognozo de akvoniveloj per TICON-4-datumoj</h4>
+                <p>(privata neoficiala prognozo ne tauga por navigaciaj celoj)</p>
+<!--                <p><a href="https://script.google.com/a/~/macros/s/AKfycbyy-nFj7AJvQhlr76YxpAy7Df4Hf_3rjs47bNGLwL-ESRotCzSEAyq0v54ZMGSbhC8N_g/exec" target="_blank">Lokoj kun TICON-4-datumoj</a></p>
+-->
+
+<!--
+<p><a href="#" onclick="montriLokojn(); scrollToAnchor('lokojBloko'); return false;">Lokoj kun TICON-4-datumoj</a></p>
+-->
+                <p>Por Androido jen tiu chi retpagho, kiel apo &quot;<a href="https://gist.github.com/AndreasKueck/a62016ed4c3efaa477691de06af8d794" target="_blank">Maro</a>&quot; | <a href="#" onclick="scrollToAnchor('maro'); return false;">Snapchat-lensoj &quot;Maro&quot; kaj &quot;Maro: sep horoj&quot; &ndash; jen kiel uzi ilin</a>
+            </div>
+        </div>
+
+        <div class="row" align="left" id='result'>
+            <h1><br /></h1>
+        </div>
+
+        <div class="row" align="left" id="curveBox" style="display:none;">
+            <canvas id="waterCurve" width="900" height="360" style="max-width:100%; border:1px solid #cccccc;"></canvas>
+        </div>
+
+        <div class="row" align="left">
+            <form class="col s12" onsubmit="event.preventDefault(); uploadData();" id="urlShortener" name="urlShortener">
+
+                <div class="row col s12 m8 l6 offset-m2 offset-l3" align="center">
+                    <div class="input-field col s12">
+                        <input id="sendoloko" type="text" required />
+                        <label for="sendoloko">Tempo</label>
+                        <span class="helper-text" align='left'>ekz. 202708309999 au 202708301340</span>
+                    </div>
+                </div>
+
+                <div class="row col s12 m8 l6 offset-m2 offset-l3" align="left">
+                    <div class="input-field col s12">
+                        <input id="ricevoloko" type="text" required />
+                        <label for="ricevoloko">Referenca akvonivelo en cm</label>
+                        <span class="helper-text" align='left'>ekz. 0 au 531,2942</span>
+                    </div>
+                </div>
+
+                <div class="row col s12 m8 l6 offset-m2 offset-l3" align="left">
+                    <div class="input-field col s12">
+                        <input id="povumo" type="text" required />
+                        <label for="povumo">TICON-4-datumoj au alternativaj datumoj</label>
+                        <span class="helper-text" align='left'>ekz. 53.382698,8.501546,M2 ... Unspecified</span>
+                    </div>
+                </div>
+
+                <div class="row col s12 m8 l6 offset-m2 offset-l3" align="left">
+
+                    <div class="input-field col s6 m4 l4 offset-m2 offset-l2">
+                        <button class="waves-effect btn blue" type="submit" id="create">Sendi</button>
+                    </div>
+
+                    <div class="input-field col s6 m4 l4">
+                        <button class="waves-effect btn red" type='button' onclick='event.preventDefault(); clearForm();' id='freshStart'>Forvishi</button>
+                    </div>
+
+                </div>
+
+            </form>
+
+            <div align="left" class="klarigoj">
+                <h5>Klarigoj</h5>
+            
+
+<button onclick="ladeKvar()">
+    <b>Mallonge: Jen kiel uzi la formularon</b>
+  </button>
+
+  <hr>
+
+  <div id="content4">
+    ...
+  </div>
+
+  <script>
+    function ladeKvar() {
+      google.script.run
+        .withSuccessHandler(function(html) {
+          document.getElementById("content4").innerHTML = html;
+        })
+        .getKvar();
+    }
+  </script> 
+
+  <script>
+        function scrollToAnchor(anchorId) {
+            const element = document.getElementById(anchorId);
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+  </script>                
+
+                <h6>1. Kampo “Tempo”</h6>
+                <p>
+                    La tempo estu skribita sen spacoj kaj sen interpunkcio.
+                </p>
+                <ul>
+                    <li><code>202708301340</code> signifas: eligu la prognozitan akvonivelon por la 30-a de Augusto 2027 je 13:40.</li>
+                    <li><code>202708309999</code> signifas: eligu la prognozitajn elstarajn akvonivelojn, do kutime maksimumojn kaj minimumojn, por la 30-a de Augusto 2027.</li>
+                </ul>
+                <p>
+                    La dato estu nek antau <b>1900-03-01</b> nek post <b>2100-02-28</b>.
+                    Pri horzono kaj somera tempo vidu la sekvan sekcion.
+                </p>
+
+                <h6>2. Horzono kaj somera tempo</h6>
+                <p>
+                    La tempoj en la rezulto dependas de tio, kiel la originaj akvonivelaj datumoj de la koncerna loko estis preparitaj antau la harmona analizo. Tial la rezultoj povas rilati au al la loka tempo (kun au sen somera tempo, iuokaze ech miksite ene de la sama jaro) au al Universala Tempo Kunordigita (UTK). Jen detaloj <a href="https://rentry.co/tc4kvar" target="_blank">1</a> kaj <a href="https://github.com/openwatersio/tide-database/issues/96" target="_blank">2</a>.
+                </p>
+                <p>
+                    Se ne estas eligite, ke la horzono estas UTK, procedu jene: Por eltrovi, kio validas por difinita loko, komparu la rezultojn por pluraj tagoj kaj malsamaj sezonoj kun oficiala au alia fidinda prognozo pri la sama loko.
+                </p>
+                
+                <h6>3. Kampo “Referenca akvonivelo en cm”</h6>
+                <p>
+                    Tiu valoro shovas la prognozitan akvonivelon al la referenca nulo, kiun vi volas uzi.
+                </p>
+                <ul>
+                    <li>Enigu <code>0</code>, se la rezulto restu rilata al la meza marnivelo de la koncerna loko.</li>
+                    <li>Enigu alian valoron, se vi volas transformi la rezulton al loka referenca nulo, ekzemple akvonivela nulo, germane: “Pegelnullpunkt“ (PNP). Ekzemplo: <code>531,2942</code>. Uzu decimalan komon.</li>
+                </ul>
+                
+                <h6>4. Kampo “TICON-4-datumoj au alternativaj datumoj”</h6>
+                <p>
+                    Procedu jene:
+                </p>
+                <ol>
+                    <li>Elshutu dosieron <code>122848.csv</code> el <a href="https://www.seanoe.org/data/00980/109129/" target="_blank">tiu retpagho</a> per “Download dataset” au uzu unu el <a href="#" onclick="scrollToAnchor('mapoj'); return false;">mapoj</a> malsupre kaj daurigu che pasho 4.</li>
+                    <li>Malfermu la dosieron per tekstoredaktilo, kiel ekzemple WordPad.</li>
+                    <li>Trovu la 50 liniojn por la dezirata loko. Kopiu ghuste tiujn 50 liniojn: nek pli, nek malpli. En kelkaj redaktiloj unu longa linio povas aspekti, kvazau pluraj linioj.</li>
+                    <li>Algluu la kopiitajn datumojn en kampon <code>TICON-4-datumoj au alternativaj datumoj</code>.</li>
+                </ol>
+                <p>
+                    La algluajho komencighas per latitudo kaj longitudo, poste sekvas ekzemple <code>M2</code> kaj multaj pliaj signoj. Ghi finighas antau la latitudo de la sekva aro de konstituantoj.
+                </p>
+
+                <h6>5. Alternativaj harmonaj konstituantoj</h6>
+                <p>
+                    Pri kelkaj lokoj ekzistas alternativaj harmonaj konstituantoj; vidu la <a href="#" onclick="scrollToAnchor('mapoj'); return false;">mapojn</a> malsupre. Tiuj konstituantoj povas esti utilaj, ekzemple se la TICON-4-datumoj ne rilatas al UTK au se por difinita loko analizo alia eligis tiajn konstituantojn, per kiuj pli bonaj prognozoj estas fareblaj.
+                </p>
+                <p id="maro" class="anker">
+                    Pri <a href="https://eo.wikipedia.org/wiki/Ponto_de_Londono" target="_blank"><b>Ponto de Londono</b></a> kurioze ne estas datumoj en la supre menciita datumbazo. Tial jen <a href="https://www.dropbox.com/scl/fi/xx5lavjjqb8het4oef622/ponto_de_londono.txt?rlkey=k75pxdgwhwur1n4jf3l310z2b&st=rwh8g93n&dl=0" target="_blank">dosiero</a> kun alternativaj harmonaj konstituantoj; fonto: Vidu la tiean komenton.
+                </p>
+                <p>
+                  Por <b>Cape d'Or</b>, orienta Kanado, la <a href="https://github.com/openwatersio/tide-database/issues/93" target="_blank">la amplitudo de unu konstituanto lau la TICON-4-datumoj estas eksterordinare granda</a>. Tial jen <a href="https://www.dropbox.com/scl/fi/s2cao2kvs9kkw43g4duqj/cape_d_or_konstituantoj_aliaj_ol_tiuj_de_ticon4.txt?rlkey=1rq7x49lz6c3cv1depy0elzgd&st=sei48o6n&dl=0" target="_blank">dosiero</a> kun alternativaj harmonaj konstituantoj; fonto: Vidu la tiean komenton.
+                </p>
+                <h6>6. Harmonaj konstituantoj, Doodson-numeroj kaj Snapchat-lensoj “Maro” kaj “Maro: sep horoj”</h6>
+
+<button onclick="ladeTri()">
+    <b>Klaku por pli</b>
+  </button>
+
+  <hr>
+
+  <div id="content">
+    ...
+  </div>
+
+  <script>
+    function ladeTri() {
+      google.script.run
+        .withSuccessHandler(function(html) {
+          document.getElementById("content").innerHTML = html;
+        })
+        .getTri();
+    }
+  </script>                
+                
+                <h6 id="mapoj" class="anker">7. Mapoj</h6>
+                <p>
+                    En mapo &quot;Kelkaj lokoj kun harmonaj konstituantoj ...&quot; estas markitaj kelkaj lokoj kun ligilo al dosiero entenanta harmonajn konstituantojn. Malfermu la dosieron, kopiu la enhavon kaj algluu ghin en la kampon <b>TICON-4-datumoj au alternativaj datumoj</b>.
+                </p>
+                <p>
+                    Pri kelkaj lokoj ekzistas Dropbox-dosieroj kun harmonaj konstituantoj aliaj, ol tiuj donitaj en la TICON-4-datumbazo. Tiuj aliaj harmonaj konstituantoj bazighas sur <a href="https://gist.github.com/AndreasKueck/30a62c57832db964fdd3ff38a4e80d69" target="_blank">propra harmona analizo de akvoniveloj</a> kaj eligas prognozitajn akvonivelojn kun UTK, kiel tempa referenco. Temas pri jenaj lokoj:</p>
+                <p>Belum<sup>3</sup>, Brake, Bremerv&ouml;rde<sup>3, 4</sup>, Cape d'Or<sup>5</sup>, Dwarsgat, Elsfleth Ohrt<sup>3, 4</sup>, Hechthausen<sup>3, 4</sup>, Hooksielplate, Krautsand, Langeoog, Nordenham, Oldenburg<sup>3, 4</sup>, Otterndorf, Papenburg<sup>4</sup>, Rechtenfleth, Robbens&uuml;dersteert, Scharh&ouml;rn, Spiekeroog kaj Stadersand.
+                </p>
+                <p>Vidu la mapon &quot;Kelkaj lokoj kun harmonaj konstituantoj ...&quot;. Cetere: En aro de alternativaj konstituantoj la unua ne nepre estas M2, sed povas esti alia konstituanto.
+                </p>
+                <p class="small-note">
+                    <sup>3</sup> Tiuj lokoj situas apud flankriveroj. Tial la harmona metodo ofte rezultigas aparte neprecizajn prognozojn. Eksperimente la harmona analizo por determini la alternativajn konstituantojn estis farita a) surbaze de datumoj el tempospaco de nur tri monatoj, de mezo de Februaro ghis mezo de Majo 2025, kaj b) per nur dek konstituantoj, nome tiuj, kiuj estas konsiderataj en “Gezeitentafeln f&uuml;r das Jahr 1948”, eldonita de Deutsches Hydrographisches Institut Hamburg, Hamburg, 1948: M2, S2, N2, K2, MU2, K1, O1, P1, M4 kaj MS4.
+                    <br>
+                    <sup>4</sup> Pro nesimetria evoluo de la akvonivela kurbo ekzistas por tiuj lokoj po du aroj de alternativaj konstituantoj: unu aro optimumigita por prognozi minimumojn kaj alia aro optimumigita por prognozi maksimumojn. Vidu la mapon.<br>
+                    <sup>5</sup> Motivo, por prezenti aron de alternativaj konstituantoj: Vidu supre en chapitro 5.
+                </p>
+
+                <p>
+                    <iframe src="https://www.google.com/maps/d/embed?mid=1yG4v9MeHQ2fG7iFntywSEX7_kt5XY3s&ehbc=2E312F" width="448" height="336"></iframe>
+                </p>
+
+<p>
+  <button class="waves-effect btn blue" type="button" onclick="montriLokojn()">
+    Klaku, por vidi pli ampleksan mapon
+  </button>
+</p>
+
+<div id="lokojBloko" style="display:none; margin-top:1.5rem;">
+
+  <h6>Lokoj kun TICON-4-datumoj</h6>
+
+  <p>
+    Por ekhavi la harmonajn konstituantojn de difinita loko, enigu en kampon <b>tide_gauge_name</b> malsupre la <strong>tide_gauge_name</strong>, ekzemple
+    <code>boulogne_sur_mer-111-fra-refmar</code>, trovitan en la interaga mapo chi-malsupre.
+  </p>
+    <iframe
+      src="https://openadb.dgfi.tum.de/en/ocean-tides/map/"
+      width="500"
+      height="400"
+      style="max-width:100%; border:0;"
+      allowfullscreen>
+    </iframe>
+  </p>
+
+  <div class="input-field">
+    <input type="text" id="lokojNomo" placeholder="boulogne_sur_mer-111-fra-refmar" autocomplete="off">
+    <label for="lokojNomo">tide_gauge_name</label>
+  </div>
+
+  <p>
+    <button class="waves-effect btn blue" type="button" onclick="serchiLokon()">
+      Trovi
+    </button>
+  </p>
+
+  <div id="lokojRezulto"></div>
+
+</div>
+
+<script>
+  function montriLokojn() {
+    var bloko = document.getElementById('lokojBloko');
+    bloko.style.display = 'block';
+  }
+
+  function serchiLokon() {
+    var nomo = document.getElementById('lokojNomo').value.trim();
+    var div = document.getElementById('lokojRezulto');
+
+    div.innerHTML = '<div class="card-panel">Serchante ...</div>';
+
+    google.script.run
+      .withSuccessHandler(montruLokon)
+      .withFailureHandler(function(err) {
+        div.innerHTML =
+          '<div class="card-panel red lighten-4">Eraro: ' +
+          eskapuLokoj(err.message) +
+          '</div>';
+      })
+      .serchiPegelon(nomo);
+  }
+
+  function montruLokon(rez) {
+    var div = document.getElementById('lokojRezulto');
+
+    if (!rez.sukcesa) {
+      div.innerHTML =
+        '<div class="card-panel red lighten-4">' +
+        eskapuLokoj(rez.mesagho) +
+        '</div>';
+      return;
+    }
+
+    var html = '';
+
+    html += '<div class="card-panel">';
+    html += '<p class="green-text text-darken-2"><strong>Trovita:</strong> ' +
+      eskapuLokoj(rez.nomo) +
+      ' — ' +
+      eskapuLokoj(rez.nombro) +
+      ' linioj</p>';
+
+    html += '<pre id="lokojPreTicon" style="white-space:pre-wrap; overflow-x:auto;">' +
+      eskapuLokoj(rez.teksto) +
+      '</pre>';
+
+    html += '<p><button class="waves-effect btn blue" type="button" onclick="kopiiLokojEl(\'lokojPreTicon\')">Kopii al tondejo</button></p>';
+    html += '</div>';
+
+    if (rez.alternativo && rez.alternativo.petita) {
+      html += '<div class="card-panel">';
+      html += '<h6>Alternativaj konstituantoj</h6>';
+
+      if (rez.alternativo.sukcesa) {
+        html += '<p class="green-text text-darken-2"><strong>Trovitaj alternativaj datumoj:</strong> ' +
+          eskapuLokoj(rez.alternativo.nombro) +
+          ' linioj</p>';
+
+        html += '<p>Fonto: <a href="' +
+          eskapuLokoj(rez.alternativo.url) +
+          '" target="_blank">' +
+          eskapuLokoj(rez.alternativo.url) +
+          '</a></p>';
+
+        html += '<pre id="lokojPreAlt" style="white-space:pre-wrap; overflow-x:auto;">' +
+          eskapuLokoj(rez.alternativo.teksto) +
+          '</pre>';
+
+        html += '<p><button class="waves-effect btn blue" type="button" onclick="kopiiLokojEl(\'lokojPreAlt\')">Kopii al tondejo</button></p>';
+      } else {
+        html += '<p class="red-text text-darken-2">' +
+          eskapuLokoj(rez.alternativo.mesagho) +
+          '</p>';
+
+        if (rez.alternativo.url) {
+          html += '<p>Provita fonto: <a href="' +
+            eskapuLokoj(rez.alternativo.url) +
+            '" target="_blank">' +
+            eskapuLokoj(rez.alternativo.url) +
+            '</a></p>';
+        }
+      }
+
+      html += '</div>';
+    }
+
+    div.innerHTML = html;
+  }
+
+  function kopiiLokojEl(preId) {
+    var elem = document.getElementById(preId);
+
+    if (!elem) {
+      alert('Nenio kopiebla.');
+      return;
+    }
+
+    var teksto = elem.textContent;
+
+    navigator.clipboard.writeText(teksto).then(function() {
+      alert('Kopiita!');
+    }).catch(function() {
+      alert('Kopiado malsukcesis.');
+    });
+  }
+
+  function eskapuLokoj(s) {
+    return String(s ?? '').replace(/[&<>"']/g, function(ch) {
+      return {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[ch];
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('lokojNomo');
+    if (input) {
+      input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          serchiLokon();
+        }
+      });
+    }
+  });
+</script>
+
+                <h6>Fontoj de datumoj kaj jura avizo</h6>          
+                
+<p class="small-note">Tiu chi apo uzas harmonajn konstituantojn kaj antaukalkulojn el pluraj fontoj. Uzighas interalie informoj donitaj en:<br>Hart-Davis Michael, Dettmering Denise, Seitz Florian (2025). TICON-4: TIdal CONstants based on GESLA-4 sea-level records. SEANOE. <a href="https://doi.org/10.17882/109129" target="_blank">https://doi.org/10.17882/109129</a><br>kaj<br>Piccioni Gaia, Dettmering Denise, Bosch Wolfgang, Seitz Florian (2019). TICON: TIdal CONstants based on GESLA sea-level records from globally located tide gauges. Geoscience Data Journal. 6 (2). 97-104. <a href="https://doi.org/10.1002/gdj3.72" target="_blank">https://doi.org/10.1002/gdj3.72</a>, <a href="https://archimer.ifremer.fr/doc/00838/94993/" target="_blank">https://archimer.ifremer.fr/doc/00838/94993/</a>.<br>Jen <a href="https://gist.github.com/AndreasKueck/984f2ef3b18620ba872a14fe44a58551#file-akvonivelo_ticon4-txt" target="_blank">pliaj informoj</a>. Parto de la datumoj devenas el <a href="https://www.seanoe.org/data/00980/109129/" target="_blank">TICON-4</a>, tio estas publikigita datumbazo de harmonaj konstituantoj. Aliaj datumoj estis rekalkulitaj au nove analizitaj de la autoro de tiu chi apo surbaze de publike alireblaj akvoniveloj mezuritaj interalie de hidrografiaj servoj en Britujo, Germanujo kaj Kanado.<br>
+Krome parto de la konstituantoj bazighas sur analizoj faritaj de <a href="https://github.com/openwatersio/" target="_blank">openwatersio</a>.<br>
+La datumoj kaj konstituantoj en tiu chi apo povas do havi malsamajn devenojn kaj malsamajn jurajn kondichojn lau stacio (loko) au fonto.<br>
+La originalaj rajtoj pri la fontaj datumoj restas che la respektivaj datumprovizantoj au rajtposedantoj. La inkluzivigo de datumoj en tiu chi apo ne signifas, ke chiuj datumoj estas senlime au universale libere reuzeblaj.<br>
+Se vi intencas reuzi, redistribui au komerce utiligi la datumojn au harmonajn konstantituantojn, vi mem respondecas pri kontrolo de la respektivaj permesoj, uzkondichoj kaj eventualaj limigoj de la originalaj fontoj.<br>
+La datumoj estas provizitaj nur por informa uzo. Neniu garantio estas donata pri ghusteco, kompleteco, taugeco au jura uzebleco. Chiu uzo okazas je propra respondeco.</p>
+
+<button onclick="ladeDu()">
+    <b>Ekzemplaj lokoj</b>
+  </button>
+
+  <hr>
+
+  <div id="content1">
+    ...
+  </div>
+
+  <script>
+    function ladeDu() {
+      google.script.run
+        .withSuccessHandler(function(html) {
+          document.getElementById("content1").innerHTML = html;
+        })
+        .getDu();
+    }
+  </script>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div align="center" style="padding: 1rem 0 120px 0;">
+  <a href="https://jhau.de/privateco.html" target="_blank">Privateco</a>
+</div>
+
+</div>
+
+    <script>
+        function scrollToAnchor(anchorId) {
+            const element = document.getElementById(anchorId);
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+    </script>
+
+</body>
+
+</html>
