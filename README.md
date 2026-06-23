@@ -3,6 +3,8 @@ Tio chi estas la Guglo-Apoj-Skripto-pakajho por la supre menciitaj apoj. La apoj
 
 Oni atentu chapitron "Fontoj de datumoj kaj jura avizo" en la [apa retpagho](https://script.google.com/a/~/macros/s/AKfycbzgeChQUzIlVM5wmtsrmwZkNNJUZgFLLPvtYkNztVaFhHHq2xp3NqImx2uolmQw_qBG4g/exec).
 
+Dosiero Code_csvtxt,gs efektive ne estas parto de la supre menciita pakajho, sed de aparta ret-apo. Ghia celo estas montri la enhavon de .csv-dosiero en teksta formo.
+
 ## Permesilo ("License")
 
 Chi tiu projekto estas publikigita sub la [MIT-permesilo](./LICENSE).
