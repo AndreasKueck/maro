@@ -2,8 +2,6 @@
 Tiu chi .gs-dosiero estas parto de la aparta Guglo-Apoj-Skripto-ret-apo
 https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMWhZWZArsRPscRsH5jdqqTxjdMq6KJu4U9w/exec
 (mallonga URL: https://jhau.de/csvtxt).
-Ghi montras la enhavon de https://www.seanoe.org/data/00980/109129/data/122848.csv
-en teksta formo en krozilo(-apo).
 */
 
 const SOURCE_URL = "https://www.seanoe.org/data/00980/109129/data/122848.csv";
@@ -14,7 +12,6 @@ function doGet(e) {
   let page = parseInt(params.page) || 1;
   let chunkSize = parseInt(params.chunk) || 500;
   
-  // Devigi multoblon de 50 
   chunkSize = Math.ceil(chunkSize / 50) * 50;
   if (chunkSize < 50) chunkSize = 50;
   if (chunkSize > 10000) chunkSize = 10000;
@@ -35,9 +32,11 @@ function doGet(e) {
     const endIdx = Math.min(startIdx + chunkSize, totalLines);
     let content = header + '\n' + lines.slice(startIdx, endIdx).join('\n');
 
-    // Uzi chiam la URL-on kun .../a/~/macros...
     let baseUrl = ScriptApp.getService().getUrl()
                      .replace('/macros/s/', '/a/~/macros/s/');
+
+    // Cache-Busting Parameter
+    const timestamp = new Date().getTime();
 
     const html = `
 <!DOCTYPE html>
@@ -49,30 +48,31 @@ function doGet(e) {
     body { font-family: monospace; margin: 20px; }
     pre { white-space: pre-wrap; word-break: break-all; max-height: 75vh; overflow: auto; background: #f8f8f8; padding: 15px; border: 1px solid #ddd; }
     .controls { margin-bottom: 20px; padding: 15px; background: #f0f0f0; border-radius: 6px; }
-    input, select, button { margin: 5px; padding: 10px; font-size: 16px; }
-    button { background: #4285f4; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    button:hover { background: #3367d6; }
+    input, select, a.button { margin: 5px; padding: 10px; font-size: 16px; text-decoration: none; display: inline-block; }
+    .button { background: #4285f4; color: white; border-radius: 4px; cursor: pointer; }
   </style>
 </head>
 <body>
   <h2>CSV-spektilo (pecetigita)</h2>
   
   <div class="controls">
-    <label>Pagho: </label>
-    <input type="number" id="pageInput" value="${page}" min="1" max="${totalPages}" style="width:90px;">
+    <form id="navForm" style="display:inline;">
+      <label>Pagho: </label>
+      <input type="number" id="pageInput" value="${page}" min="1" max="${totalPages}" style="width:90px;">
+      
+      <label>Peceto-grando: </label>
+      <select id="chunkSelect">
+        <option value="50" ${chunkSize===50 ? 'selected' : ''}>50</option>
+        <option value="100" ${chunkSize===100 ? 'selected' : ''}>100</option>
+        <option value="500" ${chunkSize===500 ? 'selected' : ''}>500</option>
+        <option value="1000" ${chunkSize===1000 ? 'selected' : ''}>1000</option>
+        <option value="5000" ${chunkSize===5000 ? 'selected' : ''}>5000</option>
+      </select>
+    </form>
     
-    <label>Peceto-grando: </label>
-    <select id="chunkSelect">
-      <option value="50" ${chunkSize===50 ? 'selected' : ''}>50</option>
-      <option value="100" ${chunkSize===100 ? 'selected' : ''}>100</option>
-      <option value="500" ${chunkSize===500 ? 'selected' : ''}>500</option>
-      <option value="1000" ${chunkSize===1000 ? 'selected' : ''}>1000</option>
-      <option value="5000" ${chunkSize===5000 ? 'selected' : ''}>5000</option>
-    </select>
-    
-    <button onclick="goToPage()">Shargi</button>
-    <button onclick="prevPage()">← Antaua</button>
-    <button onclick="nextPage()">Sekva →</button>
+    <a href="#" onclick="goToPage(); return false;" class="button">Shargi</a>
+    <a href="${baseUrl}?page=${Math.max(1, page-1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">← Antaua</a>
+    <a href="${baseUrl}?page=${Math.min(totalPages, page+1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">Sekva →</a>
   </div>
   
   <p><strong>Pagho ${page} el ${totalPages} | Linioj ${startIdx}–${endIdx-1} el ${totalDataRows}</strong><br>
@@ -81,34 +81,21 @@ function doGet(e) {
   <pre>${content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
 
   <script>
-    const baseUrl = '${baseUrl}';
-    
     function goToPage() {
       const page = document.getElementById('pageInput').value;
       const chunk = document.getElementById('chunkSelect').value;
-      window.location.href = baseUrl + '?page=' + page + '&chunk=' + chunk;
-    }
-    
-    function prevPage() {
-      const currentPage = ${page};
-      const page = Math.max(1, currentPage - 1);
-      const chunk = document.getElementById('chunkSelect').value;
-      window.location.href = baseUrl + '?page=' + page + '&chunk=' + chunk;
-    }
-    
-    function nextPage() {
-      const currentPage = ${page};
-      const page = Math.min(${totalPages}, currentPage + 1);
-      const chunk = document.getElementById('chunkSelect').value;
-      window.location.href = baseUrl + '?page=' + page + '&chunk=' + chunk;
+      const timestamp = new Date().getTime();
+      const url = '${baseUrl}?page=' + page + '&chunk=' + chunk + '&t=' + timestamp;
+      window.open(url, '_top');   // target=_top via JS
     }
     
     document.getElementById('pageInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') goToPage();
     });
   </script>
+  
   <div align="center" style="padding: 1rem 0 120px 0;">
-   <a href="https://jhau.de/privateco.html" target="_blank">Privateco</a>
+    <a href="https://jhau.de/privateco.html" target="_blank">Privateco</a>
   </div>
 </body>
 </html>`;
