@@ -175,6 +175,10 @@ function addLink(shortStack) {
     povumokontroloutk = true;
   }
 
+  if (/\-fra\-refmar/.test(povumozeichen)) {
+    povumokontroloutk = true;
+  }
+
   if (/emdentg\-emd\-deu\-cmems/.test(povumozeichen)) {
     povumokontroloutk = true;
   }
