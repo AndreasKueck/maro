@@ -19,6 +19,59 @@ Piccioni Gaia, Dettmering Denise, Bosch Wolfgang, Seitz Florian (2019). TICON: T
 const customDomain = 'https://jhau1.de/';
 const LOKOJ_ALT_JSON_BASE_URL = 'https://raw.githubusercontent.com/openwatersio/tide-database/refs/heads/main/data/ticon/';
 
+const DEFAULT_POVUMO = [
+  '53.382698,8.501546,M2,172.563438,0.232191,Unspecified',
+  '53.382698,8.501546,N2,27.277169,337.342351,Unspecified',
+  '53.382698,8.501546,S2,45.743507,77.004876,Unspecified',
+  '53.382698,8.501546,K2,16.86265,81.070616,Unspecified',
+  '53.382698,8.501546,2N2,2.021421,304.800608,Unspecified',
+  '53.382698,8.501546,S1,1.85261,253.208041,Unspecified',
+  '53.382698,8.501546,K1,7.649817,55.53934,Unspecified',
+  '53.382698,8.501546,P1,3.212897,60.639792,Unspecified',
+  '53.382698,8.501546,O1,10.520074,254.473477,Unspecified',
+  '53.382698,8.501546,Q1,3.213288,200.408569,Unspecified',
+  '53.382698,8.501546,M1,0.77987,80.758923,Unspecified',
+  '53.382698,8.501546,M4,10.973372,184.849122,Unspecified',
+  '53.382698,8.501546,MM,3.420532,95.095623,Unspecified',
+  '53.382698,8.501546,MF,2.62847,134.090797,Unspecified',
+  '53.382698,8.501546,SA,6.968908,319.260187,Unspecified',
+  '53.382698,8.501546,SSA,4.256096,221.370938,Unspecified',
+  '53.382698,8.501546,T2,2.608761,59.154416,Unspecified',
+  '53.382698,8.501546,J1,0.488523,150.3053,Unspecified',
+  '53.382698,8.501546,L2,16.160735,15.808271,Unspecified',
+  '53.382698,8.501546,R2,0.538069,0.133908,Unspecified',
+  '53.382698,8.501546,2Q1,0.82551,119.684737,Unspecified',
+  '53.382698,8.501546,MSF,2.557205,54.750478,Unspecified',
+  '53.382698,8.501546,MSQM,0.586367,294.650503,Unspecified',
+  '53.382698,8.501546,EP2,4.67056,61.882324,Unspecified',
+  '53.382698,8.501546,M3,0.360602,235.293236,Unspecified',
+  '53.382698,8.501546,MU2,22.441928,81.779953,Unspecified',
+  '53.382698,8.501546,MTM,0.927141,269.415481,Unspecified',
+  '53.382698,8.501546,NU2,10.71709,310.808736,Unspecified',
+  '53.382698,8.501546,LAMBDA2,8.274888,15.531968,Unspecified',
+  '53.382698,8.501546,MN4,3.411482,165.190486,Unspecified',
+  '53.382698,8.501546,MS4,8.606607,265.813108,Unspecified',
+  '53.382698,8.501546,MKS2,13.75177,11.047879,Unspecified',
+  '53.382698,8.501546,N4,0.495054,130.983344,Unspecified',
+  '53.382698,8.501546,M6,7.112251,54.852743,Unspecified',
+  '53.382698,8.501546,M8,1.45909,321.964098,Unspecified',
+  '53.382698,8.501546,S4,1.301234,56.171335,Unspecified',
+  '53.382698,8.501546,OO1,0.596788,213.889151,Unspecified',
+  '53.382698,8.501546,S3,0.076616,140.451454,Unspecified',
+  '53.382698,8.501546,MA2,6.106076,325.452091,Unspecified',
+  '53.382698,8.501546,MB2,1.791335,84.393336,Unspecified',
+  '53.382698,8.501546,T3,0.07349,12.656235,Unspecified',
+  '53.382698,8.501546,R3,0.488443,353.338111,Unspecified',
+  '53.382698,8.501546,RHO1,0.491126,212.961681,Unspecified',
+  '53.382698,8.501546,SGM,0.468246,81.4596,Unspecified',
+  '53.382698,8.501546,3L2,9.378097,159.672822,Unspecified',
+  '53.382698,8.501546,3N2,2.529533,165.175666,Unspecified',
+  '53.382698,8.501546,2SM2,4.817755,291.924727,Unspecified',
+  '53.382698,8.501546,2MS6,8.143431,124.356803,Unspecified',
+  '53.382698,8.501546,2MK5,1.15173,65.303297,Unspecified',
+  '53.382698,8.501546,2MO5,0.824879,237.489862,Unspecified'
+].join('\n');
+
 const HARMONIC_DATA = {
   M2: [2, 0, 0, 0, 0, 0, 0],
   N2: [2, -1, 0, 1, 0, 0, 0],
@@ -132,11 +185,13 @@ const POVUMO_PATTERNS = [
   /LAT(\s|\S)/g
 ];
 
+
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('index')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .setTitle('Prognozo de akvoniveloj per TICON-4-datumoj');
 }
+
 
 function getDu() {
   return HtmlService.createHtmlOutputFromFile('du').getContent();
@@ -154,10 +209,15 @@ function getCustomDomain() {
   return customDomain;
 }
 
+function povumoOrDefault_(value) {
+  var s = value == null ? '' : String(value);
+  return s.trim() === '' ? DEFAULT_POVUMO : s;
+}
+
 function addLink(shortStack) {
   var sendoloko = shortStack?.sendoloko ?? '202511149999';
   var ricevoloko = shortStack?.ricevoloko ?? '507.5';
-  var povumo = shortStack?.povumo ?? '';
+  var povumo = povumoOrDefault_(shortStack?.povumo);
   var povumozeichen = povumo + '';
   var povumokontroloutk = false;
   var povumokontrolorws = false;
@@ -177,7 +237,7 @@ function addLink(shortStack) {
 
   if (/\-fra\-refmar/.test(povumozeichen)) {
     povumokontroloutk = true;
-  }
+  }  
 
   if (/emdentg\-emd\-deu\-cmems/.test(povumozeichen)) {
     povumokontroloutk = true;
@@ -582,11 +642,11 @@ function createDatumoj1(ticon4) {
 
 function skribiKonstituantojnKajDoodson(input) {
   var povumo = '';
-
+   
   if (typeof input === 'object' && input !== null) {
-    povumo = input?.povumo ?? '';
-  } else {
-    povumo = input ?? '';
+    povumo = povumoOrDefault_(input?.povumo);
+   } else {
+    povumo = povumoOrDefault_(input);
   }
 
   povumo = puriguPovumon(povumo);
@@ -614,7 +674,7 @@ function skribiKonstituantojnKajDoodson(input) {
 function getCurve(shortStack) {
   var sendoloko = shortStack?.sendoloko ?? '202511149999';
   var ricevoloko = shortStack?.ricevoloko ?? '507.5';
-  var povumo = shortStack?.povumo ?? '';
+  var povumo = povumoOrDefault_(shortStack?.povumo);
 
   ricevoloko = (ricevoloko + '').replace(/\,/, '.');
 
