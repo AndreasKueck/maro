@@ -209,14 +209,24 @@ function getCustomDomain() {
   return customDomain;
 }
 
+function valueOrDefault_(value, defaultValue) {
+  var s = value == null ? '' : String(value).trim();
+  return s === '' ? defaultValue : s;
+}
+
+function defaultSendoloko_() {
+  var tz = Session.getScriptTimeZone() || 'Etc/UTC';
+  return Utilities.formatDate(new Date(), tz, 'yyyyMMdd') + '9999';
+}
+
 function povumoOrDefault_(value) {
   var s = value == null ? '' : String(value);
   return s.trim() === '' ? DEFAULT_POVUMO : s;
 }
 
 function addLink(shortStack) {
-  var sendoloko = shortStack?.sendoloko ?? '202511149999';
-  var ricevoloko = shortStack?.ricevoloko ?? '507.5';
+  var sendoloko = valueOrDefault_(shortStack?.sendoloko, defaultSendoloko_());
+  var ricevoloko = valueOrDefault_(shortStack?.ricevoloko, '0');
   var povumo = povumoOrDefault_(shortStack?.povumo);
   var povumozeichen = povumo + '';
   var povumokontroloutk = false;
@@ -672,8 +682,8 @@ function skribiKonstituantojnKajDoodson(input) {
 }
 
 function getCurve(shortStack) {
-  var sendoloko = shortStack?.sendoloko ?? '202511149999';
-  var ricevoloko = shortStack?.ricevoloko ?? '507.5';
+  var sendoloko = valueOrDefault_(shortStack?.sendoloko, defaultSendoloko_());
+  var ricevoloko = valueOrDefault_(shortStack?.ricevoloko, '0');
   var povumo = povumoOrDefault_(shortStack?.povumo);
 
   ricevoloko = (ricevoloko + '').replace(/\,/, '.');
