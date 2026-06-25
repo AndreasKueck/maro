@@ -135,10 +135,10 @@ function doGet(e) {
 
       <label>tide_gauge_name: </label>
       <input type="text" id="tgInput" value="${escapeHtml(tideGaugeSearch)}" maxlength="4" style="width:90px;" placeholder="boul">
-    </form>
+    </form>    
     
-    <a href="#" onclick="goToPage(); return false;" class="button">Shargi</a>
     <a href="#" onclick="searchTideGauge(); return false;" class="button">Serchi</a>
+    <a href="#" onclick="goToPage(); return false;" class="button">Shargi</a>
     <a href="${baseUrl}?page=${Math.max(1, page-1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">? Antaua</a>
     <a href="${baseUrl}?page=${Math.min(totalPages, page+1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">Sekva ?</a>
   </div>
