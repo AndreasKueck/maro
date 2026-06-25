@@ -53,7 +53,7 @@ function doGet(e) {
   const params = e.parameter || {};
   
   let page = parseInt(params.page) || 1;
-  let chunkSize = parseInt(params.chunk) || 500;
+  let chunkSize = parseInt(params.chunk) || 50;
 
   const tideGaugeSearchRaw = String(params.tg || '').trim();
   const tideGaugeSearch = tideGaugeSearchRaw.substring(0, 4);
@@ -62,9 +62,9 @@ function doGet(e) {
   if (chunkSize < 50) chunkSize = 50;
   if (chunkSize > 10000) chunkSize = 10000;
 
-  // Bei Suche nach tide_gauge_name immer Darstellung mit 500 Zeilen pro Seite
+  // Bei Suche nach tide_gauge_name immer Darstellung mit 50 Zeilen pro Seite
   if (tideGaugeSearch) {
-    chunkSize = 500;
+    chunkSize = 50;
   }
 
   try {
@@ -135,7 +135,7 @@ function doGet(e) {
 
       <label>tide_gauge_name: </label>
       <input type="text" id="tgInput" value="${escapeHtml(tideGaugeSearch)}" maxlength="4" style="width:90px;" placeholder="boul">
-    </form>    
+    </form>
     
     <a href="#" onclick="searchTideGauge(); return false;" class="button">Serchi</a>
     <a href="#" onclick="goToPage(); return false;" class="button">Shargi</a>
@@ -165,7 +165,7 @@ function doGet(e) {
 
       if (!tg) return;
 
-      const url = '${baseUrl}?tg=' + encodeURIComponent(tg) + '&chunk=500&t=' + timestamp;
+      const url = '${baseUrl}?tg=' + encodeURIComponent(tg) + '&chunk=50&t=' + timestamp;
       window.open(url, '_top');   // target=_top via JS
     }
     
