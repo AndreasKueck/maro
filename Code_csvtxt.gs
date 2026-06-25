@@ -6,15 +6,66 @@ https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMW
 
 const SOURCE_URL = "https://www.seanoe.org/data/00980/109129/data/122848.csv";
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function getCsvRow(line) {
+  try {
+    return Utilities.parseCsv(line)[0] || [];
+  } catch (err) {
+    return line.split(',');
+  }
+}
+
+function getTideGaugeSearchKey(line) {
+  const row = getCsvRow(line);
+
+  // tide_gauge_name estas la 14-a elemento, do indekso 13
+  const tideGaugeName = String(row[13] || '').trim();
+
+  // Nur la parto antau la unua bindestreko, kaj de tio nur la unuaj kvar signoj
+  const beforeFirstHyphen = tideGaugeName.split('-')[0];
+
+  return beforeFirstHyphen.substring(0, 4).toLowerCase();
+}
+
+function findFirstTideGaugeLine(lines, searchKey) {
+  const wanted = String(searchKey || '').trim().substring(0, 4).toLowerCase();
+
+  if (!wanted) return -1;
+
+  for (let i = 1; i < lines.length; i++) {
+    if (getTideGaugeSearchKey(lines[i]) === wanted) {
+      return i; // i samtempe estas la datuma linio-numero, char kaplinio estas lines[0]
+    }
+  }
+
+  return -1;
+}
+
 function doGet(e) {
   const params = e.parameter || {};
   
   let page = parseInt(params.page) || 1;
   let chunkSize = parseInt(params.chunk) || 500;
+
+  const tideGaugeSearchRaw = String(params.tg || '').trim();
+  const tideGaugeSearch = tideGaugeSearchRaw.substring(0, 4);
   
   chunkSize = Math.ceil(chunkSize / 50) * 50;
   if (chunkSize < 50) chunkSize = 50;
   if (chunkSize > 10000) chunkSize = 10000;
+
+  // Bei Suche nach tide_gauge_name immer Darstellung mit 500 Zeilen pro Seite
+  if (tideGaugeSearch) {
+    chunkSize = 500;
+  }
 
   try {
     const response = UrlFetchApp.fetch(SOURCE_URL, { muteHttpExceptions: true });
@@ -24,6 +75,19 @@ function doGet(e) {
     const totalLines = lines.length;
     const totalDataRows = totalLines - 1;
     const totalPages = Math.ceil(totalDataRows / chunkSize);
+
+    let searchInfoHtml = '';
+
+    if (tideGaugeSearch) {
+      const foundLine = findFirstTideGaugeLine(lines, tideGaugeSearch);
+
+      if (foundLine > 0) {
+        page = Math.ceil(foundLine / chunkSize);
+        searchInfoHtml = `<p><strong>Trovo por tide_gauge_name "${escapeHtml(tideGaugeSearch)}": pagho ${page}, linio ${foundLine}.</strong></p>`;
+      } else {
+        searchInfoHtml = `<p><strong>Neniu trovo por tide_gauge_name "${escapeHtml(tideGaugeSearch)}".</strong></p>`;
+      }
+    }
 
     if (page < 1) page = 1;
     if (page > totalPages) page = totalPages;
@@ -68,17 +132,23 @@ function doGet(e) {
         <option value="1000" ${chunkSize===1000 ? 'selected' : ''}>1000</option>
         <option value="5000" ${chunkSize===5000 ? 'selected' : ''}>5000</option>
       </select>
+
+      <label>tide_gauge_name: </label>
+      <input type="text" id="tgInput" value="${escapeHtml(tideGaugeSearch)}" maxlength="4" style="width:90px;" placeholder="boul">
     </form>
     
     <a href="#" onclick="goToPage(); return false;" class="button">Shargi</a>
-    <a href="${baseUrl}?page=${Math.max(1, page-1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">← Antaua</a>
-    <a href="${baseUrl}?page=${Math.min(totalPages, page+1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">Sekva →</a>
+    <a href="#" onclick="searchTideGauge(); return false;" class="button">Serchi</a>
+    <a href="${baseUrl}?page=${Math.max(1, page-1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">? Antaua</a>
+    <a href="${baseUrl}?page=${Math.min(totalPages, page+1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">Sekva ?</a>
   </div>
+
+  ${searchInfoHtml}
   
   <p><strong>Pagho ${page} el ${totalPages} | Linioj ${startIdx}–${endIdx-1} el ${totalDataRows}</strong><br>
-  <small>La paghokapo estas ripetata en chiu peceto. Estas montrata en pecetoj kaj teksta formo la enhavo de <a href="https://www.seanoe.org/data/00980/109129/data/122848.csv" target="_blank">https://www.seanoe.org/data/00980/109129/data/122848.csv</a>. Uzighas informoj donitaj en:<br>Hart-Davis Michael, Dettmering Denise, Seitz Florian (2025). TICON-4: TIdal CONstants based on GESLA-4 sea-level records. SEANOE. <a href="https://doi.org/10.17882/109129" target="_blank">https://doi.org/10.17882/109129</a><br>kaj<br>Piccioni Gaia, Dettmering Denise, Bosch Wolfgang, Seitz Florian (2019). TICON: TIdal CONstants based on GESLA sea-level records from globally located tide gauges. Geoscience Data Journal. 6 (2). 97-104. <a href="https://doi.org/10.1002/gdj3.72" target="_blank">https://doi.org/10.1002/gdj3.72</a>, <a href="https://archimer.ifremer.fr/doc/00838/94993/" target="_blank">https://archimer.ifremer.fr/doc/00838/94993/</a>.Datumoj de SEANOE (CC BY). Neniu respondeco pri enhavo. Citu la originalon.</small></p>
+  <small>La paghokapo estas ripetata en chiu peceto. Estas montrata en pecetoj kaj teksta formo la enhavo de <a href="https://www.seanoe.org/data/00980/109129/data/122848.csv" target="_blank">https://www.seanoe.org/data/00980/109129/data/122848.csv</a>. Uzighas informoj donitaj en:<br>Hart-Davis Michael, Dettmering Denise, Seitz Florian (2025). TICON-4: TIdal CONstants based on GESLA-4 sea-level records. SEANOE. <a href="https://doi.org/10.17882/109129" target="_blank">https://doi.org/10.17882/109129</a><br>kaj<br>Piccioni Gaia, Dettmering Denise, Bosch Wolfgang, Seitz Florian (2019). TICON: TIdal CONstants based on GESLA sea-level records from globally located tide gauges. Geoscience Data Journal. 6 (2). 97-104. <a href="https://doi.org/10.1002/gdj3.72" target="_blank">https://doi.org/10.1002/gdj3.72</a>, <a href="https://archimer.ifremer.fr/doc/00838/94993/" target="_blank">https://archimer.ifremer.fr/doc/00838/94993/</a>.<br>Datumoj de SEANOE (CC BY). Neniu respondeco pri enhavo. Citu la originalon.</small></p>
   
-  <pre>${content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+  <pre>${escapeHtml(content)}</pre>
 
   <script>
     function goToPage() {
@@ -88,9 +158,23 @@ function doGet(e) {
       const url = '${baseUrl}?page=' + page + '&chunk=' + chunk + '&t=' + timestamp;
       window.open(url, '_top');   // target=_top via JS
     }
+
+    function searchTideGauge() {
+      const tg = document.getElementById('tgInput').value.trim().substring(0, 4);
+      const timestamp = new Date().getTime();
+
+      if (!tg) return;
+
+      const url = '${baseUrl}?tg=' + encodeURIComponent(tg) + '&chunk=500&t=' + timestamp;
+      window.open(url, '_top');   // target=_top via JS
+    }
     
     document.getElementById('pageInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') goToPage();
+    });
+
+    document.getElementById('tgInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') searchTideGauge();
     });
   </script>
   
