@@ -6,6 +6,12 @@ https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMW
 
 const SOURCE_URL = "https://www.seanoe.org/data/00980/109129/data/122848.csv";
 
+// tide_gauge_name estas la 14-a elemento, do indekso 13
+const TIDE_GAUGE_FIELD_INDEX = 13;
+
+// Apps-Script-Cache: maksimume 21600 sekundoj = 6 horoj
+const SEARCH_CACHE_SECONDS = 21600;
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, '&amp;')
@@ -23,23 +29,105 @@ function getCsvRow(line) {
   }
 }
 
-function getTideGaugeSearchKey(line) {
-  const row = getCsvRow(line);
+/*
+  Rapida ekstrakto de nur unu CSV-kampo.
+  Tio estas multe pli rapida ol Utilities.parseCsv(line) por chiu linio,
+  char por la sercho bezonatas nur la kampo tide_gauge_name.
+*/
+function getCsvField(line, targetIndex) {
+  line = String(line || '');
 
-  // tide_gauge_name estas la 14-a elemento, do indekso 13
-  const tideGaugeName = String(row[13] || '').trim();
+  let fieldIndex = 0;
+  let inQuotes = false;
+  let value = '';
+  let collecting = targetIndex === 0;
+
+  for (let i = 0; i < line.length; i++) {
+    const ch = line.charAt(i);
+
+    if (inQuotes) {
+      if (ch === '"') {
+        if (i + 1 < line.length && line.charAt(i + 1) === '"') {
+          if (collecting) value += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        if (collecting) value += ch;
+      }
+    } else {
+      if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === ',') {
+        if (fieldIndex === targetIndex) {
+          return value;
+        }
+
+        fieldIndex++;
+        collecting = fieldIndex === targetIndex;
+        value = '';
+
+        if (fieldIndex > targetIndex) {
+          return '';
+        }
+      } else {
+        if (collecting) value += ch;
+      }
+    }
+  }
+
+  return fieldIndex === targetIndex ? value : '';
+}
+
+function getTideGaugeSearchKey(line) {
+  const tideGaugeName = String(getCsvField(line, TIDE_GAUGE_FIELD_INDEX) || '').trim();
 
   // Nur la parto antau la unua bindestreko, kaj de tio nur la unuaj kvar signoj
-  const beforeFirstHyphen = tideGaugeName.split('-')[0];
+  const hyphenPos = tideGaugeName.indexOf('-');
+  const beforeFirstHyphen = hyphenPos >= 0 ? tideGaugeName.substring(0, hyphenPos) : tideGaugeName;
 
   return beforeFirstHyphen.substring(0, 4).toLowerCase();
 }
 
-function findFirstTideGaugeLine(lines, searchKey) {
-  const wanted = String(searchKey || '').trim().substring(0, 4).toLowerCase();
+function compareSearchKeys(a, b) {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}
 
-  if (!wanted) return -1;
+/*
+  Rapida sercho per binara sercho.
+  Tio funkcias tre rapide, char la CSV-datumoj estas ordigitaj tiel,
+  ke tide_gauge_name aperas alfabete.
+*/
+function findFirstTideGaugeLineBinary(lines, wanted) {
+  let low = 1;                // lines[0] estas kaplinio
+  let high = lines.length;    // ekskluziva limo
 
+  while (low < high) {
+    const mid = Math.floor((low + high) / 2);
+    const key = getTideGaugeSearchKey(lines[mid]);
+
+    if (compareSearchKeys(key, wanted) < 0) {
+      low = mid + 1;
+    } else {
+      high = mid;
+    }
+  }
+
+  if (low < lines.length && getTideGaugeSearchKey(lines[low]) === wanted) {
+    return low; // low samtempe estas la datuma linio-numero, char kaplinio estas lines[0]
+  }
+
+  return -1;
+}
+
+/*
+  Sekura rezerva sercho.
+  Ghi estas uzata nur se la binara sercho nenion trovis.
+*/
+function findFirstTideGaugeLineLinear(lines, wanted) {
   for (let i = 1; i < lines.length; i++) {
     if (getTideGaugeSearchKey(lines[i]) === wanted) {
       return i; // i samtempe estas la datuma linio-numero, char kaplinio estas lines[0]
@@ -47,6 +135,47 @@ function findFirstTideGaugeLine(lines, searchKey) {
   }
 
   return -1;
+}
+
+function getSearchCacheKey(lines, wanted) {
+  // lines.length en la shlosilo malpliigas la riskon de malghusta cache-rezulto post datuma shangho
+  return 'tgLine:v4:' + lines.length + ':' + wanted.replace(/[^a-z0-9]/g, '_');
+}
+
+function findFirstTideGaugeLine(lines, searchKey) {
+  const wanted = String(searchKey || '').trim().substring(0, 4).toLowerCase();
+
+  if (!wanted) return -1;
+
+  const cacheKey = getSearchCacheKey(lines, wanted);
+
+  try {
+    const cache = CacheService.getScriptCache();
+    const cached = cache.get(cacheKey);
+
+    if (cached !== null) {
+      const cachedLine = parseInt(cached, 10);
+      return cachedLine > 0 ? cachedLine : -1;
+    }
+  } catch (err) {
+    // Se cache ne disponeblas, simple daurigu sen cache.
+  }
+
+  let foundLine = findFirstTideGaugeLineBinary(lines, wanted);
+
+  // Rezervo por la okazo, ke la fontaj datumoj iam ne plu estus ordigitaj lau la atendata maniero.
+  if (foundLine < 0) {
+    foundLine = findFirstTideGaugeLineLinear(lines, wanted);
+  }
+
+  try {
+    const cache = CacheService.getScriptCache();
+    cache.put(cacheKey, String(foundLine > 0 ? foundLine : 0), SEARCH_CACHE_SECONDS);
+  } catch (err) {
+    // Se cache ne disponeblas, simple ignoru.
+  }
+
+  return foundLine;
 }
 
 function doGet(e) {
@@ -70,8 +199,15 @@ function doGet(e) {
   try {
     const response = UrlFetchApp.fetch(SOURCE_URL, { muteHttpExceptions: true });
     const fullText = response.getContentText();
-    const lines = fullText.split('\n');
-    const header = lines[0];
+
+    const lines = fullText.split(/\r?\n/);
+
+    // Eventuelle leere Schlusszeile entfernen, damit die Sortierung fuer die Binaersuche nicht gestoert wird.
+    while (lines.length > 0 && lines[lines.length - 1] === '') {
+      lines.pop();
+    }
+
+    const header = lines[0] || '';
     const totalLines = lines.length;
     const totalDataRows = totalLines - 1;
     const totalPages = Math.ceil(totalDataRows / chunkSize);
