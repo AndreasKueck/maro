@@ -230,13 +230,23 @@ function doGet(e) {
 
     const startIdx = 1 + (page - 1) * chunkSize;
     const endIdx = Math.min(startIdx + chunkSize, totalLines);
-    let content = header + '\n' + lines.slice(startIdx, endIdx).join('\n');
+
+    const displayedRows = lines.slice(startIdx, endIdx).join('\n');
+    let content = header + '\n' + displayedRows;
 
     let baseUrl = ScriptApp.getService().getUrl()
                      .replace('/macros/s/', '/a/~/macros/s/');
 
     // Cache-Busting Parameter
     const timestamp = new Date().getTime();
+
+    const copyButtonHtml = chunkSize === 50
+      ? `<a href="#" onclick="copyDisplayedRows(); return false;" class="button">Kopii al tondejo</a>`
+      : '';
+
+    const copyRowsTextareaHtml = chunkSize === 50
+      ? `<textarea id="copyRowsText" style="position:absolute; left:-9999px; top:-9999px; width:1px; height:1px;">${escapeHtml(displayedRows)}</textarea>`
+      : '';
 
     const html = `
 <!DOCTYPE html>
@@ -277,6 +287,7 @@ function doGet(e) {
     <a href="#" onclick="goToPage(); return false;" class="button">Shargi</a>
     <a href="${baseUrl}?page=${Math.max(1, page-1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">? Antaua</a>
     <a href="${baseUrl}?page=${Math.min(totalPages, page+1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">Sekva ?</a>
+    ${copyButtonHtml}
   </div>
 
   ${searchInfoHtml}
@@ -286,7 +297,43 @@ function doGet(e) {
   
   <pre>${escapeHtml(content)}</pre>
 
+  ${copyRowsTextareaHtml}
+
   <script>
+    function copyDisplayedRows() {
+      const el = document.getElementById('copyRowsText');
+      if (!el) return;
+
+      const text = el.value;
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).catch(function() {
+          fallbackCopyText(text);
+        });
+      } else {
+        fallbackCopyText(text);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      ta.style.top = '0';
+
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+
+      try {
+        document.execCommand('copy');
+      } finally {
+        document.body.removeChild(ta);
+      }
+    }
+
     function goToPage() {
       const page = document.getElementById('pageInput').value;
       const chunk = document.getElementById('chunkSelect').value;
