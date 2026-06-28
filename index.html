@@ -633,6 +633,46 @@
         }
     </script>
 
+<div id="welcomeModal" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.7);
+    z-index:9999;
+">
+  <div style="
+      background:white;
+      margin:20% auto;
+      padding:20px;
+      width:80%;
+      border-radius:8px;
+      text-align:center;
+  ">
+    <h2>Mallonga gvidlinio</h2>
+    <p>
+      Tiu chi apo malfermas helpopaghojn en apartaj fenestroj.<br><br>
+      Tie kopiu la eventuale bezonatajn datumojn en la tondejon.<br><br>
+      Che Androido poste vishu de la supra ekranrando malsupren,<br>por ke aperu la reen-butono,<br>kaj klaku al ghi sufiche ofte, por reveni chi tien.
+    </p>
+
+    <button onclick="closeWelcome()">Komprenite</button>
+  </div>
+</div>
+
+<script>
+window.onload = function() {
+    if (!localStorage.getItem("welcomeShown")) {
+        document.getElementById("welcomeModal").style.display = "block";
+    }
+};
+
+function closeWelcome() {
+    localStorage.setItem("welcomeShown", "yes");
+    document.getElementById("welcomeModal").style.display = "none";
+}
+</script>
+    
 </body>
 
 </html>
