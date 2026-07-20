@@ -205,6 +205,10 @@ function getKvar() {
   return HtmlService.createHtmlOutputFromFile('kvar').getContent();
 }
 
+function getKvin() {
+  return HtmlService.createHtmlOutputFromFile('kvin').getContent();
+}
+
 function getCustomDomain() {
   return customDomain;
 }
@@ -233,13 +237,15 @@ function addLink(shortStack) {
   var povumokontrolorws = false;
   var apartaaldono = '';
 
-  if (/deu\-wsv/.test(povumozeichen) && /LAT/.test(povumozeichen)) {
+  if ( ( /deu\-wsv/.test(povumozeichen) || /nld\-rws/.test(povumozeichen) ) && /LAT/.test(povumozeichen)) {
     povumokontroloutk = true;
   }
 
+/*
   if (/nld\-rws/.test(povumozeichen) && !/nld\-rws\_hist/.test(povumozeichen)) {
     povumokontrolorws = true;
   }
+*/
 
   if (/\-cmems/.test(povumozeichen) || /\-rws\_hist/.test(povumozeichen)) {
     povumokontroloutk = true;
@@ -435,7 +441,7 @@ function addLink(shortStack) {
 
   var horzono = 'LaU: Horzono ne klara. Laueble uzu alternativajn harmonajn konstituantojn.';
 
-  if (!/gesla4\.WSV/.test(povumozeichen)) {
+  if ( !(/gesla4\.WSV/.test(povumozeichen) || ( /nld\-rws/.test(povumozeichen) && !/nld\-rws\_hist/.test(povumozeichen) ) ) ) {
     horzono = 'LaU: Loka horo au Universala Tempo Kunordigita; vidu la klarigojn';
   }
 
@@ -443,9 +449,10 @@ function addLink(shortStack) {
     horzono = 'LaU: Universala Tempo Kunordigita';
   }
 
+/*
   if (povumokontrolorws) {
     horzono = 'LaU: Horzono ne klara. Vidu <a href="https://github.com/openwatersio/tide-database/issues/98" target="">tie</a>. Prefere uzu datumojn kun <code>-rws-hist</code> au <code>-cmems</code>.';
-  }
+*/  
 
   var rezulto = main(jaro, monato, tago, horo * 1, ricevoloko * 1, datumoj1, horzono);
 
