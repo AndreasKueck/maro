@@ -17,60 +17,74 @@ Piccioni Gaia, Dettmering Denise, Bosch Wolfgang, Seitz Florian (2019). TICON: T
 */
 
 const customDomain = 'https://jhau1.de/';
-const LOKOJ_ALT_JSON_BASE_URL = 'https://raw.githubusercontent.com/openwatersio/tide-database/refs/heads/main/data/ticon/';
+const LOKOJ_ALT_JSON_BASE_URL =
+  'https://raw.githubusercontent.com/openwatersio/tide-database/refs/heads/main/data/ticon/';
 
+const MIN_DATE = '1900-03-01';
+const MAX_DATE = '2100-02-28';
+
+/*
+ * La valoroj estas la samaj kiel en la antaua DEFAULT_POVUMO.
+ * Nur la komunaj komenco kaj fino de la linioj estas kunmetataj
+ * por eviti ripetadon.
+ */
 const DEFAULT_POVUMO = [
-'50.72738,1.57766,M2,294.995777,-31.113392,0.085776,2.8e-05,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,N2,53.939546,-52.782083,0.015953,0.000157,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,S2,95.866948,20.335683,0.027892,8.7e-05,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,K2,27.892851,18.540769,0.007418,0.000273,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,2N2,6.756741,-73.152486,0.001962,0.001231,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,S1,0.113812,166.335007,3.3e-05,0.073255,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,K1,4.716208,125.91494,0.001347,0.001736,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,P1,1.288709,119.16287,0.000375,0.006465,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,O1,2.930952,89.441724,0.000823,0.002747,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,Q1,1.269137,56.679763,0.000357,0.006343,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,M1,0.257195,87.541584,7.2e-05,0.031075,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,M4,33.557009,-141.67838,0.009707,0.000247,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,MM,0.804071,-178.741805,0.000232,0.010237,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,MF,1.056131,-176.436869,0.00026,0.006684,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,SA,8.082957,-133.843281,0.002352,0.001032,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,SSA,1.282702,137.758792,0.000373,0.006498,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,T2,5.324299,4.646727,0.001549,0.001565,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,J1,0.454069,-150.363374,0.000107,0.014922,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,L2,15.208473,-24.637124,0.004237,0.000525,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,R2,1.089361,53.773987,0.000317,0.00765,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,2Q1,0.185478,4.77304,5.4e-05,0.044891,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,MSF,0.602657,15.875074,0.000175,0.013808,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,MSQM,0.269449,80.222035,7.8e-05,0.030891,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,EP2,2.945053,31.370099,0.000856,0.002827,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,M3,1.248872,16.748784,0.000362,0.006651,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,MU2,11.382165,35.908614,0.003306,0.000731,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,MTM,0.065502,-155.288506,1.9e-05,0.127029,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,NU2,12.666254,-62.627431,0.003679,0.000657,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,LAMBDA2,7.745355,-32.775355,0.00225,0.001074,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,MN4,11.877831,-165.44559,0.003436,0.000698,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,MS4,21.886545,-87.753523,0.006355,0.00038,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,MKS2,1.955234,110.15685,0.000569,0.004262,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,N4,2.52439,172.401419,0.000734,0.003298,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,M6,6.897503,85.980848,0.002004,0.001207,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,M8,2.435899,-17.095803,0.0007,0.00338,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,S4,2.07191,-7.788484,0.000602,0.004018,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,OO1,0.365933,-80.362794,0.000106,0.022747,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,S3,0.067714,159.06719,2e-05,0.123064,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,MA2,3.030893,-88.387267,0.000881,0.002747,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,MB2,1.134485,65.738309,0.00033,0.007341,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,T3,0.349364,-173.493528,0.000102,0.023843,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,R3,0.917002,-1.005195,0.000267,0.009083,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,RHO1,0.156136,98.688827,4.5e-05,0.053317,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,SGM,0.458826,137.102821,0.000133,0.018147,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,3L2,1.141171,122.324366,0.000328,0.007213,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,3N2,0.072558,-111.72042,2.1e-05,0.113629,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,2SM2,6.052553,-138.211278,0.001757,0.001374,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,2MS6,6.829483,131.420016,0.001985,0.001219,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,2MK5,0.846297,-151.319669,0.000246,0.009836,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique',
-'50.72738,1.57766,2MO5,0.910047,-101.742612,0.000264,0.009147,0.0,328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,boulogne_sur_mer-111-fra-refmar,Coastal,FRA,No obvious issues,Zero Hydrographique'
-].join('\n');
+  'M2,294.995777,-31.113392,0.085776,2.8e-05,0.0',
+  'N2,53.939546,-52.782083,0.015953,0.000157,0.0',
+  'S2,95.866948,20.335683,0.027892,8.7e-05,0.0',
+  'K2,27.892851,18.540769,0.007418,0.000273,0.0',
+  '2N2,6.756741,-73.152486,0.001962,0.001231,0.0',
+  'S1,0.113812,166.335007,3.3e-05,0.073255,0.0',
+  'K1,4.716208,125.91494,0.001347,0.001736,0.0',
+  'P1,1.288709,119.16287,0.000375,0.006465,0.0',
+  'O1,2.930952,89.441724,0.000823,0.002747,0.0',
+  'Q1,1.269137,56.679763,0.000357,0.006343,0.0',
+  'M1,0.257195,87.541584,7.2e-05,0.031075,0.0',
+  'M4,33.557009,-141.67838,0.009707,0.000247,0.0',
+  'MM,0.804071,-178.741805,0.000232,0.010237,0.0',
+  'MF,1.056131,-176.436869,0.00026,0.006684,0.0',
+  'SA,8.082957,-133.843281,0.002352,0.001032,0.0',
+  'SSA,1.282702,137.758792,0.000373,0.006498,0.0',
+  'T2,5.324299,4.646727,0.001549,0.001565,0.0',
+  'J1,0.454069,-150.363374,0.000107,0.014922,0.0',
+  'L2,15.208473,-24.637124,0.004237,0.000525,0.0',
+  'R2,1.089361,53.773987,0.000317,0.00765,0.0',
+  '2Q1,0.185478,4.77304,5.4e-05,0.044891,0.0',
+  'MSF,0.602657,15.875074,0.000175,0.013808,0.0',
+  'MSQM,0.269449,80.222035,7.8e-05,0.030891,0.0',
+  'EP2,2.945053,31.370099,0.000856,0.002827,0.0',
+  'M3,1.248872,16.748784,0.000362,0.006651,0.0',
+  'MU2,11.382165,35.908614,0.003306,0.000731,0.0',
+  'MTM,0.065502,-155.288506,1.9e-05,0.127029,0.0',
+  'NU2,12.666254,-62.627431,0.003679,0.000657,0.0',
+  'LAMBDA2,7.745355,-32.775355,0.00225,0.001074,0.0',
+  'MN4,11.877831,-165.44559,0.003436,0.000698,0.0',
+  'MS4,21.886545,-87.753523,0.006355,0.00038,0.0',
+  'MKS2,1.955234,110.15685,0.000569,0.004262,0.0',
+  'N4,2.52439,172.401419,0.000734,0.003298,0.0',
+  'M6,6.897503,85.980848,0.002004,0.001207,0.0',
+  'M8,2.435899,-17.095803,0.0007,0.00338,0.0',
+  'S4,2.07191,-7.788484,0.000602,0.004018,0.0',
+  'OO1,0.365933,-80.362794,0.000106,0.022747,0.0',
+  'S3,0.067714,159.06719,2e-05,0.123064,0.0',
+  'MA2,3.030893,-88.387267,0.000881,0.002747,0.0',
+  'MB2,1.134485,65.738309,0.00033,0.007341,0.0',
+  'T3,0.349364,-173.493528,0.000102,0.023843,0.0',
+  'R3,0.917002,-1.005195,0.000267,0.009083,0.0',
+  'RHO1,0.156136,98.688827,4.5e-05,0.053317,0.0',
+  'SGM,0.458826,137.102821,0.000133,0.018147,0.0',
+  '3L2,1.141171,122.324366,0.000328,0.007213,0.0',
+  '3N2,0.072558,-111.72042,2.1e-05,0.113629,0.0',
+  '2SM2,6.052553,-138.211278,0.001757,0.001374,0.0',
+  '2MS6,6.829483,131.420016,0.001985,0.001219,0.0',
+  '2MK5,0.846297,-151.319669,0.000246,0.009836,0.0',
+  '2MO5,0.910047,-101.742612,0.000264,0.009147,0.0'
+].map(function(line) {
+  return '50.72738,1.57766,' + line +
+    ',328143,49.0,21/11/1941,31/03/2025,gesla4.REFMAR,' +
+    'boulogne_sur_mer-111-fra-refmar,Coastal,FRA,' +
+    'No obvious issues,Zero Hydrographique';
+}).join('\n');
 
 const HARMONIC_DATA = {
   M2: [2, 0, 0, 0, 0, 0, 0],
@@ -185,13 +199,17 @@ const POVUMO_PATTERNS = [
   /LAT(\s|\S)/g
 ];
 
-
 function doGet() {
-  return HtmlService.createHtmlOutputFromFile('index')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
-    .setTitle('Prognozo de akvoniveloj per TICON-4-datumoj');
-}
+  const template = HtmlService.createTemplateFromFile('index');
+  template.defaultPovumo = DEFAULT_POVUMO;
+  template.minDate = MIN_DATE;
+  template.maxDate = MAX_DATE;
 
+  return template.evaluate()
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+    .setTitle('Prognozo de akvoniveloj per TICON-4-datumoj')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1.0');
+}
 
 function getDu() {
   return HtmlService.createHtmlOutputFromFile('du').getContent();
@@ -219,8 +237,7 @@ function valueOrDefault_(value, defaultValue) {
 }
 
 function defaultSendoloko_() {
-  var tz = Session.getScriptTimeZone() || 'Etc/UTC';
-  return Utilities.formatDate(new Date(), tz, 'yyyyMMdd') + '9999';
+  return Utilities.formatDate(new Date(), 'UTC', 'yyyyMMddHHmm');
 }
 
 function povumoOrDefault_(value) {
@@ -228,355 +245,286 @@ function povumoOrDefault_(value) {
   return s.trim() === '' ? DEFAULT_POVUMO : s;
 }
 
-function addLink(shortStack) {
-  var sendoloko = valueOrDefault_(shortStack?.sendoloko, defaultSendoloko_());
-  var ricevoloko = valueOrDefault_(shortStack?.ricevoloko, '0');
-  var povumo = povumoOrDefault_(shortStack?.povumo);
-  var povumozeichen = povumo + '';
-  var povumokontroloutk = false;
-  var povumokontrolorws = false;
-  var apartaaldono = '';
-
-  if ( ( /deu\-wsv/.test(povumozeichen) || /nld\-rws/.test(povumozeichen) ) && /LAT/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
 /*
-  if (/nld\-rws/.test(povumozeichen) && !/nld\-rws\_hist/.test(povumozeichen)) {
-    povumokontrolorws = true;
-  }
-*/
+ * Chiam valida dato plus horo en UTK.
+ * La antaua speciala valoro 9999 ne plu estas akceptata.
+ */
+function parseSendoloko_(value) {
+  const s = valueOrDefault_(value, defaultSendoloko_());
 
-  if (/\-cmems/.test(povumozeichen) || /\-rws\_hist/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/\-fra\-refmar/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }  
-
-  if (/emdentg\-emd\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
+  if (!/^\d{12}$/.test(s)) {
+    throw new Error('Bonvolu elekti validajn daton kaj horon en UTK.');
   }
 
-  if (/borkum_fischerbalje\-bor\-deu\-bfg/.test(povumozeichen)) {
-    povumokontroloutk = true;
+  const dato = s.slice(0, 4) + '-' + s.slice(4, 6) + '-' + s.slice(6, 8);
+  const horo = s.slice(8, 10) + ':' + s.slice(10, 12);
+
+  if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(horo)) {
+    throw new Error('Bonvolu elekti validan horon en UTK.');
   }
 
-  if (/norderneytg\-nor\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
+  if (dato < MIN_DATE || dato > MAX_DATE) {
+    throw new Error(
+      'La dato estu inter ' + MIN_DATE + ' kaj ' + MAX_DATE + '.'
+    );
   }
 
-  if (/wangeroogetg\-wan\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
+  const canonical = dato + 'T' + horo + ':00.000Z';
+  const time = Date.parse(canonical);
+
+  if (
+    !Number.isFinite(time) ||
+    new Date(time).toISOString() !== canonical
+  ) {
+    throw new Error('La elektita dato au horo ne estas valida.');
   }
 
-  if (/wilhelmshaventg\-wil\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/bremerhaventg\-bre\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/brementg\-bre\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/helgolandtg\-hel\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/cuxhaventg\-cux\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/stpaulitg\-stp\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/buesumtg\-bue\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/husumtg\-hus\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/wittduentg\-wit\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/hoernumtg\-hoe\-deu\-cmems/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/la_jolla_ca\-554a\-usa\-uhslc_rq/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.382698/.test(povumozeichen) && /172\.563438/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.836957/.test(povumozeichen) && /309\.3729326989401/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.756276/.test(povumozeichen) && /320\.0173727138068/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.642089/.test(povumozeichen) && /335\.479994/.test(povumozeichen)) {
-    povumokontroloutk = true;
-    apartaaldono = 'Oni atentu nur la tempojn de minimumoj, char por ili la konstituantoj estas optimumigitaj.\n';
-  }
-
-  if (/53\.642089/.test(povumozeichen) && /325\.719869/.test(povumozeichen)) {
-    povumokontroloutk = true;
-    apartaaldono = 'Oni atentu nur la tempojn de maksimumoj, char por ili la konstituantoj estas optimumigitaj.\nSe ili estas uzitaj, por kalkuli akvonivelon por alia tempo, la prognozita akvonivelo estas nepreciza kaj ignorinda.\n';
-  }
-
-  if (/53\.485666/.test(povumozeichen) && /28\.777775/.test(povumozeichen)) {
-    povumokontroloutk = true;
-    apartaaldono = 'Oni atentu nur la tempojn de minimumoj, char por ili la konstituantoj estas optimumigitaj.\nSe ili estas uzitaj, por kalkuli akvonivelon por alia tempo, la prognozita akvonivelo estas nepreciza kaj ignorinda.\n';
-  }
-
-  if (/53\.485666/.test(povumozeichen) && /15\.299507/.test(povumozeichen)) {
-    povumokontroloutk = true;
-    apartaaldono = 'Oni atentu nur la tempojn de maksimumoj, char por ili la konstituantoj estas optimumigitaj.\nSe ili estas uzitaj, por kalkuli akvonivelon por alia tempo, la prognozita akvonivelo estas nepreciza kaj ignorinda.\n';
-  }
-
-  if (/53\.2458041/.test(povumozeichen) && /281\.426059/.test(povumozeichen)) {
-    povumokontroloutk = true;
-    apartaaldono = 'Oni atentu nur la tempojn de minimumoj, char por ili la konstituantoj estas optimumigitaj.\nSe ili estas uzitaj, por kalkuli akvonivelon por alia tempo, la prognozita akvonivelo estas nepreciza kaj ignorinda.\n';
-  }
-
-  if (/53\.2458041/.test(povumozeichen) && /276\.081228/.test(povumozeichen)) {
-    povumokontroloutk = true;
-    apartaaldono = 'Oni atentu nur la tempojn de maksimumoj, char por ili la konstituantoj estas optimumigitaj.\nSe ili estas uzitaj, por kalkuli akvonivelon por alia tempo, la prognozita akvonivelo estas nepreciza kaj ignorinda.\n';
-  }
-
-  if (/53\.10969/.test(povumozeichen) && /347\.217832/.test(povumozeichen)) {
-    povumokontroloutk = true;
-    apartaaldono = 'Oni atentu nur la tempojn de minimumoj, char por ili la konstituantoj estas optimumigitaj.\nSe ili estas uzitaj, por kalkuli akvonivelon por alia tempo, la prognozita akvonivelo estas nepreciza kaj ignorinda.\n';
-  }
-
-  if (/53\.10969/.test(povumozeichen) && /347\.169921/.test(povumozeichen)) {
-    povumokontroloutk = true;
-    apartaaldono = 'Oni atentu nur la tempojn de maksimumoj, char por ili la konstituantoj estas optimumigitaj.\nSe ili estas uzitaj, por kalkuli akvonivelon por alia tempo, la prognozita akvonivelo estas nepreciza kaj ignorinda.\n';
-  }
-
-  if (/53\.141738/.test(povumozeichen) && /317\.995187/.test(povumozeichen)) {
-    povumokontroloutk = true;
-    apartaaldono = 'Oni atentu nur la tempojn de minimumoj, char por ili la konstituantoj estas optimumigitaj.\nSe ili estas uzitaj, por kalkuli akvonivelon por alia tempo, la prognozita akvonivelo estas nepreciza kaj ignorinda.\n';
-  }
-
-  if (/53\.141738/.test(povumozeichen) && /311\.488437/.test(povumozeichen)) {
-    povumokontroloutk = true;
-    apartaaldono = 'Oni atentu nur la tempojn de maksimumoj, char por ili la konstituantoj estas optimumigitaj.\nSe ili estas uzitaj, por kalkuli akvonivelon por alia tempo, la prognozita akvonivelo estas nepreciza kaj ignorinda.\n';
-  }
-
-  if (/53\.82435/.test(povumozeichen) && /107\.659963/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.629727/.test(povumozeichen) && /333\.600534/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.317505/.test(povumozeichen) && /329\.59618370452847/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.464497/.test(povumozeichen) && /313\.9736550820532/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.670735/.test(povumozeichen) && /306\.73887/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.750813/.test(povumozeichen) && /305\.89634/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.72481/.test(povumozeichen) && /307\.932154/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.968643/.test(povumozeichen) && /294\.823815/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.64079/.test(povumozeichen) && /309\.761301/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/53\.720212/.test(povumozeichen) && /305\.159991/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  if (/51\.500/.test(povumozeichen) && /322\.418451/.test(povumozeichen)) {
-    povumokontroloutk = true;
-  }
-
-  ricevoloko = (ricevoloko + '').replace(/\,/, '.');
-
-  var jaro = sendoloko.substr(0, 4) * 1;
-  var monato = sendoloko.substr(4, 2) * 1;
-  var tago = sendoloko.substr(6, 2) * 1;
-  var horo = sendoloko.substr(8, 4);
-
-  if (horo == '9999') {
-    horo = -1;
-  }
-
-  povumo = puriguPovumon(povumo);
-  var datumoj1 = createDatumoj1(povumo);
-
-  if (!datumoj1.trim()) {
-    return '';
-  }
-
-  var horzono = 'LaU: Horzono ne klara. Laueble uzu alternativajn harmonajn konstituantojn.';
-
-  if ( !(/gesla4\.WSV/.test(povumozeichen) || ( /nld\-rws/.test(povumozeichen) && !/nld\-rws\_hist/.test(povumozeichen) ) ) ) {
-    horzono = 'LaU: Loka horo au Universala Tempo Kunordigita; vidu la klarigojn';
-  }
-
-  if (povumokontroloutk) {
-    horzono = 'LaU: Universala Tempo Kunordigita';
-  }
-
-/*
-  if (povumokontrolorws) {
-    horzono = 'LaU: Horzono ne klara. Vidu <a href="https://github.com/openwatersio/tide-database/issues/98" target="">tie</a>. Prefere uzu datumojn kun <code>-rws-hist</code> au <code>-cmems</code>.';
-*/  
-
-  var rezulto = main(jaro, monato, tago, horo * 1, ricevoloko * 1, datumoj1, horzono);
-
-  if (horo < 0) {
-    rezulto = rezulto.replace(/\nLaU:.+$/s, '\n' + apartaaldono + horzono);
-  }
-
-  return rezulto;
+  return {
+    dato: dato,
+    horo: horo,
+    time: time,
+    jaro: Number(s.slice(0, 4)),
+    monato: Number(s.slice(4, 6)),
+    tago: Number(s.slice(6, 8)),
+    hh: Number(s.slice(8, 10)),
+    mm: Number(s.slice(10, 12))
+  };
 }
 
-function main(jaro, monato, tago, zt, referenco, datumoj, horzono) {
-  if (zt >= 0.0) {
-    var nvo = niv(jaro, monato, tago, zt / 100, 0, referenco, datumoj);
-    return (Math.round(nvo * 1000000) / 1000000 + ' m').replace(/\./, ',');
+function prepariDatumojn_(value) {
+  const originalo = povumoOrDefault_(value);
+  const purigita = puriguPovumon(originalo);
+  const datumoj = createDatumoj1(purigita);
+
+  if (!datumoj.trim()) {
+    throw new Error('Neniuj uzeblaj harmonaj konstituantoj trovitaj.');
   }
 
-  var z = [];
-  var h = [];
-  var nw = [];
-  var hw = [];
-  var min = [];
-  var max = [];
-  var i;
-  var j = 0;
-  var k = 0;
-  var nwminh1 = 999.9;
-  var nwminz1 = '';
-  var nwminh2 = 999.9;
-  var nwminz2 = '';
-  var hwmaxh1 = -999.9;
-  var hwmaxz1 = '';
-  var hwmaxh2 = -999.9;
-  var hwmaxz2 = '';
+  const validaj = datumoj.split('\n').every(function(line) {
+    const p = line.trim().split(/\s+/);
+    return p.length === 10 &&
+      p.slice(1).every(function(v) {
+        return Number.isFinite(Number(v));
+      });
+  });
 
-  for (i = -1; i < 1442; i++) {
-    var zt1 = i * 0.01 * 5.0 / 3.0;
-    var zt2 = (zt1 - Math.floor(zt1)) * 3 / 5 + Math.floor(zt1);
-    z[i] = zt1;
-    h[i] = niv(jaro, monato, tago, zt2, 0.0, referenco, datumoj);
+  if (!validaj) {
+    throw new Error(
+      'La harmonaj konstituantoj enhavas nevalidajn nombrojn. ' +
+      'Bonvolu kontroli la algluitajn datumojn.'
+    );
   }
 
-  for (i = 0; i < 1441; i++) {
-    if (h[i] < h[i - 1] && h[i] < h[i + 1]) {
-      nw[j] = z[i];
-      min[j] = h[i];
-      j++;
+  return {
+    originalo: originalo,
+    purigita: purigita,
+    datumoj: datumoj
+  };
+}
+
+/*
+ * La antauaj rekonoj de UTK-datumoj kaj de speciale optimumigitaj
+ * konstituantoj estas konservitaj.
+ *
+ * La rekonoj ne transformas nekonatan au lokan temporeferencon.
+ */
+function datumajRimarkoj_(povumozeichen) {
+  let utk = false;
+  let apartaaldono = '';
+
+  if (
+    (/deu\-wsv/.test(povumozeichen) ||
+      /nld\-rws/.test(povumozeichen)) &&
+    /LAT/.test(povumozeichen)
+  ) {
+    utk = true;
+  }
+
+  if (
+    /\-cmems/.test(povumozeichen) ||
+    /\-rws\_hist/.test(povumozeichen) ||
+    /\-fra\-refmar/.test(povumozeichen) ||
+    /borkum_fischerbalje\-bor\-deu\-bfg/.test(povumozeichen) ||
+    /la_jolla_ca\-554a\-usa\-uhslc_rq/.test(povumozeichen)
+  ) {
+    utk = true;
+  }
+
+  const rekonoj = [
+    [/53\.382698/, /172\.563438/],
+    [/53\.836957/, /309\.3729326989401/],
+    [/53\.756276/, /320\.0173727138068/],
+    [/53\.642089/, /335\.479994/, 'minimumoj'],
+    [/53\.642089/, /325\.719869/, 'maksimumoj'],
+    [/53\.485666/, /28\.777775/, 'minimumoj'],
+    [/53\.485666/, /15\.299507/, 'maksimumoj'],
+    [/53\.2458041/, /281\.426059/, 'minimumoj'],
+    [/53\.2458041/, /276\.081228/, 'maksimumoj'],
+    [/53\.10969/, /347\.217832/, 'minimumoj'],
+    [/53\.10969/, /347\.169921/, 'maksimumoj'],
+    [/53\.141738/, /317\.995187/, 'minimumoj'],
+    [/53\.141738/, /311\.488437/, 'maksimumoj'],
+    [/53\.82435/, /107\.659963/],
+    [/53\.629727/, /333\.600534/],
+    [/53\.317505/, /329\.59618370452847/],
+    [/53\.464497/, /313\.9736550820532/],
+    [/53\.670735/, /306\.73887/],
+    [/53\.750813/, /305\.89634/],
+    [/53\.72481/, /307\.932154/],
+    [/53\.968643/, /294\.823815/],
+    [/53\.64079/, /309\.761301/],
+    [/53\.720212/, /305\.159991/],
+    [/51\.500/, /322\.418451/]
+  ];
+
+  rekonoj.forEach(function(rekono) {
+    if (
+      rekono[0].test(povumozeichen) &&
+      rekono[1].test(povumozeichen)
+    ) {
+      utk = true;
+
+      if (rekono[2]) {
+        apartaaldono =
+          'Oni atentu nur la tempojn de ' + rekono[2] +
+          ', char por ili la konstituantoj estas optimumigitaj. ' +
+          'Se ili estas uzitaj, por kalkuli akvonivelon por alia tempo, ' +
+          'la prognozita akvonivelo estas nepreciza kaj ignorinda.';
+      }
     }
+  });
 
-    if (h[i] > h[i - 1] && h[i] > h[i + 1]) {
-      hw[k] = z[i];
-      max[k] = h[i];
-      k++;
+  const rimarkoj = [
+    'La enigitaj kaj montrataj tempoj estas en Universala Tempo ' +
+    'Kunordigita (UTK), sen somera tempo.',
+
+    'La referenca aldono estas chiam 0 cm. La akvoniveloj rilatas ' +
+    'al la loka meza marnivelo; ili ne estas transformitaj al alia ' +
+    'referenca nulo.',
+
+    'La maksimumoj kaj minimumoj estas serchataj per unuminuta ' +
+    'tempokrado. Tio ne signifas precizecon de unu minuto.'
+  ];
+
+  if (!utk) {
+    if (
+      /gesla4\.WSV/.test(povumozeichen) ||
+      (
+        /nld\-rws/.test(povumozeichen) &&
+        !/nld\-rws\_hist/.test(povumozeichen)
+      )
+    ) {
+      rimarkoj.push(
+        'ATENTU: La temporeferenco de tiuj datumoj estas neklara ' +
+        'au ne rilatas al UTK. Uzu alternativajn harmonajn ' +
+        'konstituantojn rilatantajn al UTK. La apo ne faras ' +
+        'automatan horzonan korekton.'
+      );
+    } else {
+      rimarkoj.push(
+        'ATENTU: La apo ne povas konfirmi, ke tiuj harmonaj ' +
+        'konstituantoj rilatas al UTK. Ili povas rilati al loka ' +
+        'horo. Kontrolu la fonton kaj komparu kun fidinda prognozo. ' +
+        'La apo ne faras automatan horzonan korekton.'
+      );
     }
   }
 
-  var lj = nw.length;
-  var lj1 = Math.floor(lj / 2.0);
+  if (apartaaldono) {
+    rimarkoj.push(apartaaldono);
+  }
 
-  for (i = 0; i < lj1; i++) {
-    if (min[i] < nwminh1) {
-      nwminh1 = min[i];
-      nwminz1 = nw[i];
+  return rimarkoj;
+}
+
+function addLink(shortStack) {
+  const tempo = parseSendoloko_(shortStack?.sendoloko);
+  const datumoj = prepariDatumojn_(shortStack?.povumo);
+
+  const rezulto = main(
+    tempo.jaro,
+    tempo.monato,
+    tempo.tago,
+    tempo.hh * 100 + tempo.mm,
+    datumoj.datumoj
+  );
+
+  return {
+    dato: tempo.dato,
+    horo: tempo.horo,
+    nivelo: rezulto.nivelo,
+    unuo: 'm',
+    eventoj: rezulto.eventoj,
+    avertoj: datumajRimarkoj_(datumoj.originalo)
+  };
+}
+
+/*
+ * Chiam kalkulas kaj la nivelon je la elektita horo
+ * kaj la maksimumojn/minimumojn de la sama UTK-tago.
+ *
+ * La referenca aldono estas fikse 0.
+ */
+function main(jaro, monato, tago, zt, datumoj) {
+  const nvo = niv(jaro, monato, tago, zt / 100, 0, 0, datumoj);
+
+  if (!Number.isFinite(nvo)) {
+    throw new Error('Ne eblis kalkuli validan akvonivelon.');
+  }
+
+  const eventoj = kalkuliTagajnExtremojn_(jaro, monato, tago, datumoj);
+
+  return {
+    nivelo: (Math.round(nvo * 1000000) / 1000000 + '')
+      .replace(/\./, ','),
+    eventoj: eventoj.map(function(evento) {
+      return {
+        speco: evento.maksimumo
+          ? 'Maksimuma akvonivelo'
+          : 'Minimuma akvonivelo',
+        tempo: new Date(evento.time).toISOString()
+          .slice(0, 16).replace('T', ' ') + ' UTK',
+        nivelo: formatHeight(evento.alteco)
+      };
+    })
+  };
+}
+
+/*
+ * Unuminuta tempokrado, kiel antaue.
+ * La elektita tago ampleksas 00:00 ghis 23:59.
+ * 00:00 de la sekva tago estas nur kompara apogpunkto.
+ */
+function kalkuliTagajnExtremojn_(jaro, monato, tago, datumoj) {
+  const h = [];
+  const eventoj = [];
+
+  for (let i = -1; i <= 1440; i++) {
+    const zt1 = i / 60;
+    const zt2 =
+      (zt1 - Math.floor(zt1)) * 3 / 5 + Math.floor(zt1);
+
+    h[i] = niv(jaro, monato, tago, zt2, 0, 0, datumoj);
+
+    if (!Number.isFinite(h[i])) {
+      throw new Error('Ne eblis kalkuli la tagajn maksimumojn kaj minimumojn.');
     }
   }
 
-  for (i = lj1; i < lj; i++) {
-    if (min[i] < nwminh2) {
-      nwminh2 = min[i];
-      nwminz2 = nw[i];
+  for (let i = 0; i < 1440; i++) {
+    const minimumo = h[i] < h[i - 1] && h[i] < h[i + 1];
+    const maksimumo = h[i] > h[i - 1] && h[i] > h[i + 1];
+
+    if (minimumo || maksimumo) {
+      eventoj.push({
+        time: Date.UTC(jaro, monato - 1, tago, 0, i, 0),
+        alteco: h[i],
+        maksimumo: maksimumo
+      });
     }
   }
 
-  var lk = hw.length;
-  var lk1 = Math.floor(lk / 2.0);
-
-  for (i = 0; i < lk1; i++) {
-    if (max[i] > hwmaxh1) {
-      hwmaxh1 = max[i];
-      hwmaxz1 = hw[i];
-    }
-  }
-
-  for (i = lk1; i < lk; i++) {
-    if (max[i] > hwmaxh2) {
-      hwmaxh2 = max[i];
-      hwmaxz2 = hw[i];
-    }
-  }
-
-  nwminz1 = (nwminz1 - Math.floor(nwminz1)) * 3 / 5 + Math.floor(nwminz1);
-  nwminz2 = (nwminz2 - Math.floor(nwminz2)) * 3 / 5 + Math.floor(nwminz2);
-  hwmaxz1 = (hwmaxz1 - Math.floor(hwmaxz1)) * 3 / 5 + Math.floor(hwmaxz1);
-  hwmaxz2 = (hwmaxz2 - Math.floor(hwmaxz2)) * 3 / 5 + Math.floor(hwmaxz2);
-
-  var srnwz1 = formatTime(nwminz1);
-  var srnwz2 = formatTime(nwminz2);
-  var srhwz1 = formatTime(hwmaxz1);
-  var srhwz2 = formatTime(hwmaxz2);
-  var srnwh1 = formatHeight(nwminh1);
-  var srnwh2 = formatHeight(nwminh2);
-  var srhwh1 = formatHeight(hwmaxh1);
-  var srhwh2 = formatHeight(hwmaxh2);
-
-  if (/999/.test(srnwh1)) {
-    srnwh1 = '';
-    srnwz1 = '';
-  }
-
-  if (/999/.test(srnwh2)) {
-    srnwh2 = '';
-    srnwz2 = '';
-  }
-
-  if (/999/.test(srhwh1)) {
-    srhwh1 = '';
-    srhwz1 = '';
-  }
-
-  if (/999/.test(srhwh2)) {
-    srhwh2 = '';
-    srhwz2 = '';
-  }
-
-  return srnwz1 + srnwh1 + '\n' + srnwz2 + srnwh2 + '\n' + srhwz1 + srhwh1 + '\n' + srhwz2 + srhwh2 + '\n' + horzono;
+  return eventoj;
 }
 
 function niv(jaro, monato, tago, zt1, td, referenco, datumoj) {
@@ -659,10 +607,10 @@ function createDatumoj1(ticon4) {
 
 function skribiKonstituantojnKajDoodson(input) {
   var povumo = '';
-   
+
   if (typeof input === 'object' && input !== null) {
     povumo = povumoOrDefault_(input?.povumo);
-   } else {
+  } else {
     povumo = povumoOrDefault_(input);
   }
 
@@ -689,77 +637,25 @@ function skribiKonstituantojnKajDoodson(input) {
 }
 
 function getCurve(shortStack) {
-  var sendoloko = valueOrDefault_(shortStack?.sendoloko, defaultSendoloko_());
-  var ricevoloko = valueOrDefault_(shortStack?.ricevoloko, '0');
-  var povumo = povumoOrDefault_(shortStack?.povumo);
-
-  ricevoloko = (ricevoloko + '').replace(/\,/, '.');
-
-  var jaro = sendoloko.substr(0, 4) * 1;
-  var monato = sendoloko.substr(4, 2) * 1;
-  var tago = sendoloko.substr(6, 2) * 1;
-  var horo = sendoloko.substr(8, 4);
-
-  povumo = puriguPovumon(povumo);
-
-    povumo = puriguPovumon(povumo);
+  const tempo = parseSendoloko_(shortStack?.sendoloko);
+  const datumoj = prepariDatumojn_(shortStack?.povumo);
 
   try {
-    skribiKonstituantojnKajDoodson({ povumo: povumo });
+    skribiKonstituantojnKajDoodson({ povumo: datumoj.originalo });
   } catch (e) {
     console.error(e);
   }
 
-  var datumoj1 = createDatumoj1(povumo);
+  const startDate = new Date(tempo.time - 12 * 60 * 60 * 1000);
+  const endDate = new Date(tempo.time + 12 * 60 * 60 * 1000);
+  const punktoj = [];
+  const stepMinutes = 10;
 
-  var datumoj1 = createDatumoj1(povumo);
-
-  if (!datumoj1.trim()) {
-    return {
-      points: [],
-      startLabel: '',
-      endLabel: ''
-    };
-  }
-
-  var startDate;
-  var endDate;
-
-  if (horo == '9999') {
-    var extremoj = getExtremojPorKurbo(jaro, monato, tago, ricevoloko * 1, datumoj1);
-
-    if (extremoj.length > 0) {
-      var plejfrua = extremoj[0];
-      var plejmalfrua = extremoj[0];
-
-      for (var i = 1; i < extremoj.length; i++) {
-        if (extremoj[i].getTime() < plejfrua.getTime()) {
-          plejfrua = extremoj[i];
-        }
-
-        if (extremoj[i].getTime() > plejmalfrua.getTime()) {
-          plejmalfrua = extremoj[i];
-        }
-      }
-
-      startDate = new Date(plejfrua.getTime() - 2 * 60 * 60 * 1000);
-      endDate = new Date(plejmalfrua.getTime() + 2 * 60 * 60 * 1000);
-    } else {
-      startDate = new Date(Date.UTC(jaro, monato - 1, tago, 0, 0, 0));
-      endDate = new Date(Date.UTC(jaro, monato - 1, tago, 24, 0, 0));
-    }
-  } else {
-    var hh = horo.substr(0, 2) * 1;
-    var mm = horo.substr(2, 2) * 1;
-    var centreDate = new Date(Date.UTC(jaro, monato - 1, tago, hh, mm, 0));
-    startDate = new Date(centreDate.getTime() - 12 * 60 * 60 * 1000);
-    endDate = new Date(centreDate.getTime() + 12 * 60 * 60 * 1000);
-  }
-
-  var punktoj = [];
-  var stepMinutes = 10;
-
-  for (var t = startDate.getTime(); t <= endDate.getTime(); t += stepMinutes * 60 * 1000) {
+  for (
+    var t = startDate.getTime();
+    t <= endDate.getTime();
+    t += stepMinutes * 60 * 1000
+  ) {
     var d = new Date(t);
     var yy = d.getUTCFullYear();
     var mo = d.getUTCMonth() + 1;
@@ -767,11 +663,16 @@ function getCurve(shortStack) {
     var ho = d.getUTCHours();
     var mi = d.getUTCMinutes();
     var zt1 = ho + mi / 100;
-    var akvonivelo = niv(yy, mo, da, zt1, 0.0, ricevoloko * 1, datumoj1);
+    var akvonivelo = niv(yy, mo, da, zt1, 0, 0, datumoj.datumoj);
+
+    if (!Number.isFinite(akvonivelo)) {
+      throw new Error('Ne eblis kalkuli la akvonivelan kurbon.');
+    }
 
     punktoj.push({
       t: t,
-      label: twoDigits(da) + '.' + twoDigits(mo) + '. ' + twoDigits(ho) + ':' + twoDigits(mi),
+      label: twoDigits(da) + '.' + twoDigits(mo) + '. ' +
+        twoDigits(ho) + ':' + twoDigits(mi),
       h: akvonivelo
     });
   }
@@ -783,29 +684,6 @@ function getCurve(shortStack) {
   };
 }
 
-function getExtremojPorKurbo(jaro, monato, tago, referenco, datumoj) {
-  var hh = [];
-  var extremoj = [];
-
-  for (var i = -1; i < 1442; i++) {
-    var zt1 = i * 0.01 * 5.0 / 3.0;
-    var zt2 = (zt1 - Math.floor(zt1)) * 3 / 5 + Math.floor(zt1);
-    hh[i] = niv(jaro, monato, tago, zt2, 0.0, referenco, datumoj);
-  }
-
-  for (var j = 0; j < 1441; j++) {
-    if (hh[j] < hh[j - 1] && hh[j] < hh[j + 1]) {
-      extremoj.push(new Date(Date.UTC(jaro, monato - 1, tago, 0, j, 0)));
-    }
-
-    if (hh[j] > hh[j - 1] && hh[j] > hh[j + 1]) {
-      extremoj.push(new Date(Date.UTC(jaro, monato - 1, tago, 0, j, 0)));
-    }
-  }
-
-  return extremoj;
-}
-
 function puriguPovumon(povumo) {
   povumo = povumo + '';
 
@@ -814,29 +692,6 @@ function puriguPovumon(povumo) {
   }
 
   return povumo;
-}
-
-function formatTime(x) {
-  var s = Math.round(x * 100) / 100 + ' LaU ';
-  s = s.replace(/\./, ':');
-
-  if (/\:\d LaU/.test(s)) {
-    s = s.replace(/ LaU/, '0 LaU');
-  }
-
-  if (!/\:/.test(s)) {
-    s = s.replace(/ LaU/, ':00 LaU');
-  }
-
-  s = s.replace(/(\d+):60 LaU /, function(match, horo60) {
-    return parseInt(horo60, 10) + 1 + ':00 LaU ';
-  });
-
-  if (s.length == 9) {
-    s = '0' + s;
-  }
-
-  return s;
 }
 
 function formatHeight(x) {
@@ -861,7 +716,9 @@ function twoDigits(x) {
 }
 
 function autorisierenLokoj() {
-  UrlFetchApp.fetch('https://raw.githubusercontent.com/openwatersio/tide-database/refs/heads/main/data/ticon/brake-4970020-deu-wsv.json');
+  UrlFetchApp.fetch(
+    'https://raw.githubusercontent.com/openwatersio/tide-database/refs/heads/main/data/ticon/brake-4970020-deu-wsv.json'
+  );
 }
 
 function serchiPegelon(tideGaugeName) {
@@ -1004,13 +861,12 @@ function troviLatLon_(data) {
     }
 
     const lat = firstNumber_(obj, ['lat', 'latitude', 'Latitude', 'LAT']);
-    const lon = firstNumber_(obj, ['lon', 'lng', 'long', 'longitude', 'Longitude', 'LON', 'LNG']);
+    const lon = firstNumber_(obj, [
+      'lon', 'lng', 'long', 'longitude', 'Longitude', 'LON', 'LNG'
+    ]);
 
     if (lat !== null && lon !== null) {
-      return {
-        lat: lat,
-        lon: lon
-      };
+      return { lat: lat, lon: lon };
     }
 
     const coords = getValueCaseInsensitive_(obj, ['coordinates', 'coordinate']);
@@ -1020,23 +876,22 @@ function troviLatLon_(data) {
       const lat2 = asNumber_(coords[1]);
 
       if (lat2 !== null && lon2 !== null) {
-        return {
-          lat: lat2,
-          lon: lon2
-        };
+        return { lat: lat2, lon: lon2 };
       }
     }
   }
 
-  if (data && data.geometry && Array.isArray(data.geometry.coordinates) && data.geometry.coordinates.length >= 2) {
+  if (
+    data &&
+    data.geometry &&
+    Array.isArray(data.geometry.coordinates) &&
+    data.geometry.coordinates.length >= 2
+  ) {
     const lon = asNumber_(data.geometry.coordinates[0]);
     const lat = asNumber_(data.geometry.coordinates[1]);
 
     if (lat !== null && lon !== null) {
-      return {
-        lat: lat,
-        lon: lon
-      };
+      return { lat: lat, lon: lon };
     }
   }
 
@@ -1118,28 +973,15 @@ function parseKonstituanto_(item, fallbackName) {
 
   if (typeof item === 'object' && !Array.isArray(item)) {
     const name = getValueCaseInsensitive_(item, [
-      'name',
-      'constituent',
-      'constituentName',
-      'symbol',
-      'id'
+      'name', 'constituent', 'constituentName', 'symbol', 'id'
     ]) || fallbackName;
 
     const amplitude = firstNumber_(item, [
-      'amplitude',
-      'amplitude_m',
-      'amp',
-      'A',
-      'h'
+      'amplitude', 'amplitude_m', 'amp', 'A', 'h'
     ]);
 
     const phase = firstNumber_(item, [
-      'phase',
-      'phase_GMT',
-      'phase_deg',
-      'phase_degrees',
-      'epoch',
-      'g'
+      'phase', 'phase_GMT', 'phase_deg', 'phase_degrees', 'epoch', 'g'
     ]);
 
     if (name && amplitude !== null && phase !== null) {
@@ -1294,7 +1136,10 @@ function troviDatumon_(data) {
     return lauShlosiloDatumo;
   }
 
-  const lauEnhavo = troviTekstonLauEnhavo_(data, /Zero Hydrographique|Unspecified Common Datum|Unspecified|Chart Datum|Lowest Astronomical Tide|LAT|Admiralty Chart Datum|Australian Height Datum|Ordnance Datum|Normal Amsterdam Level|DHHN92|DVR90|NAVD.?88|MSL/i);
+  const lauEnhavo = troviTekstonLauEnhavo_(
+    data,
+    /Zero Hydrographique|Unspecified Common Datum|Unspecified|Chart Datum|Lowest Astronomical Tide|LAT|Admiralty Chart Datum|Australian Height Datum|Ordnance Datum|Normal Amsterdam Level|DHHN92|DVR90|NAVD.?88|MSL/i
+  );
   const lauEnhavoDatumo = eltiriDatumonElTeksto_(lauEnhavo);
 
   if (lauEnhavoDatumo) {
