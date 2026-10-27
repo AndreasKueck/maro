@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="eo">
 
 <head>
     <meta charset="UTF-8">
@@ -54,53 +54,1062 @@
         table.striped th {
             vertical-align: top;
         }
-    </style>
 
-    <script>
-        function onSuccess1(data) {
-            var element = document.getElementById('customDomain');
-            element.innerHTML = data;
+        [hidden] {
+            display: none !important;
         }
-        google.script.run.withSuccessHandler(onSuccess1).getCustomDomain();
-    </script>
+
+        .prediction-form {
+            max-width: 900px;
+            margin: 0 auto 2rem;
+            padding: 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+        }
+
+        .prediction-form fieldset {
+            min-width: 0;
+            border: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .prediction-form label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #172b3a;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+            gap: 28px;
+            align-items: start;
+        }
+
+        .calendar {
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .prediction-form select.browser-default {
+            display: block;
+            height: auto;
+            min-height: 42px;
+            padding: 7px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+            color: #172b3a;
+            font: inherit;
+        }
+
+        .calendar-nav select {
+            min-width: 0;
+        }
+
+        #month {
+            flex: 1;
+        }
+
+        #year {
+            width: 91px;
+        }
+
+        .calendar-nav button,
+        .day,
+        #now {
+            cursor: pointer;
+            min-height: 42px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+            color: #172b3a;
+            font: inherit;
+        }
+
+        .calendar-nav button {
+            padding: 6px 11px;
+        }
+
+        #now {
+            padding: 8px 13px;
+        }
+
+        .calendar-nav button:hover:not(:disabled),
+        .day:hover:not(:disabled),
+        #now:hover:not(:disabled) {
+            background: #e0f2fe;
+        }
+
+        .prediction-form button:focus-visible,
+        .prediction-form select:focus-visible,
+        .prediction-form textarea:focus-visible {
+            outline: 3px solid #38bdf8;
+            outline-offset: 3px;
+        }
+
+        .prediction-form button:disabled,
+        .prediction-form select:disabled,
+        .prediction-form textarea:disabled {
+            cursor: wait;
+            opacity: .6;
+        }
+
+        .weekdays,
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 4px;
+        }
+
+        .weekdays {
+            margin-bottom: 5px;
+            color: #526474;
+            font-size: .85rem;
+            text-align: center;
+        }
+
+        .weekdays span {
+            padding: 4px 0;
+        }
+
+        .day {
+            min-width: 0;
+            min-height: 39px;
+            padding: 5px 0;
+            border-color: transparent;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .day.today {
+            border-color: #075985;
+        }
+
+        .day.selected {
+            background: #075985;
+            color: white;
+            font-weight: 700;
+        }
+
+        .day.selected:hover:not(:disabled) {
+            background: #0c4a6e;
+        }
+
+        #selectedDate {
+            margin-top: 12px;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .time-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .time-row select {
+            min-width: 78px;
+        }
+
+        .time-separator {
+            padding-bottom: 9px;
+            font-weight: 700;
+        }
+
+        .data-field {
+            margin-top: 24px;
+        }
+
+        #povumo {
+            display: block;
+            box-sizing: border-box;
+            width: 100%;
+            height: 260px;
+            min-height: 160px;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+            color: #172b3a;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.45;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        #status {
+            min-height: 1.5em;
+            margin: 16px 0 0;
+        }
+
+        #status.error {
+            color: #a11919;
+        }
+
+        .result-panel {
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .level {
+            border-left: 5px solid #075985;
+            background: #f0f9ff;
+            padding: 16px;
+            margin-bottom: 22px;
+        }
+
+        #levelValue {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 8px 0 0;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        #events td:nth-child(2),
+        #events td:last-child {
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        #warnings {
+            padding-left: 22px;
+        }
+
+        #warnings li {
+            list-style-type: disc;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 640px) {
+            .prediction-form,
+            .result-panel {
+                padding: 14px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="row" align="center">
+            <div class="col s12">
+                <h4 style="font-family: 'Bree Serif', serif;">Prognozo de akvoniveloj per TICON-4-datumoj</h4>
+                <p>(privata neoficiala prognozo ne tauga por navigaciaj celoj)</p>
+
+                <p><a href="https://gist.github.com/AndreasKueck/a62016ed4c3efaa477691de06af8d794" target="_blank">Android-apo &quot;Maro&quot;</a> | <a href="#" onclick="scrollToAnchor('maro'); return false;">Snapchat-lensoj &quot;Maro&quot; kaj &quot;Maro: sep horoj&quot;</a> | <a href="https://github.com/AndreasKueck/maro" target="_blank">GitHub-deponejo</a></p>
+                <p>Por Rechtenfleth oni prefere uzu ret-apon <a href="https://script.google.com/a/~/macros/s/AKfycbw1p6S3LyNaRTIcSu4myv3SP-ZzSX302erglMDh8R9wwq1ZRAHCwJ8Nb9q5t-Isl0aX/exec" target="_blank">&quot;Rechtenfleth: akvoniveloj&quot;</a></p>
+            </div>
+        </div>
+
+        <div class="row" align="left" id="result" hidden>
+            <section class="result-panel" aria-labelledby="resultTitle">
+                <h5 id="resultTitle">Rezultoj</h5>
+
+                <div class="level">
+                    <h6><b>Akvonivelo je la elektita horo</b></h6>
+                    <p id="levelTime"></p>
+                    <p id="levelValue"></p>
+                </div>
+
+                <h6><b>Maksimumaj kaj minimumaj akvoniveloj de la elektita tago</b></h6>
+
+                <div class="table-wrap">
+                    <table class="striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Akvoniveloj</th>
+                                <th scope="col">Dato kaj horo en UTK</th>
+                                <th scope="col">Akvonivelo (m)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="events"></tbody>
+                    </table>
+                </div>
+
+                <p id="noEvents" hidden>
+                    La kalkulo ne liveris maksimumojn au minimumojn por tiu tago.
+                </p>
+
+                <p class="small-note">
+                    La elektita tago ampleksas la tempon de 00:00 ghis,
+                    sed ne inkluzive, 00:00 de la sekva tago en UTK.
+                </p>
+
+                <h6><b>Gravaj rimarkoj</b></h6>
+                <ul id="warnings"></ul>
+            </section>
+        </div>
+
+        <div class="row" align="left" id="curveBox" style="display:none;">
+            <canvas id="waterCurve" width="900" height="360" style="max-width:100%; border:1px solid #cccccc;"></canvas>
+            <p class="small-note">
+                La kurbo montras la dek du horojn antau kaj la dek du
+                horojn post la elektita momento. Chiuj tempoj estas en UTK.
+            </p>
+        </div>
+
+        <div class="row" align="left">
+            <form class="prediction-form" id="urlShortener" name="urlShortener" novalidate>
+                <fieldset id="controls">
+                    <p>
+                        Elektu daton en la kalendaro kaj horon en UTK.
+                        La rezultoj aperos nur post premo de <b>Sendi</b>.
+                    </p>
+
+                    <div class="form-grid">
+                        <div>
+                            <label id="calendarLabel">Dato en UTK</label>
+
+                            <div class="calendar" role="group" aria-labelledby="calendarLabel">
+                                <div class="calendar-nav">
+                                    <button type="button" id="previous"
+                                            title="Antaua monato" aria-label="Antaua monato">‹</button>
+
+                                    <select id="month" class="browser-default" aria-label="Monato"></select>
+                                    <select id="year" class="browser-default" aria-label="Jaro"></select>
+
+                                    <button type="button" id="next"
+                                            title="Sekva monato" aria-label="Sekva monato">›</button>
+                                </div>
+
+                                <div class="weekdays">
+                                    <span title="Lundo">Lu</span>
+                                    <span title="Mardo">Ma</span>
+                                    <span title="Merkredo">Me</span>
+                                    <span title="Jhaudo">Jh</span>
+                                    <span title="Vendredo">Ve</span>
+                                    <span title="Sabato">Sa</span>
+                                    <span title="Dimancho">Di</span>
+                                </div>
+
+                                <div id="days" class="days" role="group"
+                                     aria-label="Tagoj de la monato"></div>
+                            </div>
+
+                            <p id="selectedDate" aria-live="polite"></p>
+
+                            <p class="small-note">
+                                Elektebla intervalo: 1900-03-01 ghis 2100-02-28.
+                                Tiu teknika limo ne garantias la precizecon
+                                de la prognozo.
+                            </p>
+                        </div>
+
+                        <div>
+                            <div class="time-row">
+                                <div>
+                                    <label for="hour">Horo</label>
+                                    <select id="hour" class="browser-default"></select>
+                                </div>
+
+                                <span class="time-separator" aria-hidden="true">:</span>
+
+                                <div>
+                                    <label for="minute">Minuto</label>
+                                    <select id="minute" class="browser-default"></select>
+                                </div>
+
+                                <span class="time-separator">UTK</span>
+                            </div>
+
+                            <button type="button" id="now">Nuna dato kaj horo</button>
+
+                            <p class="small-note">
+                                La komencaj valoroj devenas de la horlogho
+                                de via aparato. Ili estas montrataj en UTK,
+                                sen somera tempo.
+                            </p>
+
+                            <p class="small-note">
+                                Chiu kalkulo liveras la akvonivelon je la
+                                elektita horo kaj la maksimumojn kaj
+                                minimumojn de la elektita tago.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="data-field">
+                        <label for="povumo">TICON-4-datumoj au alternativaj datumoj</label>
+
+                        <textarea id="povumo" name="povumo" rows="10"
+                                  spellcheck="false" wrap="off"
+                                  aria-describedby="povumoHelp"><?= defaultPovumo ?></textarea>
+
+                        <p id="povumoHelp" class="small-note">
+                            La kampo jam enhavas la defaulte uzatajn datumojn
+                            de Bulonjo che Maro
+                            (<code>boulogne_sur_mer-111-fra-refmar</code>).
+                            Por alia loko anstatauigu la tutan enhavon per
+                            ties datumoj. Uzu konstituantojn rilatantajn al UTK.
+                            Se la kampo estas malplena, uzighas denove la
+                            defaulte uzataj datumoj de Bulonjo che Maro.
+                        </p>
+
+                        <p class="small-note">
+                            La referenca aldono estas chiam 0 cm.
+                            La akvoniveloj rilatas al la loka meza marnivelo.
+                        </p>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="waves-effect btn blue" type="submit" id="create">Sendi</button>
+                        <button class="waves-effect btn red" type="button" id="freshStart">Forvishi</button>
+                    </div>
+
+                    <p class="small-note">
+                        <b>Forvishi</b> forigas la rezultojn kaj restarigas
+                        la nunajn daton kaj horon kaj la defaulte uzatajn
+                        datumojn de Bulonjo che Maro.
+                    </p>
+                </fieldset>
+
+                <p id="status" role="status" aria-live="polite"></p>
+
+                <noscript>
+                    Por uzi la formularon, bonvolu aktivigi JavaScript.
+                </noscript>
+            </form>
+
+            <div align="left" class="klarigoj">
+                <h5>Klarigoj</h5>
+
+                <button onclick="ladeKvar()">
+                    <b>Mallonge: Jen kiel uzi la formularon</b>
+                </button>
+
+                <hr>
+                <div id="content4">...</div>
+
+                <h6>1. Dato kaj horo</h6>
+                <p>
+                    Elektu daton en la kalendaro kaj horon per la kampoj
+                    <b>Horo</b> kaj <b>Minuto</b>. La tempo chiam rilatas al
+                    Universala Tempo Kunordigita (UTK).
+                </p>
+                <p>
+                    Ekzemple la elekto de la 30-a de Augusto 2027 kaj
+                    <code>13:40</code> liveras kaj la prognozitan akvonivelon
+                    je <code>2027-08-30 13:40 UTK</code> kaj la maksimumojn
+                    kaj minimumojn de tiu UTK-tago. Ne plu ekzistas aparta
+                    enigo por nur la tagaj maksimumoj kaj minimumoj.
+                </p>
+                <p>
+                    Komence estas elektitaj la nunaj dato kaj horo en UTK.
+                    Per <b>Nuna dato kaj horo</b> vi povas aktualigi ilin.
+                    La dato estu nek antau <b>1900-03-01</b> nek post
+                    <b>2100-02-28</b>. La rezultoj aperas nur post premo
+                    de <b>Sendi</b>.
+                </p>
+                <p>
+                    La akvonivela kurbo montras la dek du horojn antau
+                    kaj la dek du horojn post la elektita momento.
+                    La tabelo de maksimumoj kaj minimumoj, kontraste,
+                    rilatas al la elektita kalendara tago en UTK.
+                </p>
+
+                <h6>2. Horzono kaj somera tempo</h6>
+                <p>
+                    La apo akceptas kaj montras nur UTK, sen somera tempo.
+                    Tial ankau la uzataj harmonaj konstituantoj devas
+                    rilati al UTK.
+                </p>
+                <p>
+                    La temporeferenco de la konstituantoj dependas de tio,
+                    kiel la originaj akvonivelaj datumoj de la koncerna
+                    loko estis preparitaj antau la harmona analizo.
+                    Ili povas rilati al loka tempo (kun au sen somera
+                    tempo, iuokaze ech miksite ene de la sama jaro) au
+                    al UTK. Jen detaloj
+                    <a href="https://rentry.co/tc4kvar" target="_blank">1</a>
+                    kaj
+                    <a href="https://github.com/openwatersio/tide-database/issues/96" target="_blank">2</a>.
+                </p>
+                <p>
+                    La elekto de UTK en la formularo ne transformas
+                    konstituantojn kun alia temporeferenco. Se la apo ne
+                    povas konfirmi UTK-datumojn, ghi montras atentigon.
+                    Kontrolu la fonton kaj komparu la rezultojn por pluraj
+                    tagoj kaj malsamaj sezonoj kun oficiala au alia
+                    fidinda prognozo. Se necese, uzu alternativajn
+                    konstituantojn rilatantajn al UTK.
+                </p>
+
+                <h6>3. Alteca referenco</h6>
+                <p>
+                    La referenca aldono estas chiam <code>0 cm</code>;
+                    ne plu ekzistas aparta eniga kampo por ghi.
+                    La rezultoj estas montrataj en metroj rilate al
+                    la loka meza marnivelo. La apo ne transformas ilin
+                    al alia referenca nulo, ekzemple akvonivela nulo,
+                    germane: “Pegelnullpunkt” (PNP).
+                </p>
+
+                <h6>4. Kampo “TICON-4-datumoj au alternativaj datumoj”</h6>
+                <p>
+                    La plurlinia tekstokampo jam enhavas la defaulte
+                    uzatajn datumojn de Bulonjo che Maro
+                    (<code>boulogne_sur_mer-111-fra-refmar</code>).
+                    Por tiu loko vi povas lasi la enhavon senshangha.
+                    Por alia loko anstatauigu la tutan enhavon per
+                    la koncernaj datumoj; ne aldonu ilin al la jam
+                    ekzistantaj datumoj.
+                </p>
+                <p>
+                    Se vi malplenigas la kampon, dum kalkulo uzighas
+                    la defaulte uzataj datumoj de Bulonjo che Maro.
+                    Per <b>Forvishi</b> tiuj datumoj estas denove
+                    videble enmetataj en la kampon.
+                </p>
+                <p>Por trovi datumojn de alia loko, procedu jene:</p>
+                <ol>
+                    <li>
+                        Elshutu dosieron <code>122848.csv</code>
+                        (&quot;TICON_4&quot;) el
+                        <a href="https://www.seanoe.org/data/00980/109129/" target="_blank">tiu retpagho</a>
+                        per &quot;Download dataset&quot;.<br>
+                        Por spekti la enhavon sen antaua elshuto kaj
+                        serchi, oni povas uzi la
+                        <a href="#" onclick="scrollToAnchor('csvspektilo'); return false;">CSV-spektilon</a>
+                        malsupre kaj daurigi che pasho 3.<br>
+                        Au: Uzu unu el la
+                        <a href="#" onclick="scrollToAnchor('mapoj'); return false;">mapoj</a>
+                        malsupre kaj daurigu che pasho 4.
+                    </li>
+                    <li>
+                        La dosieron renomu al iu kun sufikso
+                        <code>txt</code>, kiel ekzemple
+                        <code>ticon_4.txt</code>, kaj malfermu per
+                        tekstoredaktilo, kiel ekzemple WordPad,
+                        au &ndash; en smartfono &ndash; apo, por spekti
+                        tekstodosierojn, kiel ekzemple Mi Text Viewer.
+                    </li>
+                    <li>
+                        Trovu la 50 liniojn por la koncerna loko
+                        (<code>tide_gauge_name</code>).
+                        Kopiu ghuste tiujn 50 liniojn: nek pli, nek
+                        malpli. En kelkaj redaktiloj unu longa linio
+                        povas aspekti, kvazau pluraj linioj.
+                    </li>
+                    <li>
+                        Marku la tutan ghisnunan enhavon de kampo
+                        <code>TICON-4-datumoj au alternativaj datumoj</code>
+                        kaj anstatauigu ghin per la kopiitaj datumoj.
+                        La nombro de linioj de alternativaj datumoj
+                        povas diferenci de 50.
+                    </li>
+                </ol>
+                <p>
+                    La algluajho komencighas per latitudo kaj longitudo,
+                    poste sekvas ekzemple <code>M2</code> kaj multaj
+                    pliaj signoj. Ghi finighas antau la latitudo de la
+                    sekva aro de konstituantoj.
+                </p>
+
+                <h6>5. Alternativaj harmonaj konstituantoj</h6>
+                <p>
+                    Pri kelkaj lokoj ekzistas alternativaj harmonaj konstituantoj; vidu la <a href="#" onclick="scrollToAnchor('mapoj'); return false;">mapojn</a> malsupre. Tiuj konstituantoj povas esti utilaj, ekzemple se la TICON-4-datumoj ne rilatas al UTK au se por difinita loko analizo alia eligis tiajn konstituantojn, per kiuj pli bonaj prognozoj estas fareblaj.
+                </p>
+                <p id="maro" class="anker">
+                    Pri <a href="https://eo.wikipedia.org/wiki/Ponto_de_Londono" target="_blank"><b>Ponto de Londono</b></a> kurioze ne estas datumoj en la supre menciita datumbazo. Tial jen <a href="https://andreaskueck.github.io/tc4a/ponto_de_londono/index.html">dosiero</a> kun alternativaj harmonaj konstituantoj; fonto: propra analizo de akvoniveloj de 2025-01-01 00:00 UTK ghis 2025-12-31 23:59 UTK.
+                </p>
+                <p>
+                    Por <b>Cape d'Or</b>, orienta Kanado, <a href="https://github.com/openwatersio/tide-database/issues/93" target="_blank">la amplitudo de unu konstituanto lau la TICON-4-datumoj estas eksterordinare granda</a>. Tial jen <a href="https://andreaskueck.github.io/tc4a/cape_d_or/index.html">dosiero</a> kun alternativaj harmonaj konstituantoj; fonto: propra analizo de akvoniveloj de 1974-10-03 05:00 UTK ghis 1974-12-28 04:00 UTK.
+                </p>
+
+                <h6>6. Harmonaj konstituantoj, Doodson-numeroj kaj Snapchat-lensoj “Maro” kaj “Maro: sep horoj”</h6>
+
+                <button onclick="ladeTri()"><b>Klaku por pli</b></button>
+                <hr>
+                <div id="content">...</div>
+
+                <h6 id="mapoj" class="anker">7. Mapoj</h6>
+                <p>
+                    En mapo "Kelkaj lokoj kun harmonaj konstituantoj..." estas donitaj harmonaj konstituantoj aliaj, ol en TICON-4. Ilin kopiu kaj per ili anstatauigu la tutan enhavon de kampo <code>TICON-4-datumoj au alternativaj datumoj</code>. Tiuj konstituantoj bazighas sur <a href="https://gist.github.com/AndreasKueck/30a62c57832db964fdd3ff38a4e80d69" target="_blank">propra analizo de akvoniveloj</a> kaj eligas prognozitajn akvonivelojn kun UTK, kiel tempa referenco. Temas pri jenaj lokoj (klako al la respektiva ligilo kondukas al la alternativaj konstituantoj):
+                </p>
+                <p><a href="https://andreaskueck.github.io/tc4a/belum/index.html">Belum</a><sup>2</sup>, <a href="https://andreaskueck.github.io/tc4a/brake/index.html">Brake</a>, Bremerv&ouml;rde (<a href="https://andreaskueck.github.io/tc4a/bremervoerde_maksimumoj/index.html">maksimumoj</a>, <a href="https://andreaskueck.github.io/tc4a/bremervoerde_minimumoj/index.html">minimumoj</a>)<sup>2, 3</sup>, <a href="https://andreaskueck.github.io/tc4a/dwarsgat/index.html">Dwarsgat</a>, Elsfleth Ohrt (<a href="https://andreaskueck.github.io/tc4a/elsfleth_ohrt_maksimumoj/index.html">maksimumoj</a>, <a href="https://andreaskueck.github.io/tc4a/elsfleth_ohrt_minimumoj/index.html">minimumoj</a>)<sup>2, 3</sup>, Hechthausen (<a href="https://andreaskueck.github.io/tc4a/hechthausen_maksimumoj/index.html">maksimumoj</a>, <a href="https://andreaskueck.github.io/tc4a/hechthausen_minimumoj/index.html">minimumoj</a>)<sup>2, 3</sup>, <a href="https://andreaskueck.github.io/tc4a/hooksielplate/index.html">Hooksielplate</a>, <a href="https://andreaskueck.github.io/tc4a/krautsand/index.html">Krautsand</a>, <a href="https://andreaskueck.github.io/tc4a/langeoog/index.html">Langeoog</a>, <a href="https://andreaskueck.github.io/tc4a/nordenham/index.html">Nordenham</a>, Oldenburg (<a href="https://andreaskueck.github.io/tc4a/oldenburg_maksimumoj/index.html">maksimumoj</a>, <a href="https://andreaskueck.github.io/tc4a/oldenburg_minimumoj/index.html">minimumoj</a>)<sup>2, 3</sup>, <a href="https://andreaskueck.github.io/tc4a/otterndorf/index.html">Otterndorf</a>, Papenburg (<a href="https://andreaskueck.github.io/tc4a/papenburg_maksimumoj/index.html">maksimumoj</a>, <a href="https://andreaskueck.github.io/tc4a/papenburg_minimumoj/index.html">minimumoj</a>)<sup>3</sup>, <a href="https://andreaskueck.github.io/tc4a/rechtenfleth/index.html">Rechtenfleth</a>, <a href="https://andreaskueck.github.io/tc4a/robbensuedersteert/index.html">Robbens&uuml;dersteert</a>, <a href="https://andreaskueck.github.io/tc4a/scharhoern/index.html">Scharh&ouml;rn</a>, <a href="https://andreaskueck.github.io/tc4a/spiekeroog/index.html">Spiekeroog</a> kaj <a href="https://andreaskueck.github.io/tc4a/stadersand/index.html">Stadersand</a>.</p>
+
+                <p class="small-note">
+                    <sup>2</sup> Tiuj lokoj situas apud flankriveroj. Tial la harmona metodo ofte rezultigas aparte neprecizajn prognozojn. Eksperimente la harmona analizo, por determini la alternativajn konstituantojn, estis farita a) surbaze de datumoj el tempospaco de nur tri monatoj (2025-02-14 23:00 UTK &ndash; 2025-05-14 22:59 UTK) kaj b) per nur dek konstituantoj, nome tiuj, kiuj estas konsiderataj en “Gezeitentafeln f&uuml;r das Jahr 1948”, eldonita de Deutsches Hydrographisches Institut Hamburg, Hamburg, 1948: M2, S2, N2, K2, MU2, K1, O1, P1, M4 kaj MS4.
+                    <br>
+                    <sup>3</sup> Pro nesimetria evoluo de la akvonivela kurbo ekzistas por tiuj lokoj po du aroj de alternativaj konstituantoj: unu aro optimumigita, por prognozi minimumojn, kaj alia aro optimumigita, por prognozi maksimumojn. Vidu la mapon.
+                </p>
+
+                <p>
+                    <iframe src="https://www.google.com/maps/d/embed?mid=1yG4v9MeHQ2fG7iFntywSEX7_kt5XY3s&ehbc=2E312F" width="448" height="336"></iframe>
+                </p>
+
+                <p>
+                    <button class="waves-effect btn blue" type="button" onclick="montriLokojn()">
+                        Klaku, por vidi pli ampleksan mapon
+                    </button>
+                </p>
+
+                <div id="lokojBloko" style="display:none; margin-top:1.5rem;">
+                    <h6>Lokoj kun TICON-4-datumoj</h6>
+
+                    <p>
+                        Por ekhavi la harmonajn konstituantojn de difinita loko, enigu en kampon <b>tide_gauge_name</b> malsupre la <strong>tide_gauge_name</strong>, ekzemple
+                        <code>boulogne_sur_mer-111-fra-refmar</code>, trovitan en la interaga mapo chi-malsupre.
+                    </p>
+
+                    <p>
+                        <iframe
+                            src="https://openadb.dgfi.tum.de/en/ocean-tides/map/"
+                            width="500"
+                            height="400"
+                            style="max-width:100%; border:0;"
+                            allowfullscreen>
+                        </iframe>
+                    </p>
+
+                    <div class="input-field">
+                        <input type="text" id="lokojNomo" placeholder="boulogne_sur_mer-111-fra-refmar" autocomplete="off">
+                        <label for="lokojNomo">tide_gauge_name</label>
+                    </div>
+
+                    <p>
+                        <button class="waves-effect btn blue" type="button" onclick="serchiLokon()">
+                            Trovi
+                        </button>
+                    </p>
+
+                    <div id="lokojRezulto"></div>
+                </div>
+
+                <p id="csvspektilo" class="anker">
+                    <iframe
+                        src="https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMWhZWZArsRPscRsH5jdqqTxjdMq6KJu4U9w/exec"
+                        style="width:100%; height:400px; border:1px solid #ccc;">
+                    </iframe>
+                </p>
+
+                <h6>Fontoj de datumoj kaj jura avizo</h6>
+
+                <button onclick="ladeKvin()"><b>Klaku por pli</b></button>
+                <hr>
+                <div id="content5">...</div>
+
+                <button onclick="ladeDu()"><b>Ekzemplaj lokoj</b></button>
+                <hr>
+                <div id="content1">...</div>
+            </div>
+        </div>
+    </div>
+
+    <div align="center" style="padding: 1rem 0 120px 0;">
+        <a href="https://jhau.de/privateco.html" target="_blank">Privateco</a>
+    </div>
+
+    <div id="welcomeModal" style="
+        display:none;
+        position:fixed;
+        top:0; left:0;
+        width:100%; height:100%;
+        background:rgba(0,0,0,0.7);
+        z-index:9999;
+    ">
+        <div style="
+            background:white;
+            margin:20% auto;
+            padding:20px;
+            width:80%;
+            border-radius:8px;
+            text-align:center;
+        ">
+            <h2>Mallonga gvidlinio</h2>
+            <p>
+                Tiu chi apo malfermas helpopaghojn en apartaj fenestroj.<br><br>
+                Tie kopiu la eventuale bezonatajn datumojn en la tondejon.<br><br>
+                Che Androido poste vishu de la supra ekranrando malsupren,<br>por ke aperu la reen-butono,<br>kaj klaku al ghi sufiche ofte, por reveni chi tien.
+            </p>
+            <button onclick="closeWelcome()">Komprenite</button>
+        </div>
+    </div>
 
     <script>
-        function uploadData() {
-            var shortStack = {
-                sendoloko: $("#sendoloko").val(),
-                ricevoloko: $("#ricevoloko").val(),
-                povumo: $("#povumo").val()
+        'use strict';
+
+        const MIN_DATE = '<?= minDate ?>';
+        const MAX_DATE = '<?= maxDate ?>';
+        const MIN_YEAR = Number(MIN_DATE.slice(0, 4));
+        const MAX_YEAR = Number(MAX_DATE.slice(0, 4));
+
+        const MONTHS = [
+            'Januaro', 'Februaro', 'Marto', 'Aprilo',
+            'Majo', 'Junio', 'Julio', 'Augusto',
+            'Septembro', 'Oktobro', 'Novembro', 'Decembro'
+        ];
+
+        const el = id => document.getElementById(id);
+        const defaultPovumo = el('povumo').defaultValue;
+
+        let selectedDate = '';
+        let viewYear;
+        let viewMonth;
+        let busy = false;
+
+        function pad(value) {
+            return String(value).padStart(2, '0');
+        }
+
+        function dateText(year, month, day) {
+            return String(year).padStart(4, '0') +
+                '-' + pad(month + 1) + '-' + pad(day);
+        }
+
+        function addOption(select, value, text) {
+            const option = document.createElement('option');
+            option.value = String(value);
+            option.textContent = text;
+            select.appendChild(option);
+        }
+
+        function setupOptions() {
+            MONTHS.forEach((month, index) => {
+                addOption(el('month'), index, month);
+            });
+
+            for (let year = MIN_YEAR; year <= MAX_YEAR; year++) {
+                addOption(el('year'), year, String(year));
             }
-            $("#create").attr("disabled", "disabled");
-            google.script.run.withSuccessHandler((id) => {
-                M.toast({
-                    html: "Preta!"
+
+            for (let hour = 0; hour < 24; hour++) {
+                addOption(el('hour'), pad(hour), pad(hour));
+            }
+
+            for (let minute = 0; minute < 60; minute++) {
+                addOption(el('minute'), pad(minute), pad(minute));
+            }
+        }
+
+        function clearResults() {
+            el('result').hidden = true;
+            el('curveBox').style.display = 'none';
+            el('status').textContent = '';
+            el('status').classList.remove('error');
+        }
+
+        function showError(message) {
+            clearResults();
+            el('status').textContent = message;
+            el('status').classList.add('error');
+        }
+
+        function useNow() {
+            if (busy) return;
+
+            const now = new Date();
+            const date = now.toISOString().slice(0, 10);
+
+            if (date < MIN_DATE || date > MAX_DATE) {
+                showError('La nuna dato estas ekster la elektebla intervalo.');
+                return;
+            }
+
+            selectedDate = date;
+            viewYear = now.getUTCFullYear();
+            viewMonth = now.getUTCMonth();
+
+            el('hour').value = pad(now.getUTCHours());
+            el('minute').value = pad(now.getUTCMinutes());
+
+            clearResults();
+            renderCalendar();
+        }
+
+        function monthInRange(year, month) {
+            const first = dateText(year, month, 1);
+            const lastDay = new Date(
+                Date.UTC(year, month + 1, 0)
+            ).getUTCDate();
+            const last = dateText(year, month, lastDay);
+
+            return last >= MIN_DATE && first <= MAX_DATE;
+        }
+
+        function renderCalendar() {
+            el('month').value = String(viewMonth);
+            el('year').value = String(viewYear);
+
+            el('selectedDate').textContent =
+                'Elektita dato: ' + selectedDate + ' UTK';
+
+            const previousDate = new Date(
+                Date.UTC(viewYear, viewMonth - 1, 1)
+            );
+            const nextDate = new Date(
+                Date.UTC(viewYear, viewMonth + 1, 1)
+            );
+
+            el('previous').disabled = !monthInRange(
+                previousDate.getUTCFullYear(),
+                previousDate.getUTCMonth()
+            );
+
+            el('next').disabled = !monthInRange(
+                nextDate.getUTCFullYear(),
+                nextDate.getUTCMonth()
+            );
+
+            Array.from(el('month').options).forEach(option => {
+                option.disabled = !monthInRange(
+                    viewYear,
+                    Number(option.value)
+                );
+            });
+
+            const container = el('days');
+            container.replaceChildren();
+
+            const firstDay = new Date(Date.UTC(viewYear, viewMonth, 1));
+            const offset = (firstDay.getUTCDay() + 6) % 7;
+            const dayCount = new Date(
+                Date.UTC(viewYear, viewMonth + 1, 0)
+            ).getUTCDate();
+
+            const today = new Date().toISOString().slice(0, 10);
+
+            for (let i = 0; i < offset; i++) {
+                const spacer = document.createElement('span');
+                spacer.setAttribute('aria-hidden', 'true');
+                container.appendChild(spacer);
+            }
+
+            for (let day = 1; day <= dayCount; day++) {
+                const date = dateText(viewYear, viewMonth, day);
+                const button = document.createElement('button');
+
+                button.type = 'button';
+                button.className = 'day';
+                button.textContent = String(day);
+                button.disabled = date < MIN_DATE || date > MAX_DATE;
+
+                button.setAttribute(
+                    'aria-label',
+                    day + ' ' + MONTHS[viewMonth] + ' ' + viewYear
+                );
+
+                button.setAttribute(
+                    'aria-pressed',
+                    date === selectedDate ? 'true' : 'false'
+                );
+
+                if (date === today) {
+                    button.classList.add('today');
+                    button.setAttribute('aria-current', 'date');
+                }
+
+                if (date === selectedDate) {
+                    button.classList.add('selected');
+                }
+
+                button.addEventListener('click', () => {
+                    if (busy) return;
+
+                    selectedDate = date;
+                    clearResults();
+                    renderCalendar();
+
+                    const selected = el('days').querySelector('.selected');
+                    if (selected) selected.focus();
                 });
-                $("#create").removeAttr("disabled");
-                google.script.run.withSuccessHandler(function(data) {
-                    var element = document.getElementById('result');
-                    element.innerHTML = '<pre >' + id + '</pre>';
-                }).getCustomDomain();
 
-                google.script.run.withSuccessHandler(function(curveData) {
-                    drawWaterCurve(curveData);
-                }).getCurve(shortStack);
+                container.appendChild(button);
+            }
+        }
 
-            }).addLink(shortStack);
+        function moveMonth(delta) {
+            if (busy) return;
 
+            const d = new Date(Date.UTC(viewYear, viewMonth + delta, 1));
+            const year = d.getUTCFullYear();
+            const month = d.getUTCMonth();
+
+            if (!monthInRange(year, month)) return;
+
+            viewYear = year;
+            viewMonth = month;
+
+            clearResults();
+            renderCalendar();
+        }
+
+        function changeCalendarView() {
+            if (busy) return;
+
+            viewYear = Number(el('year').value);
+            viewMonth = Number(el('month').value);
+
+            if (!monthInRange(viewYear, viewMonth)) {
+                viewMonth = viewYear === MIN_YEAR
+                    ? Number(MIN_DATE.slice(5, 7)) - 1
+                    : Number(MAX_DATE.slice(5, 7)) - 1;
+            }
+
+            clearResults();
+            renderCalendar();
+        }
+
+        function setBusy(value) {
+            busy = value;
+            el('controls').disabled = value;
+            el('urlShortener').setAttribute(
+                'aria-busy',
+                value ? 'true' : 'false'
+            );
+            el('create').textContent = value ? 'Kalkulado...' : 'Sendi';
+        }
+
+        function appendCell(row, text) {
+            const cell = document.createElement('td');
+            cell.textContent = text;
+            row.appendChild(cell);
+        }
+
+        function renderResult(result) {
+            el('resultTitle').textContent = 'Rezultoj por ' + result.dato;
+            el('levelTime').textContent =
+                result.dato + ' ' + result.horo + ' UTK';
+            el('levelValue').textContent =
+                result.nivelo + ' ' + result.unuo;
+
+            const body = el('events');
+            body.replaceChildren();
+
+            result.eventoj.forEach(event => {
+                const row = document.createElement('tr');
+                appendCell(row, event.speco);
+                appendCell(row, event.tempo);
+                appendCell(row, event.nivelo);
+                body.appendChild(row);
+            });
+
+            el('noEvents').hidden = result.eventoj.length > 0;
+
+            const warnings = el('warnings');
+            warnings.replaceChildren();
+
+            result.avertoj.forEach(text => {
+                const item = document.createElement('li');
+                item.textContent = text;
+                warnings.appendChild(item);
+            });
+
+            el('result').hidden = false;
+        }
+
+        function uploadData() {
+            if (busy) return;
+
+            const date = selectedDate;
+            const time = el('hour').value + ':' + el('minute').value;
+
+            if (
+                !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+                date < MIN_DATE ||
+                date > MAX_DATE ||
+                !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time)
+            ) {
+                showError('Bonvolu elekti validajn daton kaj horon en UTK.');
+                return;
+            }
+
+            const shortStack = {
+                sendoloko: date.replace(/-/g, '') + time.replace(':', ''),
+                povumo: el('povumo').value
+            };
+
+            clearResults();
+            setBusy(true);
+            el('status').textContent = 'Kalkulado... Bonvolu atendi.';
+
+            google.script.run
+                .withSuccessHandler(function(result) {
+                    try {
+                        renderResult(result);
+                    } catch (error) {
+                        setBusy(false);
+                        showError('Ne eblis montri la rezulton. Bonvolu reprovi.');
+                        return;
+                    }
+
+                    el('status').textContent =
+                        'La teksta kalkulo estas finita. Desegnado de la kurbo...';
+
+                    google.script.run
+                        .withSuccessHandler(function(curveData) {
+                            setBusy(false);
+
+                            try {
+                                drawWaterCurve(curveData);
+                                el('status').textContent = 'La kalkulo estas finita.';
+                                M.toast({ html: 'Preta!' });
+                            } catch (error) {
+                                el('curveBox').style.display = 'none';
+                                el('status').classList.add('error');
+                                el('status').textContent =
+                                    'La teksta rezulto estas preta, sed ne eblis montri la kurbon.';
+                            }
+                        })
+                        .withFailureHandler(function() {
+                            setBusy(false);
+                            el('curveBox').style.display = 'none';
+                            el('status').classList.add('error');
+                            el('status').textContent =
+                                'La teksta rezulto estas preta, sed ne eblis ricevi la kurbon.';
+                        })
+                        .getCurve(shortStack);
+                })
+                .withFailureHandler(function(error) {
+                    setBusy(false);
+                    showError(
+                        error && error.message
+                            ? error.message
+                            : 'Ne eblis plenumi la kalkulon. Bonvolu reprovi.'
+                    );
+                })
+                .addLink(shortStack);
         }
 
         function clearForm() {
-            $(document).ready(function() {
-                $("#urlShortener")[0].reset();
-            });
-        }
-    </script>
+            if (busy) return;
 
-    <script>
+            el('povumo').value = defaultPovumo;
+            useNow();
+        }
+
         function drawWaterCurve(curveData) {
-            var box = document.getElementById('curveBox');
-            var canvas = document.getElementById('waterCurve');
+            var box = el('curveBox');
+            var canvas = el('waterCurve');
             var ctx = canvas.getContext('2d');
 
             if (!curveData || !curveData.points || curveData.points.length < 2) {
@@ -163,7 +1172,11 @@
                 ctx.lineTo(w - right, yy);
                 ctx.stroke();
 
-                ctx.fillText((Math.round(val * 10) / 10).toString().replace(".", ",") + " m", 8, yy + 4);
+                ctx.fillText(
+                    (Math.round(val * 10) / 10).toString().replace(".", ",") + " m",
+                    8,
+                    yy + 4
+                );
             }
 
             ctx.strokeStyle = "#777777";
@@ -195,101 +1208,15 @@
             ctx.fillText(curveData.endLabel, w - right - 120, h - 25);
 
             ctx.fillStyle = "#1565c0";
-            ctx.fillText("Vertikale: akvonivelo; horizontale: tempo (la du indikoj rilatas al la komenca kaj fina punkto de la kurbo)", left, 16);
+            ctx.fillText(
+                "Vertikale: akvonivelo; horizontale: tempo en UTK (indikoj: komenco kaj fino de la kurbo)",
+                left,
+                16
+            );
         }
-    </script>
 
-</head>
-
-<body>
-    <div class="container">
-
-        <div class="row" align="center">
-            <div class="col s12">
-                <h4 style="font-family: 'Bree Serif', serif;">Prognozo de akvoniveloj per TICON-4-datumoj</h4>
-                <p>(privata neoficiala prognozo ne tauga por navigaciaj celoj)</p>
-
-                <p><a href="https://gist.github.com/AndreasKueck/a62016ed4c3efaa477691de06af8d794" target="_blank">Android-apo &quot;Maro&quot;</a> | <a href="#" onclick="scrollToAnchor('maro'); return false;">Snapchat-lensoj &quot;Maro&quot; kaj &quot;Maro: sep horoj&quot;</a> | <a href="https://github.com/AndreasKueck/maro" target="_blank">GitHub-deponejo</a></p>
-                <p>Por Rechtenfleth oni prefere uzu ret-apon <a href="https://script.google.com/a/~/macros/s/AKfycbw1p6S3LyNaRTIcSu4myv3SP-ZzSX302erglMDh8R9wwq1ZRAHCwJ8Nb9q5t-Isl0aX/exec" target="_blank">&quot;Rechtenfleth: akvoniveloj&quot;</a></p>
-            </div>
-        </div>
-
-        <div class="row" align="left" id='result'>
-            <h1><br /></h1>
-        </div>
-
-        <div class="row" align="left" id="curveBox" style="display:none;">
-            <canvas id="waterCurve" width="900" height="360" style="max-width:100%; border:1px solid #cccccc;"></canvas>
-        </div>
-
-        <div class="row" align="left">
-            <form class="col s12" onsubmit="event.preventDefault(); uploadData();" id="urlShortener" name="urlShortener">
-
-                <div class="row col s12 m8 l6 offset-m2 offset-l3" align="center">
-                    <div class="input-field col s12">
-                        <input id="sendoloko" type="text"/>
-                        <label for="sendoloko">Tempo; defaulte: la aktuala dato</label>
-                        <span class="helper-text" align='left'>ekz. 202708309999 au 202708301340</span>
-                    </div>
-                </div>
-
-                <div class="row col s12 m8 l6 offset-m2 offset-l3" align="left">
-                    <div class="input-field col s12">
-                        <input id="ricevoloko" type="text" />
-                        <label for="ricevoloko">Referenca akvonivelo en cm; defaulte: 0</label>
-                        <span class="helper-text" align='left'>ekz. 0 au 531,2942</span>
-                    </div>
-                </div>                
-
-                <div class="row col s12 m8 l6 offset-m2 offset-l3" align="left">
-                  <div class="input-field col s12">
-                    <input id="povumo" type="text"/>
-                      <label for="povumo" style="white-space: nowrap !important; display: inline-block; width: auto; max-width: none;">TICON-4-datumoj&nbsp;au&nbsp;alternativaj&nbsp;datumoj;&nbsp;defaulte:&nbsp;chi&nbsp;lastaj&nbsp;de&nbsp;Bulonjo&nbsp;che&nbsp;Maro</label>
-                      <span class="helper-text" align="left">ekz. 53.382698,8.501546,M2 ... Unspecified</span>
-                  </div>
-                </div>
-
-                <div class="row col s12 m8 l6 offset-m2 offset-l3" align="left">
-
-                    <div class="input-field col s6 m4 l4 offset-m2 offset-l2">
-                        <button class="waves-effect btn blue" type="submit" id="create">Sendi</button>
-                    </div>
-
-                    <div class="input-field col s6 m4 l4">
-                        <button class="waves-effect btn red" type='button' onclick='event.preventDefault(); clearForm();' id='freshStart'>Forvishi</button>
-                    </div>
-
-                </div>
-
-            </form>
-
-            <div align="left" class="klarigoj">
-                <h5>Klarigoj</h5>
-            
-
-<button onclick="ladeKvar()">
-    <b>Mallonge: Jen kiel uzi la formularon</b>
-  </button>
-
-  <hr>
-
-  <div id="content4">
-    ...
-  </div>
-
-  <script>
-    function ladeKvar() {
-      google.script.run
-        .withSuccessHandler(function(html) {
-          document.getElementById("content4").innerHTML = html;
-        })
-        .getKvar();
-    }
-  </script> 
-
-  <script>
         function scrollToAnchor(anchorId) {
-            const element = document.getElementById(anchorId);
+            const element = el(anchorId);
             if (element) {
                 element.scrollIntoView({
                     behavior: 'smooth',
@@ -297,383 +1224,194 @@
                 });
             }
         }
-  </script>                
 
-                <h6>1. Kampo “Tempo”</h6>
-                <p>
-                    La tempo estu skribita sen spacetoj kaj sen interpunkcio.
-                </p>
-                <ul>
-                    <li><code>202708301340</code> signifas: eligu la prognozitan akvonivelon por la 30-a de Augusto 2027 je 13:40.</li>
-                    <li><code>202708309999</code> signifas: eligu la prognozitajn elstarajn akvonivelojn, do kutime maksimumojn kaj minimumojn, por la 30-a de Augusto 2027.</li>
-                </ul>
-                <p>
-                    La dato estu nek antau <b>1900-03-01</b> nek post <b>2100-02-28</b>.
-                    Pri horzono kaj somera tempo vidu la sekvan sekcion.
-                </p>
-
-                <h6>2. Horzono kaj somera tempo</h6>
-                <p>
-                    La tempoj en la rezulto dependas de tio, kiel la originaj akvonivelaj datumoj de la koncerna loko estis preparitaj antau la harmona analizo. Tial la rezultoj povas rilati au al la loka tempo (kun au sen somera tempo, iuokaze ech miksite ene de la sama jaro) au al Universala Tempo Kunordigita (UTK). Jen detaloj <a href="https://rentry.co/tc4kvar" target="_blank">1</a> kaj <a href="https://github.com/openwatersio/tide-database/issues/96" target="_blank">2</a>.
-                </p>
-                <p>
-                    Se ne estas eligite, ke la horzono estas UTK, procedu jene: Por eltrovi, kio validas por difinita loko, komparu la rezultojn por pluraj tagoj kaj malsamaj sezonoj kun oficiala au alia fidinda prognozo pri la sama loko.
-                </p>
-                
-                <h6>3. Kampo “Referenca akvonivelo en cm”</h6>
-                <p>
-                    Tiu valoro shovas la prognozitan akvonivelon al la referenca nulo, kiun vi volas uzi.
-                </p>
-                <ul>
-                    <li>Enigu <code>0</code>, se la rezulto restu rilata al la meza marnivelo de la koncerna loko.</li>
-                    <li>Enigu alian valoron, se vi volas transformi la rezulton al loka referenca nulo, ekzemple akvonivela nulo, germane: “Pegelnullpunkt“ (PNP). Ekzemplo: <code>531,2942</code>. Uzu decimalan komon.</li>
-                </ul>
-                
-                <h6>4. Kampo “TICON-4-datumoj au alternativaj datumoj”</h6>
-                <p>
-                    Procedu jene:
-                </p>
-                <ol>
-                    <li>Elshutu dosieron <code>122848.csv</code> (&quot;TICON_4&quot;) el <a href="https://www.seanoe.org/data/00980/109129/" target="_blank">tiu retpagho</a> per &quot;Download dataset&quot;.<br>Por spekti la enhavon sen antaua elshuto kaj serchi, oni povas uzi la <a href="#" onclick="scrollToAnchor('csvspektilo'); return false;">CSV-spektilon</a> malsupre kaj daurigi che pasho 3.<br>
-                    Au: Uzu unu el la <a href="#" onclick="scrollToAnchor('mapoj'); return false;">mapoj</a> malsupre kaj daurigu che pasho 4.        
-                    </li>
-                    <li>La dosieron renomu al iu kun sufikso <code>txt</code>, kiel ekzemple <code>ticon_4.txt</code>, kaj malfermu per tekstoredaktilo, kiel ekzemple WordPad, au &ndash; en smartfono &ndash; apo, por spekti tekstodosierojn, kiel ekzemple Mi Text Viewer.</li>
-                    <li>Trovu la 50 liniojn por la koncerna loko (<code>tide_gauge_name</code>). Kopiu ghuste tiujn 50 liniojn: nek pli, nek malpli. En kelkaj redaktiloj unu longa linio povas aspekti, kvazau pluraj linioj.</li>
-                    <li>Algluu la kopiitajn datumojn en kampon <code>TICON-4-datumoj au alternativaj datumoj</code>.</li>
-                </ol>
-                <p>
-                    La algluajho komencighas per latitudo kaj longitudo, poste sekvas ekzemple <code>M2</code> kaj multaj pliaj signoj. Ghi finighas antau la latitudo de la sekva aro de konstituantoj.
-                </p>
-
-                <h6>5. Alternativaj harmonaj konstituantoj</h6>
-                <p>
-                    Pri kelkaj lokoj ekzistas alternativaj harmonaj konstituantoj; vidu la <a href="#" onclick="scrollToAnchor('mapoj'); return false;">mapojn</a> malsupre. Tiuj konstituantoj povas esti utilaj, ekzemple se la TICON-4-datumoj ne rilatas al UTK au se por difinita loko analizo alia eligis tiajn konstituantojn, per kiuj pli bonaj prognozoj estas fareblaj.
-                </p>
-                <p id="maro" class="anker">
-                    Pri <a href="https://eo.wikipedia.org/wiki/Ponto_de_Londono" target="_blank"><b>Ponto de Londono</b></a> kurioze ne estas datumoj en la supre menciita datumbazo. Tial jen <a href="https://www.dropbox.com/scl/fi/xx5lavjjqb8het4oef622/ponto_de_londono.txt?rlkey=k75pxdgwhwur1n4jf3l310z2b&st=rwh8g93n&dl=0" target="_blank">dosiero</a> kun alternativaj harmonaj konstituantoj; fonto: Vidu la tiean <a href="https://www.dropbox.com/scl/fi/xx5lavjjqb8het4oef622/ponto_de_londono.txt?dl=0&rlkey=k75pxdgwhwur1n4jf3l310z2b&st=s2q2g8ce#comment_id=pid_comments:AAAAAEv9OZvEAWVYlLzLFGTyZsH942OUqDgNLK3k9CpjhCpV" target="_blank">komenton</a>.
-                </p>
-                <p>
-                  Por <b>Cape d'Or</b>, orienta Kanado, <a href="https://github.com/openwatersio/tide-database/issues/93" target="_blank">la amplitudo de unu konstituanto lau la TICON-4-datumoj estas eksterordinare granda</a>. Tial jen <a href="https://www.dropbox.com/scl/fi/s2cao2kvs9kkw43g4duqj/cape_d_or_konstituantoj_aliaj_ol_tiuj_de_ticon4.txt?rlkey=1rq7x49lz6c3cv1depy0elzgd&st=sei48o6n&dl=0" target="_blank">dosiero</a> kun alternativaj harmonaj konstituantoj; fonto: Vidu la tiean <a href="https://www.dropbox.com/scl/fi/s2cao2kvs9kkw43g4duqj/cape_d_or_konstituantoj_aliaj_ol_tiuj_de_ticon4.txt?dl=0&rlkey=1rq7x49lz6c3cv1depy0elzgd&st=wk4yaxjz#comment_id=pid_comments:AAAAAJwlsEfpb6Jp3pU-rfO8Pem2rnWhBS4nyTjfFPxqaPCp" target="_blank">komenton</a>.
-                </p>
-                <h6>6. Harmonaj konstituantoj, Doodson-numeroj kaj Snapchat-lensoj “Maro” kaj “Maro: sep horoj”</h6>
-
-<button onclick="ladeTri()">
-    <b>Klaku por pli</b>
-  </button>
-
-  <hr>
-
-  <div id="content">
-    ...
-  </div>
-
-  <script>
-    function ladeTri() {
-      google.script.run
-        .withSuccessHandler(function(html) {
-          document.getElementById("content").innerHTML = html;
-        })
-        .getTri();
-    }
-  </script>                
-                
-                <h6 id="mapoj" class="anker">7. Mapoj</h6>
-                <p>
-                  En mapo "Kelkaj lokoj kun harmonaj konstituantoj..." estas donitaj harmonaj konstituantoj aliaj, ol en TICON-4. Ilin kopiu kaj algluu en kampon <code>TICON-4-datumoj au alternativaj datumoj</code>. Tiuj konstituantoj bazighas sur <a href="https://gist.github.com/AndreasKueck/30a62c57832db964fdd3ff38a4e80d69" target="_blank">propra analizo de akvoniveloj</a> kaj eligas prognozitajn akvonivelojn kun UTK, kiel tempa referenco. Temas pri jenaj lokoj (klako al la respektiva ligilo kondukas al la alternativaj konstituantoj):
-                </p>
-                <p><a href="https://andreaskueck.github.io/tc4a/belum/index.html">Belum</a><sup>2</sup>, <a href="https://andreaskueck.github.io/tc4a/brake/index.html">Brake</a>, Bremerv&ouml;rde (<a href="https://andreaskueck.github.io/tc4a/bremervoerde_maksimumoj/index.html">maksimumoj</a>, <a href="https://andreaskueck.github.io/tc4a/bremervoerde_minimumoj/index.html">minimumoj</a>)<sup>2, 3</sup>, <a href="https://andreaskueck.github.io/tc4a/dwarsgat/index.html">Dwarsgat</a>, Elsfleth Ohrt (<a href="https://andreaskueck.github.io/tc4a/elsfleth_ohrt_maksimumoj/index.html">maksimumoj</a>, <a href="https://andreaskueck.github.io/tc4a/elsfleth_ohrt_minimumoj/index.html">minimumoj</a>)<sup>2, 3</sup>, Hechthausen (<a href="https://andreaskueck.github.io/tc4a/hechthausen_maksimumoj/index.html">maksimumoj</a>, <a href="https://andreaskueck.github.io/tc4a/hechthausen_minimumoj/index.html">minimumoj</a>)<sup>2, 3</sup>, <a href="https://andreaskueck.github.io/tc4a/hooksielplate/index.html">Hooksielplate</a>, <a href="https://andreaskueck.github.io/tc4a/krautsand/index.html">Krautsand</a>, <a href="https://andreaskueck.github.io/tc4a/langeoog/index.html">Langeoog</a>, <a href="https://andreaskueck.github.io/tc4a/nordenham/index.html">Nordenham</a>, Oldenburg (<a href="https://andreaskueck.github.io/tc4a/oldenburg_maksimumoj/index.html">maksimumoj</a>, <a href="https://andreaskueck.github.io/tc4a/oldenburg_minimumoj/index.html">minimumoj</a>)<sup>2, 3</sup>, <a href="https://andreaskueck.github.io/tc4a/otterndorf/index.html">Otterndorf</a>, Papenburg (<a href="https://andreaskueck.github.io/tc4a/papenburg_maksimumoj/index.html">maksimumoj</a>, <a href="https://andreaskueck.github.io/tc4a/papenburg_minimumoj/index.html">minimumoj</a>)<sup>3</sup>, <a href="https://andreaskueck.github.io/tc4a/rechtenfleth/index.html">Rechtenfleth</a>, <a href="https://andreaskueck.github.io/tc4a/robbensuedersteert/index.html">Robbens&uuml;dersteert</a>, <a href="https://andreaskueck.github.io/tc4a/scharhoern/index.html">Scharh&ouml;rn</a>, <a href="https://andreaskueck.github.io/tc4a/spiekeroog/index.html">Spiekeroog</a> kaj <a href="https://andreaskueck.github.io/tc4a/stadersand/index.html">Stadersand</a>.
-                </p>
-                <p class="small-note">
-                    <sup>2</sup> Tiuj lokoj situas apud flankriveroj. Tial la harmona metodo ofte rezultigas aparte neprecizajn prognozojn. Eksperimente la harmona analizo, por determini la alternativajn konstituantojn, estis farita a) surbaze de datumoj el tempospaco de nur tri monatoj (2025-02-14 23:00 UTK &ndash; 2025-05-14 22:59 UTK) kaj kaj b) per nur dek konstituantoj, nome tiuj, kiuj estas konsiderataj en “Gezeitentafeln f&uuml;r das Jahr 1948”, eldonita de Deutsches Hydrographisches Institut Hamburg, Hamburg, 1948: M2, S2, N2, K2, MU2, K1, O1, P1, M4 kaj MS4.
-                    <br>
-                    <sup>3</sup> Pro nesimetria evoluo de la akvonivela kurbo ekzistas por tiuj lokoj po du aroj de alternativaj konstituantoj: unu aro optimumigita, por prognozi minimumojn, kaj alia aro optimumigita, por prognozi maksimumojn. Vidu la mapon.                    
-                </p>
-
-                <p>
-                    <iframe src="https://www.google.com/maps/d/embed?mid=1yG4v9MeHQ2fG7iFntywSEX7_kt5XY3s&ehbc=2E312F" width="448" height="336"></iframe>
-                </p>
-
-<p>
-  <button class="waves-effect btn blue" type="button" onclick="montriLokojn()">
-    Klaku, por vidi pli ampleksan mapon
-  </button>
-</p>
-
-<div id="lokojBloko" style="display:none; margin-top:1.5rem;">
-
-  <h6>Lokoj kun TICON-4-datumoj</h6>
-
-  <p>
-    Por ekhavi la harmonajn konstituantojn de difinita loko, enigu en kampon <b>tide_gauge_name</b> malsupre la <strong>tide_gauge_name</strong>, ekzemple
-    <code>boulogne_sur_mer-111-fra-refmar</code>, trovitan en la interaga mapo chi-malsupre.
-  </p>
-    <iframe
-      src="https://openadb.dgfi.tum.de/en/ocean-tides/map/"
-      width="500"
-      height="400"
-      style="max-width:100%; border:0;"
-      allowfullscreen>
-    </iframe>
-  </p>
-
-  <div class="input-field">
-    <input type="text" id="lokojNomo" placeholder="boulogne_sur_mer-111-fra-refmar" autocomplete="off">
-    <label for="lokojNomo">tide_gauge_name</label>
-  </div>
-
-  <p>
-    <button class="waves-effect btn blue" type="button" onclick="serchiLokon()">
-      Trovi
-    </button>
-  </p>
-
-  <div id="lokojRezulto"></div>
-
-</div>
-
-<script>
-  function montriLokojn() {
-    var bloko = document.getElementById('lokojBloko');
-    bloko.style.display = 'block';
-  }
-
-  function serchiLokon() {
-    var nomo = document.getElementById('lokojNomo').value.trim();
-    var div = document.getElementById('lokojRezulto');
-
-    div.innerHTML = '<div class="card-panel">Serchante ...</div>';
-
-    google.script.run
-      .withSuccessHandler(montruLokon)
-      .withFailureHandler(function(err) {
-        div.innerHTML =
-          '<div class="card-panel red lighten-4">Eraro: ' +
-          eskapuLokoj(err.message) +
-          '</div>';
-      })
-      .serchiPegelon(nomo);
-  }
-
-  function montruLokon(rez) {
-    var div = document.getElementById('lokojRezulto');
-
-    if (!rez.sukcesa) {
-      div.innerHTML =
-        '<div class="card-panel red lighten-4">' +
-        eskapuLokoj(rez.mesagho) +
-        '</div>';
-      return;
-    }
-
-    var html = '';
-
-    html += '<div class="card-panel">';
-    html += '<p class="green-text text-darken-2"><strong>Trovita:</strong> ' +
-      eskapuLokoj(rez.nomo) +
-      ' — ' +
-      eskapuLokoj(rez.nombro) +
-      ' linioj (fonto estas la antaue menciita retpagho); sekvas informoj prenitaj el ghi; amplitudoj en cm; nombro kaj valoroj de la konstituantoj eventuale diferencas de tiuj donitaj en la TICON-4-datumbazo</p>';
-
-    html += '<pre id="lokojPreTicon" style="white-space:pre-wrap; overflow-x:auto;">' +
-      eskapuLokoj(rez.teksto) +
-      '</pre>';
-
-    html += '<p><button class="waves-effect btn blue" type="button" onclick="kopiiLokojEl(\'lokojPreTicon\')">Kopii al tondejo</button></p>';
-    html += '</div>';
-
-    if (rez.alternativo && rez.alternativo.petita) {
-      html += '<div class="card-panel">';
-      html += '<h6>Alternativaj konstituantoj</h6>';
-
-      if (rez.alternativo.sukcesa) {
-        html += '<p class="green-text text-darken-2"><strong>Trovitaj alternativaj datumoj:</strong> ' +
-          eskapuLokoj(rez.alternativo.nombro) +
-          ' linioj</p>';
-
-        html += '<p>Fonto: <a href="' +
-          eskapuLokoj(rez.alternativo.url) +
-          '" target="_blank">' +
-          eskapuLokoj(rez.alternativo.url) +
-          '</a></p>';
-
-        html += '<pre id="lokojPreAlt" style="white-space:pre-wrap; overflow-x:auto;">' +
-          eskapuLokoj(rez.alternativo.teksto) +
-          '</pre>';
-
-        html += '<p><button class="waves-effect btn blue" type="button" onclick="kopiiLokojEl(\'lokojPreAlt\')">Kopii al tondejo</button></p>';
-      } else {
-        html += '<p class="red-text text-darken-2">' +
-          eskapuLokoj(rez.alternativo.mesagho) +
-          '</p>';
-
-        if (rez.alternativo.url) {
-          html += '<p>Provita fonto: <a href="' +
-            eskapuLokoj(rez.alternativo.url) +
-            '" target="_blank">' +
-            eskapuLokoj(rez.alternativo.url) +
-            '</a></p>';
+        function ladeKvar() {
+            google.script.run
+                .withSuccessHandler(function(html) {
+                    el('content4').innerHTML = html;
+                })
+                .getKvar();
         }
-      }
 
-      html += '</div>';
-    }
-
-    div.innerHTML = html;
-  }
-
-  function kopiiLokojEl(preId) {
-    var elem = document.getElementById(preId);
-
-    if (!elem) {
-      alert('Nenio kopiebla.');
-      return;
-    }
-
-    var teksto = elem.textContent;
-
-    navigator.clipboard.writeText(teksto).then(function() {
-      alert('Kopiita!');
-    }).catch(function() {
-      alert('Kopiado malsukcesis.');
-    });
-  }
-
-  function eskapuLokoj(s) {
-    return String(s ?? '').replace(/[&<>"']/g, function(ch) {
-      return {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      }[ch];
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    var input = document.getElementById('lokojNomo');
-    if (input) {
-      input.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          serchiLokon();
+        function ladeTri() {
+            google.script.run
+                .withSuccessHandler(function(html) {
+                    el('content').innerHTML = html;
+                })
+                .getTri();
         }
-      });
-    }
-  });
-</script>
 
-<p id="csvspektilo" class="anker">
-    <iframe 
-      src="https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMWhZWZArsRPscRsH5jdqqTxjdMq6KJu4U9w/exec" style="width:100%; height:400px; border:1px solid #ccc;">
-    </iframe>
-</p>
-                <h6>Fontoj de datumoj kaj jura avizo</h6>
+        function ladeKvin() {
+            google.script.run
+                .withSuccessHandler(function(html) {
+                    el('content5').innerHTML = html;
+                })
+                .getKvin();
+        }
 
-<button onclick="ladeKvin()">
-    <b>Klaku por pli</b>
-  </button>
+        function ladeDu() {
+            google.script.run
+                .withSuccessHandler(function(html) {
+                    el('content1').innerHTML = html;
+                })
+                .getDu();
+        }
 
-  <hr>
+        function montriLokojn() {
+            el('lokojBloko').style.display = 'block';
+        }
 
-  <div id="content5">
-    ...
-  </div>
+        function serchiLokon() {
+            var nomo = el('lokojNomo').value.trim();
+            var div = el('lokojRezulto');
 
-  <script>
-    function ladeKvin() {
-      google.script.run
-        .withSuccessHandler(function(html) {
-          document.getElementById("content5").innerHTML = html;
-        })
-        .getKvin();
-    }
-  </script>                          
-                
-<button onclick="ladeDu()">
-    <b>Ekzemplaj lokoj</b>
-  </button>
+            div.innerHTML = '<div class="card-panel">Serchante ...</div>';
 
-  <hr>
+            google.script.run
+                .withSuccessHandler(montruLokon)
+                .withFailureHandler(function(err) {
+                    div.innerHTML =
+                        '<div class="card-panel red lighten-4">Eraro: ' +
+                        eskapuLokoj(err.message) +
+                        '</div>';
+                })
+                .serchiPegelon(nomo);
+        }
 
-  <div id="content1">
-    ...
-  </div>
+        function montruLokon(rez) {
+            var div = el('lokojRezulto');
 
-  <script>
-    function ladeDu() {
-      google.script.run
-        .withSuccessHandler(function(html) {
-          document.getElementById("content1").innerHTML = html;
-        })
-        .getDu();
-    }
-  </script>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div align="center" style="padding: 1rem 0 120px 0;">
-  <a href="https://jhau.de/privateco.html" target="_blank">Privateco</a>
-</div>
-
-</div>
-
-    <script>
-        function scrollToAnchor(anchorId) {
-            const element = document.getElementById(anchorId);
-            if (element) {
-                element.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            if (!rez.sukcesa) {
+                div.innerHTML =
+                    '<div class="card-panel red lighten-4">' +
+                    eskapuLokoj(rez.mesagho) +
+                    '</div>';
+                return;
             }
+
+            var html = '';
+
+            html += '<div class="card-panel">';
+            html += '<p class="green-text text-darken-2"><strong>Trovita:</strong> ' +
+                eskapuLokoj(rez.nomo) +
+                ' — ' +
+                eskapuLokoj(rez.nombro) +
+                ' linioj (fonto estas la antaue menciita retpagho); sekvas informoj prenitaj el ghi; amplitudoj en cm; nombro kaj valoroj de la konstituantoj eventuale diferencas de tiuj donitaj en la TICON-4-datumbazo</p>';
+
+            html += '<pre id="lokojPreTicon" style="white-space:pre-wrap; overflow-x:auto;">' +
+                eskapuLokoj(rez.teksto) +
+                '</pre>';
+
+            html += '<p><button class="waves-effect btn blue" type="button" onclick="kopiiLokojEl(\'lokojPreTicon\')">Kopii al tondejo</button></p>';
+            html += '<p>Per la kopiitaj datumoj anstatauigu la tutan enhavon de la supra kampo <b>TICON-4-datumoj au alternativaj datumoj</b>.</p>';
+            html += '</div>';
+
+            if (rez.alternativo && rez.alternativo.petita) {
+                html += '<div class="card-panel">';
+                html += '<h6>Alternativaj konstituantoj</h6>';
+
+                if (rez.alternativo.sukcesa) {
+                    html += '<p class="green-text text-darken-2"><strong>Trovitaj alternativaj datumoj:</strong> ' +
+                        eskapuLokoj(rez.alternativo.nombro) +
+                        ' linioj</p>';
+
+                    html += '<p>Fonto: <a href="' +
+                        eskapuLokoj(rez.alternativo.url) +
+                        '" target="_blank">' +
+                        eskapuLokoj(rez.alternativo.url) +
+                        '</a></p>';
+
+                    html += '<pre id="lokojPreAlt" style="white-space:pre-wrap; overflow-x:auto;">' +
+                        eskapuLokoj(rez.alternativo.teksto) +
+                        '</pre>';
+
+                    html += '<p><button class="waves-effect btn blue" type="button" onclick="kopiiLokojEl(\'lokojPreAlt\')">Kopii al tondejo</button></p>';
+                } else {
+                    html += '<p class="red-text text-darken-2">' +
+                        eskapuLokoj(rez.alternativo.mesagho) +
+                        '</p>';
+
+                    if (rez.alternativo.url) {
+                        html += '<p>Provita fonto: <a href="' +
+                            eskapuLokoj(rez.alternativo.url) +
+                            '" target="_blank">' +
+                            eskapuLokoj(rez.alternativo.url) +
+                            '</a></p>';
+                    }
+                }
+
+                html += '</div>';
+            }
+
+            div.innerHTML = html;
         }
+
+        function kopiiLokojEl(preId) {
+            var elem = el(preId);
+
+            if (!elem) {
+                alert('Nenio kopiebla.');
+                return;
+            }
+
+            var teksto = elem.textContent;
+
+            navigator.clipboard.writeText(teksto).then(function() {
+                alert('Kopiita!');
+            }).catch(function() {
+                alert('Kopiado malsukcesis.');
+            });
+        }
+
+        function eskapuLokoj(s) {
+            return String(s ?? '').replace(/[&<>"']/g, function(ch) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                }[ch];
+            });
+        }
+
+        function closeWelcome() {
+            localStorage.setItem('welcomeShown', 'yes');
+            el('welcomeModal').style.display = 'none';
+        }
+
+        el('urlShortener').addEventListener('submit', function(event) {
+            event.preventDefault();
+            uploadData();
+        });
+
+        el('previous').addEventListener('click', () => moveMonth(-1));
+        el('next').addEventListener('click', () => moveMonth(1));
+        el('month').addEventListener('change', changeCalendarView);
+        el('year').addEventListener('change', changeCalendarView);
+        el('hour').addEventListener('change', clearResults);
+        el('minute').addEventListener('change', clearResults);
+        el('povumo').addEventListener('input', clearResults);
+        el('now').addEventListener('click', useNow);
+        el('freshStart').addEventListener('click', clearForm);
+
+        el('lokojNomo').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                serchiLokon();
+            }
+        });
+
+        window.addEventListener('load', function() {
+            if (!localStorage.getItem('welcomeShown')) {
+                el('welcomeModal').style.display = 'block';
+            }
+        });
+
+        setupOptions();
+        useNow();
+
+        // Neniu kalkulo estas startigata dum la shargo de la pagho.
     </script>
-
-<div id="welcomeModal" style="
-    display:none;
-    position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background:rgba(0,0,0,0.7);
-    z-index:9999;
-">
-  <div style="
-      background:white;
-      margin:20% auto;
-      padding:20px;
-      width:80%;
-      border-radius:8px;
-      text-align:center;
-  ">
-    <h2>Mallonga gvidlinio</h2>
-    <p>
-      Tiu chi apo malfermas helpopaghojn en apartaj fenestroj.<br><br>
-      Tie kopiu la eventuale bezonatajn datumojn en la tondejon.<br><br>
-      Che Androido poste vishu de la supra ekranrando malsupren,<br>por ke aperu la reen-butono,<br>kaj klaku al ghi sufiche ofte, por reveni chi tien.
-    </p>
-
-    <button onclick="closeWelcome()">Komprenite</button>
-  </div>
-</div>
-
-<script>
-window.onload = function() {
-    if (!localStorage.getItem("welcomeShown")) {
-        document.getElementById("welcomeModal").style.display = "block";
-    }
-};
-
-function closeWelcome() {
-    localStorage.setItem("welcomeShown", "yes");
-    document.getElementById("welcomeModal").style.display = "none";
-}
-</script>
-    
 </body>
-
 </html>
