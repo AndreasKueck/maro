@@ -1,16 +1,80 @@
-                <div class="card-panel blue lighten-5">
-                    <p>Procedu jene:</p>
-                    <ol>
-                        <li>Enigu la tempon en la kampo <b>Tempo</b>:
-                            <ul>
-                                <li><code>JJJJMMTThhmm</code> por unu difinita momento, ekzemple <code>202708301340</code>;</li>
-                                <li><code>JJJJMMTT9999</code> por la chefaj altaj kaj malaltaj akvoniveloj de tuta tago, ekzemple <code>202708309999</code>.</li>
-                            </ul>
-                        </li>
-                        <li>Enigu la <b>referencan akvonivelon en cm</b>. Se vi volas rezultojn rilate al la loka meza marnivelo, ordinare sufichas <code>0</code>. Se vi volas rezultojn rilate al alia referenca nulo, ekzemple al akvonivela nulo, enigu la koncernan valoron, ekzemple <code>531,2942</code>.</li>
-                        <li>Elektu lokon (ekzemple Bremerhaven) kaj trovu por ghi TICON-4-datumojn au alternativajn harmonajn konstituantojn. Ekzemplo: TICON-4-datumoj de Bremerhaven; tio estas 50 linioj komencighantaj per <code>53.544998,8.568,M2</code> kaj finighantaj per <code>2MO5,0.540223,-94.627095,7.9e-05,0.007735,0.009221,1041050,12.0,02/01/2014,30/06/2025,gesla4.CMEMS,bremerhaventg-bre-deu-cmems,Coastal,DEU,Possible quality control issues,DHHN92 / Amsterdam</code>; ilin marku kaj kopiu en la tondejon.</li>
-                        <li>Algluu la TICON-4-datumojn au alternativajn datumojn en kampon <b>TICON-4-datumoj au alternativaj datumoj</b>.</li>
-                        <li>Klaku al <b>Sendi</b>. La teksta rezulto kaj akvonivela kurbo aperos supre.</li>
-                    </ol>
-                    <p><b>Grava atentigo:</b> La rezultoj estas privataj neoficialaj prognozoj. Ili ne estas taugaj por navigacio, sekurecaj decidoj au aliaj kritikaj uzoj.</p>
-                </div>
+<div class="card-panel blue lighten-5">
+    <p>Procedu jene:</p>
+    <ol>
+        <li>
+            Elektu la <b>daton en la kalendaro</b> kaj la
+            <b>horon kaj minuton en UTK</b>.
+            Ekzemple: la 30-a de Augusto 2027 je
+            <code>13:40 UTK</code>.
+            Komence estas elektitaj la nunaj dato kaj horo en UTK.
+            Per <b>Nuna dato kaj horo</b> vi povas aktualigi ilin.
+        </li>
+        <li>
+            La kampo <b>TICON-4-datumoj au alternativaj datumoj</b>
+            jam enhavas la defaulte uzatajn datumojn de
+            <b>Bulonjo che Maro</b>
+            (<code>boulogne_sur_mer-111-fra-refmar</code>).
+            Por tiu loko lasu la enhavon senshangha.
+        </li>
+        <li>
+            Por alia loko trovu ties TICON-4-datumojn au alternativajn
+            harmonajn konstituantojn rilatantajn al UTK.
+            Ekzemplo: TICON-4-datumoj de Bremerhaven; tio estas
+            50 linioj komencighantaj per
+            <code>53.544998,8.568,M2</code>
+            kaj finighantaj per
+            <code>2MO5,0.540223,-94.627095,7.9e-05,0.007735,0.009221,1041050,12.0,02/01/2014,30/06/2025,gesla4.CMEMS,bremerhaventg-bre-deu-cmems,Coastal,DEU,Possible quality control issues,DHHN92 / Amsterdam</code>;
+            ilin marku kaj kopiu en la tondejon.
+            La nombro de linioj de alternativaj datumoj povas
+            diferenci de 50.
+        </li>
+        <li>
+            Marku la <b>tutan ghisnunan enhavon</b> de kampo
+            <b>TICON-4-datumoj au alternativaj datumoj</b>
+            kaj anstatauigu ghin per la kopiitaj datumoj.
+            Ne kunmetu datumojn de malsamaj lokoj en la sama kampo.
+            Se la kampo estas malplena, uzighas la defaulte uzataj
+            datumoj de Bulonjo che Maro.
+        </li>
+        <li>
+            Klaku al <b>Sendi</b>.
+            Supre aperos:
+            <ul>
+                <li>la akvonivelo je la elektita dato kaj horo;</li>
+                <li>la maksimumaj kaj minimumaj akvoniveloj de la elektita UTK-tago, kun iliaj tempoj;</li>
+                <li>la akvonivela kurbo por la dek du horoj antau kaj la dek du horoj post la elektita momento.</li>
+            </ul>
+        </li>
+    </ol>
+
+    <p>
+        <b>Alteca referenco:</b>
+        La referenca aldono estas chiam <code>0 cm</code>.
+        Ne ekzistas aparta eniga kampo por ghi.
+        La rezultoj estas montrataj en metroj rilate al la
+        loka meza marnivelo.
+    </p>
+
+    <p>
+        <b>Horzono:</b>
+        Chiuj enigitaj kaj montrataj tempoj estas en UTK, sen
+        somera tempo. La uzataj harmonaj konstituantoj devas
+        ankau rilati al UTK. La apo ne transformas konstituantojn
+        kun alia au nekonata temporeferenco; atentu la eventualan
+        averton en la rezulto.
+    </p>
+
+    <p>
+        <b>Forvishi:</b>
+        Tiu butono forigas la rezultojn kaj restarigas la nunajn
+        daton kaj horon kaj la defaulte uzatajn datumojn de
+        Bulonjo che Maro.
+    </p>
+
+    <p>
+        <b>Grava atentigo:</b>
+        La rezultoj estas privataj neoficialaj prognozoj.
+        Ili ne estas taugaj por navigacio, sekurecaj decidoj
+        au aliaj kritikaj uzoj.
+    </p>
+</div>
