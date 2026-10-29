@@ -328,7 +328,7 @@ function prepariDatumojn_(value) {
  *
  * La rekonoj ne transformas nekonatan au lokan temporeferencon.
  */
-function datumajRimarkoj_(povumozeichen) {
+function datumajRimarkoj_(povumozeichen, limigoj = {}) {
   let utk = false;
   let apartaaldono = '';
 
@@ -385,6 +385,7 @@ function datumajRimarkoj_(povumozeichen) {
       utk = true;
 
       if (rekono[2]) {
+        limigoj.speco = rekono[2];
         apartaaldono =
           'Oni atentu nur la tempojn de ' + rekono[2] +
           ', char por ili la konstituantoj estas optimumigitaj. ' +
@@ -440,13 +441,16 @@ function datumajRimarkoj_(povumozeichen) {
 function addLink(shortStack) {
   const tempo = parseSendoloko_(shortStack?.sendoloko);
   const datumoj = prepariDatumojn_(shortStack?.povumo);
+  const limigoj = {};
+  const avertoj = datumajRimarkoj_(datumoj.originalo, limigoj);
 
   const rezulto = main(
     tempo.jaro,
     tempo.monato,
     tempo.tago,
     tempo.hh * 100 + tempo.mm,
-    datumoj.datumoj
+    datumoj.datumoj,
+    limigoj.speco
   );
 
   return {
@@ -455,7 +459,7 @@ function addLink(shortStack) {
     nivelo: rezulto.nivelo,
     unuo: 'm',
     eventoj: rezulto.eventoj,
-    avertoj: datumajRimarkoj_(datumoj.originalo)
+    avertoj: avertoj
   };
 }
 
@@ -465,18 +469,23 @@ function addLink(shortStack) {
  *
  * La referenca aldono estas fikse 0.
  */
-function main(jaro, monato, tago, zt, datumoj) {
+function main(jaro, monato, tago, zt, datumoj, optimumigitaSpeco) {
   const nvo = niv(jaro, monato, tago, zt / 100, 0, 0, datumoj);
 
   if (!Number.isFinite(nvo)) {
     throw new Error('Ne eblis kalkuli validan akvonivelon.');
   }
 
-  const eventoj = kalkuliTagajnExtremojn_(jaro, monato, tago, datumoj);
+  const eventoj = kalkuliTagajnExtremojn_(jaro, monato, tago, datumoj)
+    .filter(function(evento) {
+      return !optimumigitaSpeco ||
+        (optimumigitaSpeco === 'maksimumoj' && evento.maksimumo) ||
+        (optimumigitaSpeco === 'minimumoj' && !evento.maksimumo);
+    });
 
   return {
-    nivelo: (Math.round(nvo * 1000000) / 1000000 + '')
-      .replace(/\./, ','),
+    nivelo: optimumigitaSpeco ? null :
+      (Math.round(nvo * 1000000) / 1000000 + '').replace(/\./, ','),
     eventoj: eventoj.map(function(evento) {
       return {
         speco: evento.maksimumo
@@ -1374,7 +1383,7 @@ function valoroAlTeksto_(v) {
         if (teksto) {
           return teksto;
         }
-      }
+      } 
     }
 
     for (const key of Object.keys(v)) {
