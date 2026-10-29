@@ -334,13 +334,13 @@
             <section class="result-panel" aria-labelledby="resultTitle">
                 <h5 id="resultTitle">Rezultoj</h5>
 
-                <div class="level">
+                <div class="level" id="level">
                     <h6><b>Akvonivelo je la elektita horo</b></h6>
                     <p id="levelTime"></p>
                     <p id="levelValue"></p>
                 </div>
 
-                <h6><b>Maksimumaj kaj minimumaj akvoniveloj de la elektita tago</b></h6>
+<!--                <h6><b>Maksimumaj kaj minimumaj akvoniveloj de la elektita tago</b></h6> -->
 
                 <div class="table-wrap">
                     <table class="striped">
@@ -623,8 +623,6 @@
                         Marku la tutan ghisnunan enhavon de kampo
                         <code>TICON-4-datumoj au alternativaj datumoj</code>
                         kaj anstatauigu ghin per la kopiitaj datumoj.
-                        La nombro de linioj de alternativaj datumoj
-                        povas diferenci de 50.
                     </li>
                 </ol>
 
@@ -991,9 +989,10 @@
 
         function renderResult(result) {
             el('resultTitle').textContent = 'Rezultoj por ' + result.dato;
-            el('levelTime').textContent =
+            el('level').hidden = result.nivelo == null;
+            el('levelTime').textContent = result.nivelo == null ? '' :
                 result.dato + ' ' + result.horo + ' UTK';
-            el('levelValue').textContent =
+            el('levelValue').textContent = result.nivelo == null ? '' :
                 result.nivelo + ' ' + result.unuo;
 
             const body = el('events');
