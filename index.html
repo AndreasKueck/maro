@@ -489,30 +489,14 @@
                                   aria-describedby="povumoHelp"><?= defaultPovumo ?></textarea>
 
                         <p id="povumoHelp" class="small-note">
-                            La kampo jam enhavas la defaulte uzatajn datumojn
+                            La kampo jam entenas la defaulte uzatajn datumojn
                             de Bulonjo che Maro
                             (<code>boulogne_sur_mer-111-fra-refmar</code>).
                             Por alia loko anstatauigu la tutan enhavon per
                             ties datumoj. Uzu konstituantojn rilatantajn al UTK.
                             Se la kampo estas malplena, uzighas denove la
                             defaulte uzataj datumoj de Bulonjo che Maro.
-                        </p>
-
-                        <p class="small-note">
-                            Por serchi datumojn, malfermu la pli ampleksan
-                            mapon en sekcio
-                            <a href="#" onclick="scrollToAnchor('mapoj'); return false;">Mapoj</a>.
-                            La tiea kampo <b>tide_gauge_name</b> jam enhavas
-                            <code>kilrushlough-kil-irl-cmems</code>.
-                            Post <b>Trovi</b> kopiu la trovitajn datumojn
-                            kaj per ili anstatauigu la tutan enhavon de
-                            tiu chi plurlinia kampo. La sercho mem ne
-                            shanghas la datumojn uzatajn por la kalkulo.
-                        </p>
-
-                        <p class="small-note">
-                            La referenca aldono estas chiam 0 cm.
-                            La akvoniveloj rilatas al la loka meza marnivelo.
+                            La akvoniveloj rilatas al la loka meza akvonivelo.
                         </p>
                     </div>
 
@@ -537,14 +521,14 @@
 
             <div align="left" class="klarigoj">
                 <h5>Klarigoj</h5>
-
+<!--
                 <button onclick="ladeKvar()">
                     <b>Mallonge: Jen kiel uzi la formularon</b>
                 </button>
 
                 <hr>
                 <div id="content4">...</div>
-
+-->
                 <h6>1. Dato kaj horo</h6>
                 <p>
                     Elektu daton en la kalendaro kaj horon per la kampoj
@@ -599,56 +583,23 @@
                     konstituantojn rilatantajn al UTK.
                 </p>
 
-                <h6>3. Alteca referenco</h6>
+                <h6>3. Alto-referenco</h6>
                 <p>
-                    La referenca aldono estas chiam <code>0 cm</code>;
-                    ne plu ekzistas aparta eniga kampo por ghi.
-                    La rezultoj estas montrataj en metroj rilate al
-                    la loka meza marnivelo. La apo ne transformas ilin
-                    al alia referenca nulo, ekzemple akvonivela nulo,
-                    germane: “Pegelnullpunkt” (PNP).
+                    La referenca aldono estas chiam <code>0 m</code>.
+                    La akvoniveloj estas montrataj en metroj rilate la lokan mezan akvonivelon.
                 </p>
 
                 <h6>4. Kampo “TICON-4-datumoj au alternativaj datumoj”</h6>
                 <p>
-                    La plurlinia tekstokampo jam enhavas la defaulte
+                    La plurlinia tekstokampo jam entenas la defaulte
                     uzatajn datumojn de Bulonjo che Maro
                     (<code>boulogne_sur_mer-111-fra-refmar</code>).
-                    Por tiu loko vi povas lasi la enhavon senshangha.
                     Por alia loko anstatauigu la tutan enhavon per
-                    la koncernaj datumoj; ne aldonu ilin al la jam
-                    ekzistantaj datumoj.
+                    la koncernaj datumoj.
                 </p>
                 <p>
-                    Se vi malplenigas la kampon, dum kalkulo uzighas
-                    la defaulte uzataj datumoj de Bulonjo che Maro.
-                    Per <b>Forvishi</b> tiuj datumoj estas denove
-                    videble enmetataj en la kampon.
-                </p>
-                <p>
-                    Por serchi per <b>tide_gauge_name</b>, iru al sekcio
-                    <a href="#" onclick="scrollToAnchor('mapoj'); return false;">Mapoj</a>
-                    kaj klaku al <b>Klaku, por vidi pli ampleksan mapon</b>.
-                    La serchkampo jam enhavas
-                    <code>kilrushlough-kil-irl-cmems</code> kiel veran
-                    enigan valoron, montratan nigre.
-                    Lasu ghin senshangha kaj klaku al <b>Trovi</b>,
-                    por serchi la datumojn de tiu stacio.
-                    Por alia stacio anstatauigu la valoron per ties
-                    <b>tide_gauge_name</b> el la interaga mapo.
-                </p>
-                <p>
-                    Post sukcesa sercho klaku al <b>Kopii al tondejo</b>
-                    kaj per la kopiitaj datumoj anstatauigu la tutan
-                    enhavon de la supra plurlinia kampo.
-                    <b>Trovi</b> nur serchas kaj montras datumojn;
-                    ghi ne automate enmetas ilin en la kalkulan
-                    formularon kaj ne startigas kalkulon.
-                    Poste klaku al <b>Sendi</b>.
-                </p>
-                <p>
-                    Alternative, por trovi datumojn rekte en la
-                    TICON-4-datumbazo, procedu jene:
+                    Ilin oni trovas per helpo de sekcio <a href="#" onclick="scrollToAnchor('alternativaj'); return false;">Alternativaj harmonaj konstituantoj</a>.
+                    Au, por trovi harmonajn konstituantojn rekte en la TICON-4-datumbazo, oni procedu jene:
                 </p>
                 <ol>
                     <li>
@@ -659,10 +610,7 @@
                         Por spekti la enhavon sen antaua elshuto kaj
                         serchi, oni povas uzi la
                         <a href="#" onclick="scrollToAnchor('csvspektilo'); return false;">CSV-spektilon</a>
-                        malsupre kaj daurigi che pasho 3.<br>
-                        Au: Uzu unu el la
-                        <a href="#" onclick="scrollToAnchor('mapoj'); return false;">mapoj</a>
-                        malsupre kaj daurigu che pasho 4.
+                        malsupre kaj daurigi che pasho 3.
                     </li>
                     <li>
                         La dosieron renomu al iu kun sufikso
@@ -686,7 +634,7 @@
                     </li>
                 </ol>
 
-                <h6>5. Alternativaj harmonaj konstituantoj</h6>
+                <h6 id="alternativaj" class="anker">5. Alternativaj harmonaj konstituantoj</h6>
                 <p>
                     Pri kelkaj lokoj ekzistas alternativaj harmonaj konstituantoj; vidu la <a href="#" onclick="scrollToAnchor('mapoj'); return false;">mapojn</a> malsupre. Tiuj konstituantoj povas esti utilaj, ekzemple se la TICON-4-datumoj ne rilatas al UTK au se por difinita loko analizo alia eligis tiajn konstituantojn, per kiuj pli bonaj prognozoj estas fareblaj.
                 </p>
@@ -731,7 +679,7 @@
                     <p>
                         Por ekhavi la harmonajn konstituantojn de difinita
                         loko, uzu la kampon <b>tide_gauge_name</b> malsupre.
-                        Ghi jam enhavas
+                        Ghi jam entenas
                         <code>kilrushlough-kil-irl-cmems</code>.
                         Por serchi tiun stacion, simple klaku al
                         <b>Trovi</b>.
@@ -1308,7 +1256,7 @@
                 });
             }
         }
-
+/*
         function ladeKvar() {
             google.script.run
                 .withSuccessHandler(function(html) {
@@ -1316,7 +1264,7 @@
                 })
                 .getKvar();
         }
-
+*/
         function ladeTri() {
             google.script.run
                 .withSuccessHandler(function(html) {
