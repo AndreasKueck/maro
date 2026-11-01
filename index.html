@@ -74,12 +74,13 @@
             padding: 0;
         }
 
-        .prediction-form label {
+        .prediction-form label,
+        .station-field label {
             display: block;
             margin-bottom: 6px;
             font-size: 1rem;
             font-weight: 600;
-            color: #172b3a;
+            color: #000;
         }
 
         .form-grid {
@@ -154,7 +155,8 @@
 
         .prediction-form button:focus-visible,
         .prediction-form select:focus-visible,
-        .prediction-form textarea:focus-visible {
+        .prediction-form textarea:focus-visible,
+        input#lokojNomo:focus-visible {
             outline: 3px solid #38bdf8;
             outline-offset: 3px;
         }
@@ -228,25 +230,48 @@
             font-weight: 700;
         }
 
-        .data-field {
+        .data-field,
+        .station-field {
             margin-top: 24px;
         }
 
-        #povumo {
+        #povumo,
+        input#lokojNomo {
             display: block;
             box-sizing: border-box;
             width: 100%;
-            height: 260px;
-            min-height: 160px;
             padding: 10px;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
             background: white;
-            color: #172b3a;
+            color: #000;
             font-family: monospace;
             font-size: 13px;
+            font-weight: 400;
             line-height: 1.45;
+            box-shadow: none;
+        }
+
+        #povumo {
+            height: 260px;
+            min-height: 160px;
             resize: vertical;
+        }
+
+        input#lokojNomo {
+            height: 42px;
+            min-height: 42px;
+            margin: 0;
+        }
+
+        input#lokojNomo:focus {
+            border: 1px solid #075985;
+            box-shadow: none;
+            color: #000;
+        }
+
+        #lokojNomoHelp {
+            color: #000;
         }
 
         .form-actions {
@@ -340,7 +365,7 @@
                     <p id="levelValue"></p>
                 </div>
 
-<!--                <h6><b>Maksimumaj kaj minimumaj akvoniveloj de la elektita tago</b></h6> -->
+                <!-- <h6><b>Maksimumaj kaj minimumaj akvoniveloj de la elektita tago</b></h6> -->
 
                 <div class="table-wrap">
                     <table class="striped">
@@ -445,8 +470,7 @@
 
                             <p class="small-note">
                                 La komencaj valoroj devenas de la horlogho
-                                de via aparato. Ili estas montrataj en UTK,
-                                sen somera tempo.
+                                de via aparato. Ili estas montrataj en UTK.
                             </p>
 
                             <p class="small-note">
@@ -472,6 +496,18 @@
                             ties datumoj. Uzu konstituantojn rilatantajn al UTK.
                             Se la kampo estas malplena, uzighas denove la
                             defaulte uzataj datumoj de Bulonjo che Maro.
+                        </p>
+
+                        <p class="small-note">
+                            Por serchi datumojn, malfermu la pli ampleksan
+                            mapon en sekcio
+                            <a href="#" onclick="scrollToAnchor('mapoj'); return false;">Mapoj</a>.
+                            La tiea kampo <b>tide_gauge_name</b> jam enhavas
+                            <code>kilrushlough-kil-irl-cmems</code>.
+                            Post <b>Trovi</b> kopiu la trovitajn datumojn
+                            kaj per ili anstatauigu la tutan enhavon de
+                            tiu chi plurlinia kampo. La sercho mem ne
+                            shanghas la datumojn uzatajn por la kalkulo.
                         </p>
 
                         <p class="small-note">
@@ -538,7 +574,7 @@
 
                 <h6>2. Horzono kaj somera tempo</h6>
                 <p>
-                    La apo akceptas kaj montras nur UTK, sen somera tempo.
+                    La apo akceptas kaj montras nur UTK.
                     Tial ankau la uzataj harmonaj konstituantoj devas
                     rilati al UTK.
                 </p>
@@ -589,7 +625,31 @@
                     Per <b>Forvishi</b> tiuj datumoj estas denove
                     videble enmetataj en la kampon.
                 </p>
-                <p>Por trovi datumojn de alia loko, procedu jene:</p>
+                <p>
+                    Por serchi per <b>tide_gauge_name</b>, iru al sekcio
+                    <a href="#" onclick="scrollToAnchor('mapoj'); return false;">Mapoj</a>
+                    kaj klaku al <b>Klaku, por vidi pli ampleksan mapon</b>.
+                    La serchkampo jam enhavas
+                    <code>kilrushlough-kil-irl-cmems</code> kiel veran
+                    enigan valoron, montratan nigre.
+                    Lasu ghin senshangha kaj klaku al <b>Trovi</b>,
+                    por serchi la datumojn de tiu stacio.
+                    Por alia stacio anstatauigu la valoron per ties
+                    <b>tide_gauge_name</b> el la interaga mapo.
+                </p>
+                <p>
+                    Post sukcesa sercho klaku al <b>Kopii al tondejo</b>
+                    kaj per la kopiitaj datumoj anstatauigu la tutan
+                    enhavon de la supra plurlinia kampo.
+                    <b>Trovi</b> nur serchas kaj montras datumojn;
+                    ghi ne automate enmetas ilin en la kalkulan
+                    formularon kaj ne startigas kalkulon.
+                    Poste klaku al <b>Sendi</b>.
+                </p>
+                <p>
+                    Alternative, por trovi datumojn rekte en la
+                    TICON-4-datumbazo, procedu jene:
+                </p>
                 <ol>
                     <li>
                         Elshutu dosieron <code>122848.csv</code>
@@ -660,8 +720,8 @@
                 </p>
 
                 <p>
-                    <button class="waves-effect btn blue" type="button" onclick="montriLokojn()">
-                        Klaku, por vidi pli ampleksan mapon
+                    <button type="button" onclick="montriLokojn()">
+                        <b>Klaku, por vidi pli ampleksan mapon</b>
                     </button>
                 </p>
 
@@ -669,8 +729,14 @@
                     <h6>Lokoj kun TICON-4-datumoj</h6>
 
                     <p>
-                        Por ekhavi la harmonajn konstituantojn de difinita loko, enigu en kampon <b>tide_gauge_name</b> malsupre la <strong>tide_gauge_name</strong>, ekzemple
-                        <code>boulogne_sur_mer-111-fra-refmar</code>, trovitan en la interaga mapo chi-malsupre.
+                        Por ekhavi la harmonajn konstituantojn de difinita
+                        loko, uzu la kampon <b>tide_gauge_name</b> malsupre.
+                        Ghi jam enhavas
+                        <code>kilrushlough-kil-irl-cmems</code>.
+                        Por serchi tiun stacion, simple klaku al
+                        <b>Trovi</b>.
+                        Por alia loko anstatauigu la valoron per la
+                        <b>tide_gauge_name</b> trovita en la interaga mapo.
                     </p>
 
                     <p>
@@ -683,15 +749,40 @@
                         </iframe>
                     </p>
 
-                    <div class="input-field">
-                        <input type="text" id="lokojNomo" placeholder="boulogne_sur_mer-111-fra-refmar" autocomplete="off">
+                    <div class="station-field">
                         <label for="lokojNomo">tide_gauge_name</label>
+                        <input type="text"
+                               id="lokojNomo"
+                               name="tide_gauge_name"
+                               value="kilrushlough-kil-irl-cmems"
+                               autocomplete="off"
+                               autocapitalize="none"
+                               spellcheck="false"
+                               aria-describedby="lokojNomoHelp">
+
+                        <p id="lokojNomoHelp" class="small-note">
+                            La nigra teksto estas la efektiva serchvaloro.
+                            Se vi ne anstatauigas ghin,
+                            <b>Trovi</b> serchas
+                            <code>kilrushlough-kil-irl-cmems</code>.
+                            Vi povas ankau startigi la serchon per
+                            la eniga klavo.
+                        </p>
                     </div>
 
                     <p>
                         <button class="waves-effect btn blue" type="button" onclick="serchiLokon()">
                             Trovi
                         </button>
+                    </p>
+
+                    <p class="small-note">
+                        Post sukcesa sercho klaku al <b>Kopii al tondejo</b>.
+                        Per la kopiitaj datumoj anstatauigu la tutan
+                        enhavon de la supra kampo
+                        <b>TICON-4-datumoj au alternativaj datumoj</b>
+                        kaj poste klaku al <b>Sendi</b>.
+                        La sercho mem ne shanghas la enhavon de tiu kampo.
                     </p>
 
                     <div id="lokojRezulto"></div>
