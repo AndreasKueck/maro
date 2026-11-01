@@ -649,10 +649,30 @@ function getCurve(shortStack) {
   const tempo = parseSendoloko_(shortStack?.sendoloko);
   const datumoj = prepariDatumojn_(shortStack?.povumo);
 
+  // Uzu la saman rekonon de optimumigitaj konstituantoj
+  // kiel che la kalkulo de la tekstaj rezultoj.
+  const limigoj = {};
+  datumajRimarkoj_(datumoj.originalo, limigoj);
+
+  // Konservu la skribadon de la konstituantoj kaj Doodson-numeroj,
+  // ankau se pro optimumigo neniu kurbo estos montrata.
   try {
     skribiKonstituantojnKajDoodson({ povumo: datumoj.originalo });
   } catch (e) {
     console.error(e);
+  }
+
+  // Konstituantoj optimumigitaj por maksimumoj au minimumoj
+  // ne estas uzataj por kalkuli kaj montri akvonivelan kurbon.
+  if (
+    limigoj.speco === 'maksimumoj' ||
+    limigoj.speco === 'minimumoj'
+  ) {
+    return {
+      points: [],
+      startLabel: '',
+      endLabel: ''
+    };
   }
 
   const startDate = new Date(tempo.time - 12 * 60 * 60 * 1000);
