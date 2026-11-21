@@ -285,8 +285,8 @@ function doGet(e) {
     
     <a href="#" onclick="searchTideGauge(); return false;" class="button">Serchi</a>
     <a href="#" onclick="goToPage(); return false;" class="button">Shargi</a>
-    <a href="${baseUrl}?page=${Math.max(1, page-1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">? Antaua</a>
-    <a href="${baseUrl}?page=${Math.min(totalPages, page+1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">Sekva ?</a>
+    <a href="${baseUrl}?page=${Math.max(1, page-1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">&lt; Antaua</a>
+    <a href="${baseUrl}?page=${Math.min(totalPages, page+1)}&chunk=${chunkSize}&t=${timestamp}" target="_top" class="button">Sekva &gt;</a>
     ${copyButtonHtml}
   </div>
 
