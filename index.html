@@ -1,1436 +1,997 @@
 <!DOCTYPE html>
 <html lang="eo">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Wasserstands- und Gezeitenprognosen auf Basis von TICON-4-Daten. Water level and tidal predictions based on TICON-4 data. Prévisions des niveaux d'eau et des marées basées sur les données TICON-4. Prognozoj de akvoniveloj kaj tajdoj surbaze de TICON-4-datumoj.">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <base target="_top">
-    <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&display=swap&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="description"
+        content="Wasserstands- und Gezeitenprognosen auf Basis harmonischer Konstituenten. Prognozoj de akvoniveloj kaj tajdoj.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base target="_top">
+  <title>Prognozo de akvoniveloj per TICON-4-datumoj</title>
 
-    <style>
-        body {
-            font-family: 'Open Sans', Arial, sans-serif;
-        }
+  <style>
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
 
-        .klarigoj h5 {
-            margin-top: 2rem;
-            font-weight: 700;
-        }
+    body {
+      margin: 0;
+      color: #172b3a;
+      background: white;
+      font: 16px/1.5 system-ui, sans-serif;
+    }
 
-        .klarigoj h6 {
-            margin-top: 1.4rem;
-            font-weight: 700;
-        }
+    main {
+      max-width: 980px;
+      margin: auto;
+      padding: 16px;
+    }
 
-        .klarigoj .card-panel {
-            padding: 1.2rem 1.4rem;
-        }
+    header, footer { text-align: center; }
+    h1 { font: bold clamp(1.6rem, 4vw, 2.3rem) Georgia, serif; }
+    h2 { font-size: 1.35rem; }
+    h3 { font-size: 1.1rem; }
+    a { color: #075985; }
+    label { display: block; margin-bottom: 4px; font-weight: 650; }
 
-        .klarigoj ul {
-            margin-left: 1.2rem;
-        }
+    .panel, .box {
+      min-width: 0;
+      padding: 16px;
+      margin: 16px 0;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+    }
 
-        .klarigoj li {
-            margin-bottom: 0.35rem;
-        }
+    .active {
+      border-left: 5px solid #075985;
+      background: #f0f9ff;
+      padding: 10px 14px;
+      overflow-wrap: anywhere;
+    }
 
-        .klarigoj code {
-            background: #f3f3f3;
-            padding: 0.1rem 0.3rem;
-            border-radius: 3px;
-        }
+    .small { font-size: .93rem; }
+    .error { color: #9c1919; }
+    .note { color: #415565; }
+    .actions, .nav, .time {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
 
-        .small-note {
-            font-size: 0.95rem;
-        }
+    input, select, button, textarea {
+      font: inherit;
+      color: inherit;
+    }
 
-        table.striped td,
-        table.striped th {
-            vertical-align: top;
-        }
+    input, select, button {
+      min-height: 42px;
+      padding: 7px 10px;
+      border: 1px solid #aab9c5;
+      border-radius: 7px;
+      background: white;
+    }
 
-        [hidden] {
-            display: none !important;
-        }
+    button, summary { cursor: pointer; }
+    button:hover:not(:disabled) { background: #e1f3ff; }
+    button.primary {
+      background: #075985;
+      color: white;
+      border-color: #075985;
+    }
+    button.primary:hover:not(:disabled) { background: #0c4a6e; }
+    button:disabled { opacity: .6; cursor: default; }
+    :focus-visible { outline: 3px solid #38bdf8; outline-offset: 2px; }
 
-        .prediction-form {
-            max-width: 900px;
-            margin: 0 auto 2rem;
-            padding: 20px;
-            border: 1px solid #cbd5e1;
-            border-radius: 12px;
-        }
+    fieldset {
+      border: 0;
+      padding: 0;
+      margin: 0;
+      min-width: 0;
+    }
 
-        .prediction-form fieldset {
-            min-width: 0;
-            border: 0;
-            margin: 0;
-            padding: 0;
-        }
+    #stationQuery { flex: 1 1 230px; min-width: 0; }
+    #stationHits {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    #stationHits button {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 4px;
+      overflow-wrap: anywhere;
+    }
 
-        .prediction-form label,
-        .station-field label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #000;
-        }
+    #povumo {
+      width: 100%;
+      min-height: 200px;
+      padding: 8px;
+      font: 13px/1.45 monospace;
+      resize: vertical;
+    }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-            gap: 28px;
-            align-items: start;
-        }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: 24px;
+    }
 
-        .calendar {
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 12px;
-        }
+    .calendar {
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+    }
 
-        .calendar-nav {
-            display: flex;
-            gap: 7px;
-            align-items: center;
-            margin-bottom: 12px;
-        }
+    .nav { flex-wrap: nowrap; }
+    #month { flex: 1; min-width: 0; }
+    .week, #days {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 3px;
+      text-align: center;
+    }
+    .week { margin: 8px 0; font-size: .85rem; }
+    #days button { padding: 3px 0; min-height: 36px; }
+    #days button.today { border: 2px solid #075985; }
+    #days button.selected { background: #075985; color: white; }
 
-        .prediction-form select.browser-default {
-            display: block;
-            height: auto;
-            min-height: 42px;
-            padding: 7px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            background: white;
-            color: #172b3a;
-            font: inherit;
-        }
+    table { border-collapse: collapse; }
+    th, td { text-align: left; padding: 6px; vertical-align: top; }
+    #eventsTable { width: 100%; }
+    #eventsTable th, #eventsTable td { border-bottom: 1px solid #ddd; }
+    .scroll { overflow-x: auto; }
+    #waterCurve { display: block; width: 100%; height: auto; }
+    details { margin: 12px 0; }
+    summary { font-weight: 650; }
+    iframe { width: 100%; height: 420px; border: 1px solid #ccc; }
+    code { overflow-wrap: anywhere; }
+    footer { padding: 24px 0 80px; }
 
-        .calendar-nav select {
-            min-width: 0;
-        }
-
-        #month {
-            flex: 1;
-        }
-
-        #year {
-            width: 91px;
-        }
-
-        .calendar-nav button,
-        .day,
-        #now {
-            cursor: pointer;
-            min-height: 42px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            background: white;
-            color: #172b3a;
-            font: inherit;
-        }
-
-        .calendar-nav button {
-            padding: 6px 11px;
-        }
-
-        #now {
-            padding: 8px 13px;
-        }
-
-        .calendar-nav button:hover:not(:disabled),
-        .day:hover:not(:disabled),
-        #now:hover:not(:disabled) {
-            background: #e0f2fe;
-        }
-
-        .prediction-form button:focus-visible,
-        .prediction-form select:focus-visible,
-        .prediction-form textarea:focus-visible,
-        input#lokojNomo:focus-visible {
-            outline: 3px solid #38bdf8;
-            outline-offset: 3px;
-        }
-
-        .prediction-form button:disabled,
-        .prediction-form select:disabled,
-        .prediction-form textarea:disabled {
-            cursor: wait;
-            opacity: .6;
-        }
-
-        .weekdays,
-        .days {
-            display: grid;
-            grid-template-columns: repeat(7, minmax(0, 1fr));
-            gap: 4px;
-        }
-
-        .weekdays {
-            margin-bottom: 5px;
-            color: #526474;
-            font-size: .85rem;
-            text-align: center;
-        }
-
-        .weekdays span {
-            padding: 4px 0;
-        }
-
-        .day {
-            min-width: 0;
-            min-height: 39px;
-            padding: 5px 0;
-            border-color: transparent;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .day.today {
-            border-color: #075985;
-        }
-
-        .day.selected {
-            background: #075985;
-            color: white;
-            font-weight: 700;
-        }
-
-        .day.selected:hover:not(:disabled) {
-            background: #0c4a6e;
-        }
-
-        #selectedDate {
-            margin-top: 12px;
-            font-weight: 600;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .time-row {
-            display: flex;
-            align-items: flex-end;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-
-        .time-row select {
-            min-width: 78px;
-        }
-
-        .time-separator {
-            padding-bottom: 9px;
-            font-weight: 700;
-        }
-
-        .data-field,
-        .station-field {
-            margin-top: 24px;
-        }
-
-        #povumo,
-        input#lokojNomo {
-            display: block;
-            box-sizing: border-box;
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            background: white;
-            color: #000;
-            font-family: monospace;
-            font-size: 13px;
-            font-weight: 400;
-            line-height: 1.45;
-            box-shadow: none;
-        }
-
-        #povumo {
-            height: 260px;
-            min-height: 160px;
-            resize: vertical;
-        }
-
-        input#lokojNomo {
-            height: 42px;
-            min-height: 42px;
-            margin: 0;
-        }
-
-        input#lokojNomo:focus {
-            border: 1px solid #075985;
-            box-shadow: none;
-            color: #000;
-        }
-
-        #lokojNomoHelp {
-            color: #000;
-        }
-
-        .form-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-top: 20px;
-        }
-
-        #status {
-            min-height: 1.5em;
-            margin: 16px 0 0;
-        }
-
-        #status.error {
-            color: #a11919;
-        }
-
-        .result-panel {
-            border: 1px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .level {
-            border-left: 5px solid #075985;
-            background: #f0f9ff;
-            padding: 16px;
-            margin-bottom: 22px;
-        }
-
-        #levelValue {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin: 8px 0 0;
-        }
-
-        .table-wrap {
-            overflow-x: auto;
-        }
-
-        #events td:nth-child(2),
-        #events td:last-child {
-            white-space: nowrap;
-            font-variant-numeric: tabular-nums;
-        }
-
-        #warnings {
-            padding-left: 22px;
-        }
-
-        #warnings li {
-            list-style-type: disc;
-            margin-bottom: 8px;
-        }
-
-        @media (max-width: 640px) {
-            .prediction-form,
-            .result-panel {
-                padding: 14px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-        }
-    </style>
+    @media (max-width: 650px) {
+      .grid { grid-template-columns: 1fr; gap: 10px; }
+      main { padding: 10px; }
+      .panel, .box { padding: 11px; }
+    }
+  </style>
 </head>
 
 <body>
-    <div class="container">
+<main>
+  <header>
+    <h1>Prognozo de akvoniveloj per TICON-4-datumoj</h1>
+    <p>Privata neoficiala prognozo ne tauga por navigaciaj celoj;
+      bazo: harmona metodo.</p>
+    <p>
+      <a href="https://gist.github.com/AndreasKueck/a62016ed4c3efaa477691de06af8d794"
+         target="_blank">Android-apo “Maro”</a> |
+      <a href="#maro" target="_self">Snapchat-lenso “Maro: sep horoj”</a> |
+      <a href="https://github.com/AndreasKueck/maro" target="_blank">GitHub-deponejo</a> |
+      <a href="https://grok.com/share/c2hhcmQtNA_400782cd-162d-42bf-93dc-dc6798a04b29"
+         target="_blank">Grok-Tajdo</a> |
+      <a href="https://github.com/AndreasKueck/flupauzo" target="_blank">Flupauzo</a>
+    </p>
+    <p>
+      Por chiu el jenaj lokoj ekzistas ret-apo kaj Snapchat-lenso
+      surbaze de la metodo nome harmona prezento de neegalajhoj
+      (germane: „harmonische Darstellung der Ungleichheiten“).
+      Koncerne germanajn lokojn prognozoj per ghi ordinare estas pli
+      proksimaj al oficialaj prognozoj kaj al la realo, ol prognozoj
+      per la harmona metodo.
+      <br>
+      <span id="otherApps"></span>
+    </p>
+  </header>
 
-        <div class="row" align="center">
-            <div class="col s12">
-                <h4 style="font-family: 'Bree Serif', serif;">Prognozo de akvoniveloj per TICON-4-datumoj</h4>
-                <p>(privata neoficiala prognozo ne tauga por navigaciaj celoj; bazo: harmona metodo)</p>
+  <form id="predictionForm" class="panel" novalidate>
+    <fieldset id="controls">
 
-                <p><a href="https://gist.github.com/AndreasKueck/a62016ed4c3efaa477691de06af8d794" target="_blank">Android-apo &quot;Maro&quot;</a> | <a href="#" onclick="scrollToAnchor('maro'); return false;">Snapchat-lenso &quot;Maro: sep horoj&quot;</a> | <a href="https://github.com/AndreasKueck/maro" target="_blank">GitHub-deponejo</a> | <a href="https://grok.com/share/c2hhcmQtNA_400782cd-162d-42bf-93dc-dc6798a04b29" target="_blank">Grok-Tajdo: akvoniveloj per prompto</a> | <a href="https://github.com/AndreasKueck/flupauzo" target="_blank">Flupauzo: per komandlinio neenrete prognozi akvonivelojn</a></p>
-                <p>Por chiu el jenaj lokoj ekzistas ret-apo kaj Snapchat-lenso surbaze de la metodo nome harmona prezento de neegalajhoj (germane: "harmonische Darstellung der Ungleichheiten"). Koncerne germanajn lokojn prognozoj per ghi ordinare estas pli proksimaj al oficialaj prognozoj kaj al la realo, ol prognozoj per la harmona metodo.<br><a href="https://script.google.com/a/~/macros/s/AKfycbwYKQYvG8XhRLoWLwzaNUlmbmF5rltLOVySPOghF-7qDxIlBSGbF0tslFoAxot-hc0e/exec" target="_blank">Belum</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbwMCbCHyS0efZdNoQ1ThOqyEEOjQ27PporNrxoED3J3N0PLXnG5o0WJ3f8TvFWVzNq_bw/exec" target="_blank">Bremen</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbwhrCptnMjEJhwO5PraT78B_md-0yBp_uEHWluGCF5x39fTHk8cdiK74j1lufHLa1sc/exec" target="_blank">Bremerhaven</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbyEGdBNs6A7V9TTm5XicPGa8ai3B3m4iP-JBaY0D3NeoEbGWSdlFMU1NOlwwSgw3NK5/exec" target="_blank">Bremerv&ouml;rde</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbwKllsiz0caZM_nTfrmgXHnggm5Go8bxin5h6yhkjjHa2-myTmRu7fDIbNZxsVo4aZp8Q/exec" target="_blank">Cuxhaven</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbymzldC7yNgGHjzjRIMLC9ituSb08VITchFJWg24o55AtuCowpipnmQCUU-K8JieiAJ/exec" target="_blank">Elsfleth</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbwi1sFEr8CtKeDWl3LqQQnwYunqg7-H7NVmuoBAOVLScfaZqOqOqiXPwSNsLe3DxMS6sw/exec" target="_blank">Emden</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbxZfSR32y1MrSwdr4DsdU24eXOp0NL5WLtfuKBJgJdwwCqxFW16sVHdTTj_TVE7pX83/exec" target="_blank">Gl&uuml;ckstadt</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbzrddFJWsO8ivLMrhQv5MbLxcSPl1NPi1-XTWVOSI6zu_Zp0k-q60kzfUw5sfSte2tA/exec" target="_blank">Hamburgo</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbxK0LmZ3yBFVjqOT4s4z4UhicB5nc8CvHRa7e9WQkOsKowsshISoKHylOo1Or-D4EWH5g/exec" target="_blank">Hechthausen</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbzA5W3LTynhL05KoPevL2nGgAT9WczbEAX_E_-C1kjCGYd1SW-LwmpV2AZcLHXwsyC2/exec" target="_blank">Helgoland</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbz0H5gaSzWz_hNsgGqx_a4krpDesUAp3HfdgOqLucDLHCAbeVH4-X5x6VDrT01ATPQY/exec" target="_blank">Husum</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbwFMJk10hFb-XSNX8vWRIc0XnJmAcB1CJPh4YbPHqJI12caPHM9UmWVr1I5ry57LwrG3g/exec" target="_blank">Norderney</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbwkI1b6nJRZvZ_-UKx04XBt97SlzdxIVCCmSrNN2OWL_i7wyHb5j-G9NlzF2KpIOf4Pbw/exec" target="_blank">Oldenburg</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbxYD6-T92Png1jSSJ8nV1P7-PLL9-aI_t95G0B4I_VCJtB7geKNKlFE8X68KMPsnfSk/exec" target="_blank">Otterndorf</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbwGAUAULHxlc9ETGTuYQMGaBENda7gXAC9qRi8G8cyJiJk3npeqZZ_nKJom8vOO05CEhQ/exec" target="_blank">Papenburg</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbw1p6S3LyNaRTIcSu4myv3SP-ZzSX302erglMDh8R9wwq1ZRAHCwJ8Nb9q5t-Isl0aX/exec" target="_blank">Rechtenfleth</a> | <a href="https://script.google.com/a/~/macros/s/AKfycbzAR1q8kD4qGaxGNSrn7D_kSkEik7XbE9Dy8Msd0a9DZZAi5XT6vH4JBXZ7ar432AIbdg/exec" target="_blank">Wilhelmshaven</a></p>
+      <section aria-labelledby="stationTitle">
+        <h2 id="stationTitle">Loko kaj harmonaj konstituantoj</h2>
+
+        <div class="active" id="activeBox" aria-live="polite">
+          <strong id="activeStation"></strong>
+          <span id="activeSource"></span>
+        </div>
+
+        <p class="small">
+          Por alia stacio enigu loknomon, ekzemple
+          <b>Portsmouth</b>, au kompletan <code>tide_gauge_name</code>.
+          Poste elektu unu el la trovitaj stacioj.
+        </p>
+
+        <label for="stationQuery">Loko au tide_gauge_name</label>
+        <div class="actions">
+          <input type="search" id="stationQuery"
+                 placeholder="Ekz. Portsmouth"
+                 autocomplete="off" autocapitalize="none"
+                 spellcheck="false" enterkeyhint="search">
+          <button type="button" id="searchButton">Serchi</button>
+        </div>
+
+        <p id="stationStatus" role="status" aria-live="polite"></p>
+        <ul id="stationHits" aria-label="Trovitaj stacioj" hidden></ul>
+
+        <details id="dataDetails">
+          <summary>Montri au redakti datumojn</summary>
+          <p class="small">
+            Vi povas ankau permane anstatauigi la tutan enhavon.
+            Uzu konstituantojn rilatantajn al UTK.
+            Se la kampo estas malplena, uzighas la defaulte uzataj
+            TICON-4-datumoj de Bulonjo che Maro.
+          </p>
+          <label for="povumo">TICON-4-datumoj au alternativaj datumoj</label>
+          <textarea id="povumo" name="povumo" rows="10"
+                    spellcheck="false" wrap="off"><?= defaultPovumo ?></textarea>
+        </details>
+      </section>
+
+      <section aria-labelledby="dateTitle">
+        <h2 id="dateTitle">Dato kaj horo en UTK</h2>
+        <div class="grid">
+          <div>
+            <div class="calendar" role="group" aria-label="Kalendaro en UTK">
+              <div class="nav">
+                <button type="button" id="previous" aria-label="Antaua monato">‹</button>
+                <select id="month" aria-label="Monato"></select>
+                <select id="year" aria-label="Jaro"></select>
+                <button type="button" id="next" aria-label="Sekva monato">›</button>
+              </div>
+              <div class="week" aria-hidden="true">
+                <span>Lu</span><span>Ma</span><span>Me</span><span>Jh</span>
+                <span>Ve</span><span>Sa</span><span>Di</span>
+              </div>
+              <div id="days" role="group" aria-label="Tagoj de la monato"></div>
             </div>
-        </div>
+            <p id="selectedDate" aria-live="polite"></p>
+          </div>
 
-        <div class="row" align="left" id="result" hidden>
-            <section class="result-panel" aria-labelledby="resultTitle">
-                <h5 id="resultTitle">Rezultoj</h5>
-
-                <div class="level" id="level">
-                    <h6><b>Akvonivelo je la elektita horo</b></h6>
-                    <p id="levelTime"></p>
-                    <p id="levelValue"></p>
-                </div>
-
-                <!-- <h6><b>Maksimumaj kaj minimumaj akvoniveloj de la elektita tago</b></h6> -->
-
-                <div class="table-wrap">
-                    <table class="striped">
-                        <thead>
-                            <tr>
-                                <th scope="col">Akvoniveloj</th>
-                                <th scope="col">Dato kaj horo en UTK</th>
-                                <th scope="col">Akvonivelo (m)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="events"></tbody>
-                    </table>
-                </div>
-
-                <p id="noEvents" hidden>
-                    La kalkulo ne liveris maksimumojn au minimumojn por tiu tago.
-                </p>
-
-                <p class="small-note">
-                    La elektita tago ampleksas la tempon de 00:00 ghis,
-                    sed ne inkluzive, 00:00 de la sekva tago en UTK.
-                </p>
-
-                <h6><b>Gravaj rimarkoj</b></h6>
-                <ul id="warnings"></ul>
-            </section>
-        </div>
-
-        <div class="row" align="left" id="curveBox" style="display:none;">
-            <canvas id="waterCurve" width="900" height="360" style="max-width:100%; border:1px solid #cccccc;"></canvas>
-            <p class="small-note">
-                La kurbo montras la dek du horojn antau kaj la dek du
-                horojn post la elektita momento. Chiuj tempoj estas en UTK.
-            </p>
-        </div>
-
-        <div class="row" align="left">
-            <form class="prediction-form" id="urlShortener" name="urlShortener" novalidate>
-                <fieldset id="controls">
-                    <p>
-                        Elektu daton en la kalendaro kaj horon en UTK.
-                        La rezultoj aperos nur post premo de <b>Sendi</b>.
-                    </p>
-
-                    <div class="form-grid">
-                        <div>
-                            <label id="calendarLabel">Dato en UTK</label>
-
-                            <div class="calendar" role="group" aria-labelledby="calendarLabel">
-                                <div class="calendar-nav">
-                                    <button type="button" id="previous"
-                                            title="Antaua monato" aria-label="Antaua monato">‹</button>
-
-                                    <select id="month" class="browser-default" aria-label="Monato"></select>
-                                    <select id="year" class="browser-default" aria-label="Jaro"></select>
-
-                                    <button type="button" id="next"
-                                            title="Sekva monato" aria-label="Sekva monato">›</button>
-                                </div>
-
-                                <div class="weekdays">
-                                    <span title="Lundo">Lu</span>
-                                    <span title="Mardo">Ma</span>
-                                    <span title="Merkredo">Me</span>
-                                    <span title="Jhaudo">Jh</span>
-                                    <span title="Vendredo">Ve</span>
-                                    <span title="Sabato">Sa</span>
-                                    <span title="Dimancho">Di</span>
-                                </div>
-
-                                <div id="days" class="days" role="group"
-                                     aria-label="Tagoj de la monato"></div>
-                            </div>
-
-                            <p id="selectedDate" aria-live="polite"></p>
-
-                            <p class="small-note">
-                                Elektebla intervalo: 1900-03-01 ghis 2100-02-28.
-                                Tiu teknika limo ne garantias la precizecon
-                                de la prognozo.
-                            </p>
-                        </div>
-
-                        <div>
-                            <div class="time-row">
-                                <div>
-                                    <label for="hour">Horo</label>
-                                    <select id="hour" class="browser-default"></select>
-                                </div>
-
-                                <span class="time-separator" aria-hidden="true">:</span>
-
-                                <div>
-                                    <label for="minute">Minuto</label>
-                                    <select id="minute" class="browser-default"></select>
-                                </div>
-
-                                <span class="time-separator">UTK</span>
-                            </div>
-
-                            <button type="button" id="now">Nuna dato kaj horo</button>
-
-                            <p class="small-note">
-                                La komencaj valoroj devenas de la horlogho
-                                de via aparato. Ili estas montrataj en UTK.
-                            </p>
-
-                            <p class="small-note">
-                                Chiu kalkulo liveras la akvonivelon je la
-                                elektita horo kaj la maksimumojn kaj
-                                minimumojn de la elektita tago.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="data-field">
-                        <label for="povumo">TICON-4-datumoj au alternativaj datumoj</label>
-
-                        <textarea id="povumo" name="povumo" rows="10"
-                                  spellcheck="false" wrap="off"
-                                  aria-describedby="povumoHelp"><?= defaultPovumo ?></textarea>
-
-                        <p id="povumoHelp" class="small-note">
-                            La kampo jam entenas la defaulte uzatajn datumojn
-                            de Bulonjo che Maro
-                            (<code>boulogne_sur_mer-111-fra-refmar</code>).
-                            Ties fonto estas Hart-Davis Michael, Dettmering Denise, Seitz Florian (2025). TICON-4: TIdal CONstants based on GESLA-4 sea-level records. SEANOE (<a href="https://doi.org/10.17882/109129" target="_blank">https://doi.org/10.17882/109129</a>).
-                            Por alia loko anstatauigu la tutan enhavon per
-                            ties datumoj. Uzu konstituantojn rilatantajn al UTK.
-                            Se la kampo estas malplena, uzighas denove la
-                            defaulte uzataj datumoj de Bulonjo che Maro.
-                            La akvoniveloj rilatas al la loka meza akvonivelo.
-                        </p>
-                    </div>
-
-                    <div class="form-actions">
-                        <button class="waves-effect btn blue" type="submit" id="create">Sendi</button>
-                        <button class="waves-effect btn red" type="button" id="freshStart">Forvishi</button>
-                    </div>
-
-                    <p class="small-note">
-                        <b>Forvishi</b> forigas la rezultojn kaj restarigas
-                        la nunajn daton kaj horon kaj la defaulte uzatajn
-                        datumojn de Bulonjo che Maro.
-                    </p>
-                </fieldset>
-
-                <p id="status" role="status" aria-live="polite"></p>
-
-                <noscript>
-                    Por uzi la formularon, bonvolu aktivigi JavaScript.
-                </noscript>
-            </form>
-
-            <div align="left" class="klarigoj">
-                <h5>Klarigoj</h5>
-<!--
-                <button onclick="ladeKvar()">
-                    <b>Mallonge: Jen kiel uzi la formularon</b>
-                </button>
-
-                <hr>
-                <div id="content4">...</div>
--->
-                <h6>1. Dato kaj horo</h6>
-                <p>
-                    Elektu daton en la kalendaro kaj horon per la kampoj
-                    <b>Horo</b> kaj <b>Minuto</b>. La tempo chiam rilatas al
-                    Universala Tempo Kunordigita (UTK).
-                </p>
-                <p>
-                    Ekzemple la elekto de la 30-a de Augusto 2027 kaj
-                    <code>13:40</code> liveras kaj la prognozitan akvonivelon
-                    je <code>2027-08-30 13:40 UTK</code> kaj la maksimumojn
-                    kaj minimumojn de tiu UTK-tago. Ne plu ekzistas aparta
-                    enigo por nur la tagaj maksimumoj kaj minimumoj.
-                </p>
-                <p>
-                    Komence estas elektitaj la nunaj dato kaj horo en UTK.
-                    Per <b>Nuna dato kaj horo</b> vi povas aktualigi ilin.
-                    La dato estu nek antau <b>1900-03-01</b> nek post
-                    <b>2100-02-28</b>. La rezultoj aperas nur post premo
-                    de <b>Sendi</b>.
-                </p>
-                <p>
-                    La akvonivela kurbo montras la dek du horojn antau
-                    kaj la dek du horojn post la elektita momento.
-                    La tabelo de maksimumoj kaj minimumoj, kontraste,
-                    rilatas al la elektita kalendara tago en UTK.
-                </p>
-
-                <h6>2. Horzono kaj somera tempo</h6>
-                <p>
-                    La horoj estas en UTK. Ghin la uzataj harmonaj konstituantoj havu, kiel referencon.
-                </p>
-                <p>
-                    La temporeferenco de la konstituantoj dependas de tio,
-                    kiel la originaj akvonivelaj datumoj de la koncerna
-                    loko estis preparitaj antau la harmona analizo.
-                    Ili povas rilati al loka tempo (kun au sen somera
-                    tempo, iuokaze ech miksite ene de la sama jaro) au
-                    al UTK. Jen detaloj
-                    <a href="https://rentry.co/tc4kvar" target="_blank">1</a>
-                    kaj
-                    <a href="https://github.com/openwatersio/tide-database/issues/96" target="_blank">2</a>.
-                </p>
-                <p>
-                    La elekto de UTK en la formularo ne transformas
-                    konstituantojn kun alia temporeferenco. Se la apo ne
-                    povas konfirmi UTK-datumojn, ghi montras atentigon.
-                    Kontrolu la fonton kaj komparu la rezultojn por pluraj
-                    tagoj kaj malsamaj sezonoj kun oficiala au alia
-                    fidinda prognozo. Se necese, uzu alternativajn
-                    konstituantojn rilatantajn al UTK.
-                </p>
-
-                <h6>3. Alto-referenco</h6>
-                <p>
-                    La referenca aldono estas chiam <code>0 m</code>.
-                    La akvoniveloj estas montrataj en metroj rilate la lokan mezan akvonivelon.
-                </p>
-
-                <h6>4. Kampo “TICON-4-datumoj au alternativaj datumoj”</h6>
-                <p>
-                    La plurlinia tekstokampo jam entenas la defaulte
-                    uzatajn datumojn de Bulonjo che Maro
-                    (<code>boulogne_sur_mer-111-fra-refmar</code>).
-                    Por alia loko anstatauigu la tutan enhavon per
-                    la koncernaj datumoj.
-                </p>
-                <p>
-                    Ilin oni trovas per helpo de sekcio <a href="#" onclick="scrollToAnchor('alternativaj'); return false;">Alternativaj harmonaj konstituantoj</a>.
-                    Au, por trovi harmonajn konstituantojn rekte en la TICON-4-datumbazo, oni procedu jene:
-                </p>
-                <ol>
-                    <li>
-                        Elshutu dosieron <code>122848.csv</code>
-                        (&quot;TICON_4&quot;) el
-                        <a href="https://www.seanoe.org/data/00980/109129/" target="_blank">tiu retpagho</a>
-                        per &quot;Download dataset&quot;.<br>
-                        Por spekti la enhavon sen antaua elshuto kaj
-                        serchi, oni povas uzi la
-                        <a href="#" onclick="scrollToAnchor('csvspektilo'); return false;">CSV-spektilon</a>
-                        malsupre kaj daurigi che pasho 3.
-                    </li>
-                    <li>
-                        La dosieron renomu al iu kun sufikso
-                        <code>txt</code>, kiel ekzemple
-                        <code>ticon_4.txt</code>, kaj malfermu per
-                        tekstoredaktilo, kiel ekzemple WordPad,
-                        au &ndash; en smartfono &ndash; apo, por spekti
-                        tekstodosierojn, kiel ekzemple Mi Text Viewer.
-                    </li>
-                    <li>
-                        Trovu la liniojn por la koncerna loko
-                        (<code>tide_gauge_name</code>).
-                        Kopiu ghuste tiujn liniojn: nek pli, nek
-                        malpli. En kelkaj redaktiloj unu longa linio
-                        povas aspekti, kvazau pluraj linioj.
-                    </li>
-                    <li>
-                        Marku la tutan ghisnunan enhavon de kampo
-                        <code>TICON-4-datumoj au alternativaj datumoj</code>
-                        kaj anstatauigu ghin per la kopiitaj datumoj.
-                    </li>
-                  </ol>
-                  <b>Rekomendo:</b> El la TICON-4-datumbazo (dosiero <code>122848.csv</code>) kaj <a href="#" onclick="scrollToAnchor('csvspektilo'); return false;">CSV-spektilo</a> oni ne uzu konstituantojn de lokoj kun <code>tide_gauge_name</code> finighanta per <code>deu-wsv</code> au <code>nld-rws</code> kaj krome kun <code>tide_gauge_name</code> <code>hong_kong-329-hkg-uhslc</code>, <code>hong_kong-329a-hkg-uhslc_rq</code> kaj <code>hong_kong-329b-hkg-uhslc_rq</code>, char la koncernaj konstituantoj havas malghustan tempan referencon. Anstataue oni uzu <a href="#" onclick="scrollToAnchor('alternativaj'); return false;">alternativajn konstituantojn</a>. <a href="https://github.com/openwatersio/slackwater-database/pull/108" target="_blank">Problemoj</a> estas ankau okaze de <code>mazatlan_flotador-16-mex-unam</code> (oni uzu anstataue la konstituantojn de <code>mazatlan-673-mex-unam_hist</code>) kaj Cape d'Or (oni uzu <a href="https://script.google.com/a/~/macros/s/AKfycbwLg10h9pXC95lafWaZ0Z0hTJJ1rwtbXZUxCjPaH-pZIZ4-FBzaMgcHWz1mNVm-8ZkDsw/exec" target="_blank">ret-apon</a> surbaze de la harmona prezento de neegalajhoj).
-
-                <h6 id="alternativaj" class="anker">5. Alternativaj harmonaj konstituantoj</h6>
-                <p>
-                    Pri kelkaj lokoj ekzistas alternativaj harmonaj konstituantoj. Vidu sekcion &quot;<a href="#" onclick="scrollToAnchor('mapoj'); return false;">Mapo</a>&quot;. Tiuj konstituantoj povas esti utilaj, ekzemple se la TICON-4-datumoj ne rilatas al UTK au se por difinita loko analizo alia eligis tiajn konstituantojn, per kiuj pli bonaj prognozoj estas fareblaj.
-                </p>
-                <p>
-                  Pri <a href="https://eo.wikipedia.org/wiki/Ponto_de_Londono" target="_blank"><b>Ponto de Londono</b></a> kurioze ne estas datumoj en TICON-4. Tial jen <a href="https://andreaskueck.github.io/tc4a/ponto_de_londono/index.html">dosiero</a> kun alternativaj harmonaj konstituantoj; fonto: &quot;Gezeitentafeln f&uuml;r das Jahr 1948&quot;, eldonita de Deutsches Hydrographisches Institut Hamburg, Hamburg, 1948, pagho 168. "Alternativaj" do chi-kuntekste mesaghas: &quot;entute iuj&quot;.
-                </p>
-                <p id="maro" class="anker">
-                    Por <b>Cape d'Or</b> <a href="https://github.com/openwatersio/tide-database/issues/93" target="_blank">la amplitudo de unu konstituanto lau la TICON-4-datumoj estas eksterordinare granda</a>. Tial jen <a href="https://script.google.com/a/~/macros/s/AKfycbwLg10h9pXC95lafWaZ0Z0hTJJ1rwtbXZUxCjPaH-pZIZ4-FBzaMgcHWz1mNVm-8ZkDsw/exec" target="_blank">ret-apo</a> surbaze de la harmona prezento de neegalajhoj.
-                </p>
-
-                <h6>6. Harmonaj konstituantoj, Doodson-numeroj kaj Snapchat-lenso “Maro: sep horoj”</h6>                
-                <p>
-                    <button type="button" onclick="ladeTri()">
-                        <b>Klaku por pli</b>
-                    </button>
-                </p>
-<!--                <hr> -->
-                <div id="content">...</div>
-
-                <h6 id="mapoj" class="anker">7. Mapo</h6>
-                <p>
-                    <button type="button" onclick="montriLokojn()">
-                        <b>Klaku, por elekti lokon per mapo</b>
-                    </button>
-                </p>
-
-                <div id="lokojBloko" style="display:none; margin-top:1.5rem;">
-                    <h6>Lokoj kun TICON-4-datumoj</h6>
-
-                    <p>
-                        Por ekhavi la harmonajn konstituantojn de difinita
-                        loko, uzu la kampon <b>tide_gauge_name</b> malsupre.
-                        Ghi jam entenas
-                        <code>kilrushlough-kil-irl-cmems</code>.
-                        Por serchi tiun stacion, simple klaku al
-                        <b>Trovi</b>.
-                        Por alia loko anstatauigu la valoron per la
-                        <b>tide_gauge_name</b> trovita en <a href="https://openadb.dgfi.tum.de/en/ocean-tides/map/" target="_blank">tiu interaga mapo</a>.<br>
-                        En la Android-apo povas esti pli oportune, kopii la ligilon al la mapo (<code>https://openadb.dgfi.tum.de/en/ocean-tides/map/</code>) kaj alglui ghin en krozila apo.
-                    </p>
-                    <p>
-                      La harmonaj konstituantoj eligataj malsupre venas de <a href="https://github.com/openwatersio/slackwater-database/tree/main/data/ticon" target="_blank">datumbazo de Open Waters</a> kaj laubezone estas korektitaj tiuefike, ke ili rilatas al UTK. Jen detala priskribo (<a href="https://github.com/openwatersio/slackwater-database#modifications-to-source-data" target="_blank">originale angla</a> / <a href="https://grok.com/share/c2hhcmQtNA_7175cdc6-2819-469d-a69a-a97658956773" target="_blank">tradukita Esperanten</a>) de la modifoj al fontaj datumoj.
-                    </p>
-                    <div class="station-field">
-                        <label for="lokojNomo">tide_gauge_name</label>
-                        <input type="text"
-                               id="lokojNomo"
-                               name="tide_gauge_name"
-                               value="kilrushlough-kil-irl-cmems"
-                               autocomplete="off"
-                               autocapitalize="none"
-                               spellcheck="false"
-                               aria-describedby="lokojNomoHelp">
-
-                        <p id="lokojNomoHelp" class="small-note">
-                            La nigra teksto estas la efektiva serchvaloro.
-                            Se vi ne anstatauigas ghin,
-                            <b>Trovi</b> serchas
-                            <code>kilrushlough-kil-irl-cmems</code>.
-                            Vi povas ankau startigi la serchon per
-                            la eniga klavo.
-                        </p>
-                    </div>
-
-                    <p>
-                        <button class="waves-effect btn blue" type="button" onclick="serchiLokon()">
-                            Trovi
-                        </button>
-                    </p>
-
-                    <p class="small-note">
-                        Post sukcesa sercho klaku al <b>Kopii al tondejo</b>.
-                        Per la kopiitaj datumoj anstatauigu la tutan
-                        enhavon de la supra kampo
-                        <b>TICON-4-datumoj au alternativaj datumoj</b>
-                        kaj poste klaku al <b>Sendi</b>.
-                        La sercho mem ne shanghas la enhavon de tiu kampo.
-                    </p>
-
-                    <div id="lokojRezulto"></div>
-                </div>
-                <h6>8. CSV-spektilo</h6>
-                <p id="csvspektilo" class="anker">
-                    <p class="small-note">
-                      Se la CSV-spektilo ne estas montrata, klaku <a href="https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMWhZWZArsRPscRsH5jdqqTxjdMq6KJu4U9w/exec" target="_blank">chi tie</a> au kopiu <code>https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMWhZWZArsRPscRsH5jdqqTxjdMq6KJu4U9w/exec</code> kaj algluu la kopiitan retadreson en aparta langeto de krozilo(-apo). Tiam la CSV-spektilo aperas aparte. Se ne, la TICON-4-datumbazo aktuale ne estas alirebla.
-                    </p>
-                    <p>
-                      <b>Rekomendo:</b> El la <a href="#" onclick="scrollToAnchor('csvspektilo'); return false;">CSV-spektilo</a> kaj TICON-4-datumbazo (dosiero <code>122848.csv</code>) oni ne uzu konstituantojn de lokoj kun <code>tide_gauge_name</code> finighanta per <code>deu-wsv</code> au <code>nld-rws</code> kaj krome kun <code>tide_gauge_name</code> <code>hong_kong-329-hkg-uhslc</code>, <code>hong_kong-329a-hkg-uhslc_rq</code> kaj <code>hong_kong-329b-hkg-uhslc_rq</code>, char la koncernaj konstituantoj havas malghustan tempan referencon. Anstataue oni uzu <a href="#" onclick="scrollToAnchor('alternativaj'); return false;">alternativajn konstituantojn</a>.  <a href="https://github.com/openwatersio/slackwater-database/pull/108" target="_blank">Problemoj</a> estas ankau okaze de <code>mazatlan_flotador-16-mex-unam</code> (oni uzu anstataue la konstituantojn de <code>mazatlan-673-mex-unam_hist</code>) kaj Cape d'Or (oni uzu <a href="https://script.google.com/a/~/macros/s/AKfycbwLg10h9pXC95lafWaZ0Z0hTJJ1rwtbXZUxCjPaH-pZIZ4-FBzaMgcHWz1mNVm-8ZkDsw/exec" target="_blank">ret-apon</a> surbaze de la harmona prezento de neegalajhoj).
-                    </p>
-                    <iframe
-                        src="https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMWhZWZArsRPscRsH5jdqqTxjdMq6KJu4U9w/exec"
-                        style="width:100%; height:400px; border:1px solid #ccc;">
-                    </iframe>
-                </p>
-
-                <h6>Fontoj de datumoj kaj jura avizo</h6>
-
-                <button onclick="ladeKvin()"><b>Klaku por pli</b></button>
-                <hr>
-                <div id="content5">...</div>
-
-                <button onclick="ladeDu()"><b>Ekzemplaj lokoj</b></button>
-                <hr>
-                <div id="content1">...</div>
+          <div>
+            <div class="time">
+              <div>
+                <label for="hour">Horo</label>
+                <select id="hour"></select>
+              </div>
+              <span>:</span>
+              <div>
+                <label for="minute">Minuto</label>
+                <select id="minute"></select>
+              </div>
+              <span>UTK</span>
             </div>
-        </div>
-    </div>
-
-    <div align="center" style="padding: 1rem 0 120px 0;">
-        <a href="https://jhau.de/privateco.html" target="_blank">Privateco</a>
-    </div>
-
-    <div id="welcomeModal" style="
-        display:none;
-        position:fixed;
-        top:0; left:0;
-        width:100%; height:100%;
-        background:rgba(0,0,0,0.7);
-        z-index:9999;
-    ">
-        <div style="
-            background:white;
-            margin:20% auto;
-            padding:20px;
-            width:80%;
-            border-radius:8px;
-            text-align:center;
-        ">
-            <h2>Mallonga gvidlinio</h2>
-            <p>
-                Tiu chi apo malfermas helpopaghojn en apartaj fenestroj.<br><br>
-                Tie kopiu la eventuale bezonatajn datumojn en la tondejon.<br><br>
-                Che Androido poste vishu de la supra ekranrando malsupren,<br>por ke aperu la reen-butono,<br>kaj klaku al ghi sufiche ofte, por reveni chi tien.
+            <p><button type="button" id="now">Nuna dato kaj horo</button></p>
+            <p class="small note">
+              La komencaj valoroj devenas de la horlogho de via aparato.
+              La rezultoj aperos nur post premo de <b>Sendi</b>.
             </p>
-            <button onclick="closeWelcome()">Komprenite</button>
+          </div>
         </div>
+      </section>
+
+      <div class="actions">
+        <button type="submit" class="primary" id="send">Sendi</button>
+        <button type="button" id="resetButton">Forvishi</button>
+      </div>
+      <p class="small">
+        <b>Forvishi</b> restarigas la defaulte uzatajn datumojn de
+        Bulonjo che Maro kaj la nunajn daton kaj horon.
+      </p>
+    </fieldset>
+
+    <p id="calcStatus" role="status" aria-live="polite"></p>
+    <noscript>Por uzi la formularon, bonvolu aktivigi JavaScript.</noscript>
+  </form>
+
+  <section id="result" class="panel" aria-labelledby="resultTitle" hidden>
+    <h2 id="resultTitle">Rezultoj</h2>
+    <p id="resultStation" class="active"></p>
+    <div id="levelBox">
+      <h3>Akvonivelo je la elektita horo</h3>
+      <p><span id="levelTime"></span>: <strong id="levelValue"></strong></p>
     </div>
+    <div class="scroll">
+      <table id="eventsTable">
+        <thead><tr>
+          <th scope="col">Akvoniveloj</th>
+          <th scope="col">Dato kaj horo en UTK</th>
+          <th scope="col">Akvonivelo (m)</th>
+        </tr></thead>
+        <tbody id="events"></tbody>
+      </table>
+    </div>
+    <p id="noEvents" hidden>Neniuj maksimumoj au minimumoj por tiu tago.</p>
+    <p class="small">La tago ampleksas 00:00 ghis 23:59 UTK.</p>
+    <h3>Gravaj rimarkoj</h3>
+    <ul id="warnings"></ul>
+    <div id="curveBox" hidden>
+      <canvas id="waterCurve" width="900" height="340"
+              aria-label="Akvonivela kurbo"></canvas>
+      <p class="small">
+        La kurbo montras la dek du horojn antau kaj post la elektita
+        momento. Chiuj tempoj estas en UTK.
+      </p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Klarigoj kaj pliaj ebloj</h2>
+
+    <details>
+      <summary>Fonto de la elektitaj datumoj</summary>
+      <p>
+        La komencaj datumoj de Bulonjo che Maro
+        (<code>boulogne_sur_mer-111-fra-refmar</code>) devenas de
+        <a href="https://doi.org/10.17882/109129" target="_blank">TICON-4</a>.
+        La loksercho uzas la staciajn JSON-dosierojn de
+        <a href="https://github.com/openwatersio/slackwater-database/tree/main/data/ticon"
+           target="_blank">Open Waters</a>.
+        La nombro kaj valoroj de la konstituantoj povas diferenci de
+        tiuj en la originala TICON-4-datumbazo.
+      </p>
+      <p>
+        Hart-Davis Michael, Dettmering Denise, Seitz Florian (2025).
+        TICON-4: TIdal CONstants based on GESLA-4 sea-level records.
+        SEANOE. <a href="https://doi.org/10.17882/109129"
+                   target="_blank">DOI: 10.17882/109129</a>.
+      </p>
+      <p>
+        La sercho mem ne shanghas la datumojn. Nur sukcesa shargo
+        de elektita stacio anstatauigas ilin. Por uzi aliajn datumojn,
+        malfermu <b>Montri au redakti datumojn</b>.
+      </p>
+    </details>
+
+    <details>
+      <summary>Tempo, referenca nivelo kaj limigoj</summary>
+      <p>
+        La enigitaj kaj montrataj tempoj estas en UTK sen somera
+        tempo. La apo ne transformas loktempajn konstituantojn al UTK.
+        La referenca aldono estas 0 m. La akvoniveloj rilatas al la
+        loka meza akvonivelo, ne al alia referenca nulo.
+      </p>
+      <p>
+        Elektebla intervalo: 1900-03-01 ghis 2100-02-28.
+        Tiu teknika limo ne garantias precizecon.
+        Kontrolu la fonton kaj komparu kun fidinda prognozo.
+        Se datumo estas optimumigita nur por la tempoj de maksimumoj
+        au minimumoj, atentu la koncernan rimarkon che la rezultoj.
+      </p>
+    </details>
+
+    <details id="mapoj">
+      <summary>Mapo kaj alternativaj harmonaj konstituantoj</summary>
+      <p>
+        Por trovi stacion geografie, uzu la
+        <a href="https://openadb.dgfi.tum.de/en/ocean-tides/map/"
+           target="_blank">interagan mapon</a>.
+        Poste enigu la loknomon au la <code>tide_gauge_name</code>
+        en la serchkampon de la formularo.
+      </p>
+      <p>
+      <p>
+        Pri
+        <a href="https://eo.wikipedia.org/wiki/Ponto_de_Londono"
+           target="_blank"><b>Ponto de Londono</b></a>
+        kurioze ne estas datumoj en TICON-4. Tial jen
+        <a href="https://andreaskueck.github.io/tc4a/ponto_de_londono/index.html"
+           target="_blank">dosiero kun alternativaj harmonaj konstituantoj</a>;
+        fonto: „Gezeitentafeln für das Jahr 1948“, eldonita de
+        Deutsches Hydrographisches Institut Hamburg, Hamburg, 1948,
+        pagho 168. „Alternativaj“ do chi-kuntekste mesaghas:
+        „entute iuj“.
+      </p>
+
+      <p id="capeDor">
+        Por <b>Cape d'Or</b>
+        <a href="https://github.com/openwatersio/tide-database/issues/93"
+           target="_blank">la amplitudo de unu konstituanto lau la
+           TICON-4-datumoj estas eksterordinare granda</a>.
+        Tial jen
+        <a href="https://script.google.com/a/~/macros/s/AKfycbwLg10h9pXC95lafWaZ0Z0hTJJ1rwtbXZUxCjPaH-pZIZ4-FBzaMgcHWz1mNVm-8ZkDsw/exec"
+           target="_blank">ret-apo por Cape d'Or</a>
+        surbaze de la harmona prezento de neegalajhoj.
+      </p>
+      </p>
+    </details>
+
+    <details id="csvspektilo">
+      <summary>CSV-spektilo por la originala TICON-4-datumbazo</summary>
+      <p>
+        La CSV-spektilo estas aparta ret-apo por inspekti la
+        <a href="https://www.seanoe.org/data/00980/109129/"
+           target="_blank">originalajn TICON-4-datumojn</a>.
+        Ghi ne estas bezonata por la supra loksercho.
+        <a id="csvLink"
+           href="https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMWhZWZArsRPscRsH5jdqqTxjdMq6KJu4U9w/exec"
+           target="_blank">Malfermi la CSV-spektilon en aparta pagho</a>.
+      </p>
+      <p class="small">
+        En la originalaj TICON-4-datumoj atentu la problemojn de
+        temporeferenco por nomoj finighantaj per <code>deu-wsv</code>
+        au <code>nld-rws</code> kaj por
+        <code>hong_kong-329-hkg-uhslc</code>,
+        <code>hong_kong-329a-hkg-uhslc_rq</code> kaj
+        <code>hong_kong-329b-hkg-uhslc_rq</code>.
+        Uzu taugan alternativon. Anstatau
+        <code>mazatlan_flotador-16-mex-unam</code> uzu
+        <code>mazatlan-673-mex-unam_hist</code>.
+      </p>
+      <p class="small">
+        Por <b>Cape d'Or</b> oni uzu
+        <a href="https://script.google.com/a/~/macros/s/AKfycbwLg10h9pXC95lafWaZ0Z0hTJJ1rwtbXZUxCjPaH-pZIZ4-FBzaMgcHWz1mNVm-8ZkDsw/exec"
+           target="_blank">la apartan ret-apon por Cape d'Or</a>
+        surbaze de la harmona prezento de neegalajhoj.
+      </p>
+      <iframe id="csvFrame" title="CSV-spektilo"></iframe>
+    </details>
+
+    <details id="maro">
+      <summary>Harmonaj konstituantoj, Doodson-numeroj kaj Snapchat-lenso</summary>
+      <div id="triContent"></div>
+    </details>
+
+    <details id="examples">
+      <summary>Ekzemplaj lokoj</summary>
+      <div id="duContent" class="scroll"></div>
+    </details>
+
+    <details id="sources">
+      <summary>Fontoj de datumoj kaj jura avizo</summary>
+      <div id="kvinContent"></div>
+    </details>    
+  </section>
+
+  <footer>
+    <a href="https://jhau.de/privateco.html" target="_blank">Privateco</a>
+  </footer>
+</main>
+
+<script>
+'use strict';
+
+const el = id => document.getElementById(id);
+const MIN_DATE = '<?= minDate ?>';
+const MAX_DATE = '<?= maxDate ?>';
+const MIN_YEAR = Number(MIN_DATE.slice(0, 4));
+const MAX_YEAR = Number(MAX_DATE.slice(0, 4));
+const DEFAULT_TEXT = el('povumo').defaultValue;
+const DEFAULT_NAME = 'boulogne_sur_mer-111-fra-refmar';
+
+const MONTHS = [
+  'Januaro', 'Februaro', 'Marto', 'Aprilo', 'Majo', 'Junio',
+  'Julio', 'Augusto', 'Septembro', 'Oktobro', 'Novembro', 'Decembro'
+];
+
+let selectedDate = '';
+let viewYear;
+let viewMonth;
+let busy = false;
+let activeName = '';
+let activeSource = '';
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function message(id, text, error = false) {
+  const node = el(id);
+  node.textContent = text;
+  node.classList.toggle('error', error);
+}
+
+function errorText(err) {
+  return err && err.message ? err.message : String(err || 'Nekonata eraro.');
+}
+
+function setBusy(value) {
+  busy = value;
+  el('controls').disabled = value;
+  el('predictionForm').setAttribute('aria-busy', String(value));
+}
+
+function clearResults() {
+  el('result').hidden = true;
+  el('curveBox').hidden = true;
+  message('calcStatus', '');
+}
+
+function clearHits() {
+  el('stationHits').replaceChildren();
+  el('stationHits').hidden = true;
+}
+
+function setActive(name, source, url) {
+  activeName = name;
+  activeSource = source;
+  el('activeStation').textContent = name;
+  const node = el('activeSource');
+  node.replaceChildren();
+
+  if (source) {
+    node.append(document.createTextNode(' · Fonto: '));
+    if (url) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = source;
+      node.append(a);
+    } else {
+      node.append(document.createTextNode(source));
+    }
+  }
+}
+
+function setDefaultLabel() {
+  setActive('Elektita stacio: ' + DEFAULT_NAME,
+            'TICON-4', 'https://doi.org/10.17882/109129');
+}
+
+function searchStations() {
+  if (busy) return;
+
+  const query = el('stationQuery').value.trim();
+  clearHits();
+
+  if (query.length < 2) {
+    message('stationStatus', 'Bonvolu enigi almenau du signojn.', true);
+    el('stationQuery').focus();
+    return;
+  }
+
+  setBusy(true);
+  message('stationStatus', 'Serchado de stacioj…');
+
+  google.script.run
+    .withSuccessHandler(result => {
+      setBusy(false);
+
+      if (!result || !Array.isArray(result.nomoj) || !result.nomoj.length) {
+        message('stationStatus',
+          'Neniu stacio trovita. La aktivaj datumoj restas senshanghaj.');
+        el('stationQuery').focus();
+        return;
+      }
+
+      const list = el('stationHits');
+      result.nomoj.forEach(name => {
+        const li = document.createElement('li');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = name;
+        button.addEventListener('click', () => loadStation(name));
+        li.append(button);
+        list.append(li);
+      });
+
+      list.hidden = false;
+      let text = 'Trovitaj stacioj: ' + result.nombro + '. ';
+      if (result.nombro > result.nomoj.length) {
+        text += 'Montrataj: ' + result.nomoj.length +
+          '. Por aliaj trafoj precizigu la serchon. ';
+      }
+      message('stationStatus', text + 'Elektu la deziratan stacion.');
+      list.querySelector('button').focus();
+    })
+    .withFailureHandler(err => {
+      setBusy(false);
+      message('stationStatus',
+        errorText(err) + ' La aktivaj datumoj restas senshanghaj.', true);
+      el('stationQuery').focus();
+    })
+    .serchiStaciojn(query);
+}
+
+function loadStation(name) {
+  if (busy) return;
+  setBusy(true);
+  message('stationStatus', 'Shargado: ' + name + '…');
+
+  google.script.run
+    .withSuccessHandler(station => {
+      setBusy(false);
+
+      if (!station || typeof station.teksto !== 'string' ||
+          !station.teksto.trim()) {
+        message('stationStatus',
+          'Neniuj uzeblaj datumoj. La aktivaj datumoj restas senshanghaj.',
+          true);
+        return;
+      }
+
+      // Einziger Punkt, an dem die Suche das Datenfeld überschreibt.
+      el('povumo').value = station.teksto;
+      clearResults();
+      setActive('Elektita stacio: ' + station.nomo,
+                'Open Waters', station.fonto);
+
+      el('stationQuery').value = station.nomo;
+      clearHits();
+      message('stationStatus',
+        'Shargitaj konstituantoj: ' + station.nombro +
+        '. Por kalkuli, premu Sendi.');
+      el('send').focus();
+    })
+    .withFailureHandler(err => {
+      setBusy(false);
+      message('stationStatus',
+        errorText(err) + ' La aktivaj datumoj restas senshanghaj.', true);
+    })
+    .shargiStacion(name);
+}
+
+function addOption(id, value, label) {
+  el(id).add(new Option(label, String(value)));
+}
+
+function setupCalendar() {
+  MONTHS.forEach((m, i) => addOption('month', i, m));
+  for (let y = MIN_YEAR; y <= MAX_YEAR; y++) addOption('year', y, y);
+  for (let h = 0; h < 24; h++) addOption('hour', pad(h), pad(h));
+  for (let m = 0; m < 60; m++) addOption('minute', pad(m), pad(m));
+}
+
+function dateText(y, m, d) {
+  return y + '-' + pad(m + 1) + '-' + pad(d);
+}
+
+function validMonth(y, m) {
+  const first = new Date(Date.UTC(y, m, 1)).toISOString().slice(0, 10);
+  const last = new Date(Date.UTC(y, m + 1, 0)).toISOString().slice(0, 10);
+  return first <= MAX_DATE && last >= MIN_DATE;
+}
+
+function renderCalendar() {
+  el('month').value = String(viewMonth);
+  el('year').value = String(viewYear);
+
+  Array.from(el('month').options).forEach(o => {
+    o.disabled = !validMonth(viewYear, Number(o.value));
+  });
+
+  el('previous').disabled = !validMonth(viewYear, viewMonth - 1);
+  el('next').disabled = !validMonth(viewYear, viewMonth + 1);
+  el('selectedDate').textContent = 'Elektita dato: ' + selectedDate + ' UTK';
+
+  const days = el('days');
+  days.replaceChildren();
+  const first = new Date(Date.UTC(viewYear, viewMonth, 1));
+  const offset = (first.getUTCDay() + 6) % 7;
+  const count = new Date(Date.UTC(viewYear, viewMonth + 1, 0)).getUTCDate();
+  const today = new Date().toISOString().slice(0, 10);
+
+  for (let i = 0; i < offset; i++) days.append(document.createElement('span'));
+
+  for (let d = 1; d <= count; d++) {
+    const date = dateText(viewYear, viewMonth, d);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = String(d);
+    button.disabled = date < MIN_DATE || date > MAX_DATE;
+    button.setAttribute('aria-label', d + ' ' + MONTHS[viewMonth] + ' ' + viewYear);
+    button.setAttribute('aria-pressed', String(date === selectedDate));
+
+    if (date === today) {
+      button.classList.add('today');
+      button.setAttribute('aria-current', 'date');
+    }
+    if (date === selectedDate) button.classList.add('selected');
+
+    button.addEventListener('click', () => {
+      selectedDate = date;
+      clearResults();
+      renderCalendar();
+      el('days').querySelector('.selected').focus();
+    });
+    days.append(button);
+  }
+}
+
+function useNow() {
+  const d = new Date();
+  const date = d.toISOString().slice(0, 10);
+  if (date < MIN_DATE || date > MAX_DATE) {
+    message('calcStatus', 'La nuna dato estas ekster la elektebla intervalo.', true);
+    return;
+  }
+  selectedDate = date;
+  viewYear = d.getUTCFullYear();
+  viewMonth = d.getUTCMonth();
+  el('hour').value = pad(d.getUTCHours());
+  el('minute').value = pad(d.getUTCMinutes());
+  clearResults();
+  renderCalendar();
+}
+
+function moveMonth(delta) {
+  const d = new Date(Date.UTC(viewYear, viewMonth + delta, 1));
+  if (!validMonth(d.getUTCFullYear(), d.getUTCMonth())) return;
+  viewYear = d.getUTCFullYear();
+  viewMonth = d.getUTCMonth();
+  renderCalendar();
+}
+
+function changeView() {
+  viewYear = Number(el('year').value);
+  viewMonth = Number(el('month').value);
+  if (!validMonth(viewYear, viewMonth)) {
+    viewMonth = viewYear === MIN_YEAR
+      ? Number(MIN_DATE.slice(5, 7)) - 1
+      : Number(MAX_DATE.slice(5, 7)) - 1;
+  }
+  renderCalendar();
+}
+
+function resetForm() {
+  el('povumo').value = DEFAULT_TEXT;
+  el('stationQuery').value = '';
+  el('dataDetails').open = false;
+  clearHits();
+  message('stationStatus', '');
+  setDefaultLabel();
+  useNow();
+}
+
+function renderResult(r) {
+  el('resultTitle').textContent = 'Rezultoj por ' + r.dato;
+  el('resultStation').textContent = activeName +
+    (activeSource ? ' · Fonto: ' + activeSource : '');
+
+  el('levelBox').hidden = r.nivelo == null;
+  el('levelTime').textContent = r.dato + ' ' + r.horo + ' UTK';
+  el('levelValue').textContent = r.nivelo == null ? '' : r.nivelo + ' ' + r.unuo;
+
+  const body = el('events');
+  body.replaceChildren();
+  r.eventoj.forEach(evento => {
+    const tr = document.createElement('tr');
+    [evento.speco, evento.tempo, evento.nivelo].forEach(value => {
+      const td = document.createElement('td');
+      td.textContent = value;
+      tr.append(td);
+    });
+    body.append(tr);
+  });
+  el('noEvents').hidden = r.eventoj.length !== 0;
+
+  const warnings = el('warnings');
+  warnings.replaceChildren();
+  r.avertoj.forEach(text => {
+    const li = document.createElement('li');
+    li.textContent = text;
+    warnings.append(li);
+  });
+  el('result').hidden = false;
+}
+
+function drawWaterCurve(data) {
+  const box = el('curveBox');
+  box.hidden = true;
+  if (!data || !data.points || data.points.length < 2) return;
+
+  const p = data.points;
+  const canvas = el('waterCurve');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const left = 65, right = 20, top = 25, bottom = 45;
+
+  let lo = Math.min(...p.map(v => v.h));
+  let hi = Math.max(...p.map(v => v.h));
+  const margin = hi === lo ? .5 : (hi - lo) * .08;
+  lo -= margin;
+  hi += margin;
+
+  const t0 = p[0].t, t1 = p[p.length - 1].t;
+  const x = t => left + (t - t0) / (t1 - t0) * (w - left - right);
+  const y = value => top + (hi - value) / (hi - lo) * (h - top - bottom);
+
+  ctx.clearRect(0, 0, w, h);
+  ctx.font = '14px sans-serif';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const v = lo + i * (hi - lo) / 5;
+    const yy = y(v);
+    ctx.strokeStyle = '#d6dce0';
+    ctx.beginPath();
+    ctx.moveTo(left, yy);
+    ctx.lineTo(w - right, yy);
+    ctx.stroke();
+    ctx.fillStyle = '#333';
+    ctx.fillText(v.toFixed(1).replace('.', ',') + ' m', 4, yy + 4);
+  }
+
+  ctx.strokeStyle = '#527082';
+  ctx.beginPath();
+  ctx.moveTo(left, top);
+  ctx.lineTo(left, h - bottom);
+  ctx.lineTo(w - right, h - bottom);
+  ctx.stroke();
+
+  ctx.strokeStyle = '#1565c0';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  p.forEach((point, i) => {
+    if (i === 0) ctx.moveTo(x(point.t), y(point.h));
+    else ctx.lineTo(x(point.t), y(point.h));
+  });
+  ctx.stroke();
+
+  ctx.fillStyle = '#172b3a';
+  ctx.fillText('Akvonivelo (m) · Tempo en UTK', left, 16);
+  ctx.fillText(data.startLabel, left, h - 12);
+  ctx.fillText(data.endLabel, w - right - ctx.measureText(data.endLabel).width, h - 12);
+  box.hidden = false;
+}
+
+function calculate() {
+  if (busy) return;
+  if (!selectedDate || selectedDate < MIN_DATE || selectedDate > MAX_DATE) {
+    message('calcStatus', 'Bonvolu elekti validan daton.', true);
+    return;
+  }
+
+  const input = {
+    sendoloko: selectedDate.replace(/-/g, '') +
+      el('hour').value + el('minute').value,
+    povumo: el('povumo').value
+  };
+
+  clearResults();
+  setBusy(true);
+  message('calcStatus', 'Kalkulado… Bonvolu atendi.');
+
+  google.script.run
+    .withFailureHandler(err => {
+      setBusy(false);
+      message('calcStatus', errorText(err), true);
+    })
+    .withSuccessHandler(r => {
+      try {
+        renderResult(r);
+      } catch (err) {
+        setBusy(false);
+        message('calcStatus', 'Ne eblis montri la rezultojn: ' + errorText(err), true);
+        return;
+      }
+
+      message('calcStatus', 'La teksta kalkulo estas finita. Desegnado de la kurbo…');
+      google.script.run
+        .withFailureHandler(err => {
+          setBusy(false);
+          message('calcStatus',
+            'La teksta rezulto estas preta, sed ne eblis ricevi la kurbon: ' +
+            errorText(err), true);
+        })
+        .withSuccessHandler(curve => {
+          setBusy(false);
+          try {
+            drawWaterCurve(curve);
+            message('calcStatus', 'La kalkulo estas finita.');
+          } catch (err) {
+            el('curveBox').hidden = true;
+            message('calcStatus',
+              'La teksta rezulto estas preta, sed ne eblis montri la kurbon.', true);
+          }
+        })
+        .getCurve(input);
+    })
+    .addLink(input);
+}
 
-    <script>
-        'use strict';
-
-        const MIN_DATE = '<?= minDate ?>';
-        const MAX_DATE = '<?= maxDate ?>';
-        const MIN_YEAR = Number(MIN_DATE.slice(0, 4));
-        const MAX_YEAR = Number(MAX_DATE.slice(0, 4));
-
-        const MONTHS = [
-            'Januaro', 'Februaro', 'Marto', 'Aprilo',
-            'Majo', 'Junio', 'Julio', 'Augusto',
-            'Septembro', 'Oktobro', 'Novembro', 'Decembro'
-        ];
-
-        const el = id => document.getElementById(id);
-        const defaultPovumo = el('povumo').defaultValue;
-
-        let selectedDate = '';
-        let viewYear;
-        let viewMonth;
-        let busy = false;
-
-        function pad(value) {
-            return String(value).padStart(2, '0');
-        }
-
-        function dateText(year, month, day) {
-            return String(year).padStart(4, '0') +
-                '-' + pad(month + 1) + '-' + pad(day);
-        }
-
-        function addOption(select, value, text) {
-            const option = document.createElement('option');
-            option.value = String(value);
-            option.textContent = text;
-            select.appendChild(option);
-        }
-
-        function setupOptions() {
-            MONTHS.forEach((month, index) => {
-                addOption(el('month'), index, month);
-            });
-
-            for (let year = MIN_YEAR; year <= MAX_YEAR; year++) {
-                addOption(el('year'), year, String(year));
-            }
-
-            for (let hour = 0; hour < 24; hour++) {
-                addOption(el('hour'), pad(hour), pad(hour));
-            }
-
-            for (let minute = 0; minute < 60; minute++) {
-                addOption(el('minute'), pad(minute), pad(minute));
-            }
-        }
-
-        function clearResults() {
-            el('result').hidden = true;
-            el('curveBox').style.display = 'none';
-            el('status').textContent = '';
-            el('status').classList.remove('error');
-        }
-
-        function showError(message) {
-            clearResults();
-            el('status').textContent = message;
-            el('status').classList.add('error');
-        }
-
-        function useNow() {
-            if (busy) return;
-
-            const now = new Date();
-            const date = now.toISOString().slice(0, 10);
-
-            if (date < MIN_DATE || date > MAX_DATE) {
-                showError('La nuna dato estas ekster la elektebla intervalo.');
-                return;
-            }
-
-            selectedDate = date;
-            viewYear = now.getUTCFullYear();
-            viewMonth = now.getUTCMonth();
-
-            el('hour').value = pad(now.getUTCHours());
-            el('minute').value = pad(now.getUTCMinutes());
-
-            clearResults();
-            renderCalendar();
-        }
-
-        function monthInRange(year, month) {
-            const first = dateText(year, month, 1);
-            const lastDay = new Date(
-                Date.UTC(year, month + 1, 0)
-            ).getUTCDate();
-            const last = dateText(year, month, lastDay);
-
-            return last >= MIN_DATE && first <= MAX_DATE;
-        }
-
-        function renderCalendar() {
-            el('month').value = String(viewMonth);
-            el('year').value = String(viewYear);
-
-            el('selectedDate').textContent =
-                'Elektita dato: ' + selectedDate + ' UTK';
-
-            const previousDate = new Date(
-                Date.UTC(viewYear, viewMonth - 1, 1)
-            );
-            const nextDate = new Date(
-                Date.UTC(viewYear, viewMonth + 1, 1)
-            );
-
-            el('previous').disabled = !monthInRange(
-                previousDate.getUTCFullYear(),
-                previousDate.getUTCMonth()
-            );
-
-            el('next').disabled = !monthInRange(
-                nextDate.getUTCFullYear(),
-                nextDate.getUTCMonth()
-            );
-
-            Array.from(el('month').options).forEach(option => {
-                option.disabled = !monthInRange(
-                    viewYear,
-                    Number(option.value)
-                );
-            });
-
-            const container = el('days');
-            container.replaceChildren();
-
-            const firstDay = new Date(Date.UTC(viewYear, viewMonth, 1));
-            const offset = (firstDay.getUTCDay() + 6) % 7;
-            const dayCount = new Date(
-                Date.UTC(viewYear, viewMonth + 1, 0)
-            ).getUTCDate();
-
-            const today = new Date().toISOString().slice(0, 10);
-
-            for (let i = 0; i < offset; i++) {
-                const spacer = document.createElement('span');
-                spacer.setAttribute('aria-hidden', 'true');
-                container.appendChild(spacer);
-            }
-
-            for (let day = 1; day <= dayCount; day++) {
-                const date = dateText(viewYear, viewMonth, day);
-                const button = document.createElement('button');
-
-                button.type = 'button';
-                button.className = 'day';
-                button.textContent = String(day);
-                button.disabled = date < MIN_DATE || date > MAX_DATE;
-
-                button.setAttribute(
-                    'aria-label',
-                    day + ' ' + MONTHS[viewMonth] + ' ' + viewYear
-                );
-
-                button.setAttribute(
-                    'aria-pressed',
-                    date === selectedDate ? 'true' : 'false'
-                );
-
-                if (date === today) {
-                    button.classList.add('today');
-                    button.setAttribute('aria-current', 'date');
-                }
-
-                if (date === selectedDate) {
-                    button.classList.add('selected');
-                }
-
-                button.addEventListener('click', () => {
-                    if (busy) return;
-
-                    selectedDate = date;
-                    clearResults();
-                    renderCalendar();
-
-                    const selected = el('days').querySelector('.selected');
-                    if (selected) selected.focus();
-                });
-
-                container.appendChild(button);
-            }
-        }
-
-        function moveMonth(delta) {
-            if (busy) return;
-
-            const d = new Date(Date.UTC(viewYear, viewMonth + delta, 1));
-            const year = d.getUTCFullYear();
-            const month = d.getUTCMonth();
-
-            if (!monthInRange(year, month)) return;
-
-            viewYear = year;
-            viewMonth = month;
-
-            clearResults();
-            renderCalendar();
-        }
-
-        function changeCalendarView() {
-            if (busy) return;
-
-            viewYear = Number(el('year').value);
-            viewMonth = Number(el('month').value);
-
-            if (!monthInRange(viewYear, viewMonth)) {
-                viewMonth = viewYear === MIN_YEAR
-                    ? Number(MIN_DATE.slice(5, 7)) - 1
-                    : Number(MAX_DATE.slice(5, 7)) - 1;
-            }
-
-            clearResults();
-            renderCalendar();
-        }
-
-        function setBusy(value) {
-            busy = value;
-            el('controls').disabled = value;
-            el('urlShortener').setAttribute(
-                'aria-busy',
-                value ? 'true' : 'false'
-            );
-            el('create').textContent = value ? 'Kalkulado...' : 'Sendi';
-        }
-
-        function appendCell(row, text) {
-            const cell = document.createElement('td');
-            cell.textContent = text;
-            row.appendChild(cell);
-        }
-
-        function renderResult(result) {
-            el('resultTitle').textContent = 'Rezultoj por ' + result.dato;
-            el('level').hidden = result.nivelo == null;
-            el('levelTime').textContent = result.nivelo == null ? '' :
-                result.dato + ' ' + result.horo + ' UTK';
-            el('levelValue').textContent = result.nivelo == null ? '' :
-                result.nivelo + ' ' + result.unuo;
-
-            const body = el('events');
-            body.replaceChildren();
-
-            result.eventoj.forEach(event => {
-                const row = document.createElement('tr');
-                appendCell(row, event.speco);
-                appendCell(row, event.tempo);
-                appendCell(row, event.nivelo);
-                body.appendChild(row);
-            });
-
-            el('noEvents').hidden = result.eventoj.length > 0;
-
-            const warnings = el('warnings');
-            warnings.replaceChildren();
-
-            result.avertoj.forEach(text => {
-                const item = document.createElement('li');
-                item.textContent = text;
-                warnings.appendChild(item);
-            });
-
-            el('result').hidden = false;
-        }
-
-        function uploadData() {
-            if (busy) return;
-
-            const date = selectedDate;
-            const time = el('hour').value + ':' + el('minute').value;
-
-            if (
-                !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
-                date < MIN_DATE ||
-                date > MAX_DATE ||
-                !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time)
-            ) {
-                showError('Bonvolu elekti validajn daton kaj horon en UTK.');
-                return;
-            }
-
-            const shortStack = {
-                sendoloko: date.replace(/-/g, '') + time.replace(':', ''),
-                povumo: el('povumo').value
-            };
-
-            clearResults();
-            setBusy(true);
-            el('status').textContent = 'Kalkulado... Bonvolu atendi.';
-
-            google.script.run
-                .withSuccessHandler(function(result) {
-                    try {
-                        renderResult(result);
-                    } catch (error) {
-                        setBusy(false);
-                        showError('Ne eblis montri la rezulton. Bonvolu reprovi.');
-                        return;
-                    }
-
-                    el('status').textContent =
-                        'La teksta kalkulo estas finita. Desegnado de la kurbo...';
-
-                    google.script.run
-                        .withSuccessHandler(function(curveData) {
-                            setBusy(false);
-
-                            try {
-                                drawWaterCurve(curveData);
-                                el('status').textContent = 'La kalkulo estas finita.';
-                                M.toast({ html: 'Preta!' });
-                            } catch (error) {
-                                el('curveBox').style.display = 'none';
-                                el('status').classList.add('error');
-                                el('status').textContent =
-                                    'La teksta rezulto estas preta, sed ne eblis montri la kurbon.';
-                            }
-                        })
-                        .withFailureHandler(function() {
-                            setBusy(false);
-                            el('curveBox').style.display = 'none';
-                            el('status').classList.add('error');
-                            el('status').textContent =
-                                'La teksta rezulto estas preta, sed ne eblis ricevi la kurbon.';
-                        })
-                        .getCurve(shortStack);
-                })
-                .withFailureHandler(function(error) {
-                    setBusy(false);
-                    showError(
-                        error && error.message
-                            ? error.message
-                            : 'Ne eblis plenumi la kalkulon. Bonvolu reprovi.'
-                    );
-                })
-                .addLink(shortStack);
-        }
-
-        function clearForm() {
-            if (busy) return;
-
-            el('povumo').value = defaultPovumo;
-            useNow();
-        }
-
-        function drawWaterCurve(curveData) {
-            var box = el('curveBox');
-            var canvas = el('waterCurve');
-            var ctx = canvas.getContext('2d');
-
-            if (!curveData || !curveData.points || curveData.points.length < 2) {
-                box.style.display = 'none';
-                return;
-            }
-
-            box.style.display = 'block';
-
-            var points = curveData.points;
-            var w = canvas.width;
-            var h = canvas.height;
-
-            ctx.clearRect(0, 0, w, h);
-
-            var left = 60;
-            var right = 20;
-            var top = 25;
-            var bottom = 55;
-
-            var minH = points[0].h;
-            var maxH = points[0].h;
-
-            for (var i = 1; i < points.length; i++) {
-                if (points[i].h < minH) { minH = points[i].h; }
-                if (points[i].h > maxH) { maxH = points[i].h; }
-            }
-
-            if (maxH == minH) {
-                maxH = maxH + 0.5;
-                minH = minH - 0.5;
-            }
-
-            var rand = (maxH - minH) * 0.08;
-            maxH = maxH + rand;
-            minH = minH - rand;
-
-            var minT = points[0].t;
-            var maxT = points[points.length - 1].t;
-
-            function x(t) {
-                return left + (t - minT) / (maxT - minT) * (w - left - right);
-            }
-
-            function y(v) {
-                return top + (maxH - v) / (maxH - minH) * (h - top - bottom);
-            }
-
-            ctx.font = "13px Open Sans, Arial, sans-serif";
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = "#dddddd";
-            ctx.fillStyle = "#333333";
-
-            for (var j = 0; j <= 5; j++) {
-                var val = minH + j / 5 * (maxH - minH);
-                var yy = y(val);
-
-                ctx.beginPath();
-                ctx.moveTo(left, yy);
-                ctx.lineTo(w - right, yy);
-                ctx.stroke();
-
-                ctx.fillText(
-                    (Math.round(val * 10) / 10).toString().replace(".", ",") + " m",
-                    8,
-                    yy + 4
-                );
-            }
-
-            ctx.strokeStyle = "#777777";
-            ctx.beginPath();
-            ctx.moveTo(left, top);
-            ctx.lineTo(left, h - bottom);
-            ctx.lineTo(w - right, h - bottom);
-            ctx.stroke();
-
-            ctx.strokeStyle = "#1565c0";
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-
-            for (var i = 0; i < points.length; i++) {
-                var xx = x(points[i].t);
-                var yy = y(points[i].h);
-
-                if (i == 0) {
-                    ctx.moveTo(xx, yy);
-                } else {
-                    ctx.lineTo(xx, yy);
-                }
-            }
-
-            ctx.stroke();
-
-            ctx.fillStyle = "#333333";
-            ctx.fillText(curveData.startLabel, left, h - 25);
-            ctx.fillText(curveData.endLabel, w - right - 120, h - 25);
-
-            ctx.fillStyle = "#1565c0";
-            ctx.fillText(
-                "Vertikale: akvonivelo; horizontale: tempo en UTK (indikoj: komenco kaj fino de la kurbo)",
-                left,
-                16
-            );
-        }
-
-        function scrollToAnchor(anchorId) {
-            const element = el(anchorId);
-            if (element) {
-                element.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        }
 /*
-        function ladeKvar() {
-            google.script.run
-                .withSuccessHandler(function(html) {
-                    el('content4').innerHTML = html;
-                })
-                .getKvar();
-        }
-*/
-        function ladeTri() {
-            google.script.run
-                .withSuccessHandler(function(html) {
-                    el('content').innerHTML = html;
-                })
-                .getTri();
-        }
+ * Eigene HTML-Teildateien erst beim ersten Öffnen laden.
+ */
+function lazyInfo(detailsId, contentId, callServer) {
+  let loaded = false;
+  let loading = false;
+  el(detailsId).addEventListener('toggle', () => {
+    if (!el(detailsId).open || loaded || loading) return;
+    loading = true;
+    const node = el(contentId);
+    node.textContent = 'Shargado…';
+    const runner = google.script.run
+      .withSuccessHandler(html => {
+        // HTML kommt aus der eigenen statischen Projektdatei.
+        node.innerHTML = html;
+        loaded = true;
+        loading = false;
+      })
+      .withFailureHandler(err => {
+        node.textContent = errorText(err);
+        loading = false;
+      });
+    callServer(runner);
+  });
+}
 
-        function ladeKvin() {
-            google.script.run
-                .withSuccessHandler(function(html) {
-                    el('content5').innerHTML = html;
-                })
-                .getKvin();
-        }
+function setupOtherApps() {
+  const apps = [
+    ['Belum','AKfycbwYKQYvG8XhRLoWLwzaNUlmbmF5rltLOVySPOghF-7qDxIlBSGbF0tslFoAxot-hc0e'],
+    ['Bremen','AKfycbwMCbCHyS0efZdNoQ1ThOqyEEOjQ27PporNrxoED3J3N0PLXnG5o0WJ3f8TvFWVzNq_bw'],
+    ['Bremerhaven','AKfycbwhrCptnMjEJhwO5PraT78B_md-0yBp_uEHWluGCF5x39fTHk8cdiK74j1lufHLa1sc'],
+    ['Bremervörde','AKfycbyEGdBNs6A7V9TTm5XicPGa8ai3B3m4iP-JBaY0D3NeoEbGWSdlFMU1NOlwwSgw3NK5'],
+    ['Cuxhaven','AKfycbwKllsiz0caZM_nTfrmgXHnggm5Go8bxin5h6yhkjjHa2-myTmRu7fDIbNZxsVo4aZp8Q'],
+    ['Elsfleth','AKfycbymzldC7yNgGHjzjRIMLC9ituSb08VITchFJWg24o55AtuCowpipnmQCUU-K8JieiAJ'],
+    ['Emden','AKfycbwi1sFEr8CtKeDWl3LqQQnwYunqg7-H7NVmuoBAOVLScfaZqOqOqiXPwSNsLe3DxMS6sw'],
+    ['Glückstadt','AKfycbxZfSR32y1MrSwdr4DsdU24eXOp0NL5WLtfuKBJgJdwwCqxFW16sVHdTTj_TVE7pX83'],
+    ['Hamburgo','AKfycbzrddFJWsO8ivLMrhQv5MbLxcSPl1NPi1-XTWVOSI6zu_Zp0k-q60kzfUw5sfSte2tA'],
+    ['Hechthausen','AKfycbxK0LmZ3yBFVjqOT4s4z4UhicB5nc8CvHRa7e9WQkOsKowsshISoKHylOo1Or-D4EWH5g'],
+    ['Helgoland','AKfycbzA5W3LTynhL05KoPevL2nGgAT9WczbEAX_E_-C1kjCGYd1SW-LwmpV2AZcLHXwsyC2'],
+    ['Husum','AKfycbz0H5gaSzWz_hNsgGqx_a4krpDesUAp3HfdgOqLucDLHCAbeVH4-X5x6VDrT01ATPQY'],
+    ['Norderney','AKfycbwFMJk10hFb-XSNX8vWRIc0XnJmAcB1CJPh4YbPHqJI12caPHM9UmWVr1I5ry57LwrG3g'],
+    ['Oldenburg','AKfycbwkI1b6nJRZvZ_-UKx04XBt97SlzdxIVCCmSrNN2OWL_i7wyHb5j-G9NlzF2KpIOf4Pbw'],
+    ['Otterndorf','AKfycbxYD6-T92Png1jSSJ8nV1P7-PLL9-aI_t95G0B4I_VCJtB7geKNKlFE8X68KMPsnfSk'],
+    ['Papenburg','AKfycbwGAUAULHxlc9ETGTuYQMGaBENda7gXAC9qRi8G8cyJiJk3npeqZZ_nKJom8vOO05CEhQ'],
+    ['Rechtenfleth','AKfycbw1p6S3LyNaRTIcSu4myv3SP-ZzSX302erglMDh8R9wwq1ZRAHCwJ8Nb9q5t-Isl0aX'],
+    ['Wilhelmshaven','AKfycbzAR1q8kD4qGaxGNSrn7D_kSkEik7XbE9Dy8Msd0a9DZZAi5XT6vH4JBXZ7ar432AIbdg']
+  ];
+  apps.forEach(([name, id], i) => {
+    if (i) el('otherApps').append(document.createTextNode(' | '));
+    const a = document.createElement('a');
+    a.textContent = name;
+    a.href = 'https://script.google.com/a/~/macros/s/' + id + '/exec';
+    a.target = '_blank';
+    a.rel = 'noopener';
+    el('otherApps').append(a);
+  });
+}
 
-        function ladeDu() {
-            google.script.run
-                .withSuccessHandler(function(html) {
-                    el('content1').innerHTML = html;
-                })
-                .getDu();
-        }
+el('searchButton').addEventListener('click', searchStations);
+el('stationQuery').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.isComposing) {
+    e.preventDefault();
+    searchStations();
+  }
+});
+el('stationQuery').addEventListener('input', () => {
+  clearHits();
+  message('stationStatus', '');
+});
 
-        function montriLokojn() {
-            el('lokojBloko').style.display = 'block';
-        }
+el('povumo').addEventListener('input', () => {
+  clearResults();
+  clearHits();
+  message('stationStatus', '');
+  const text = el('povumo').value;
+  if (!text.trim() || text === DEFAULT_TEXT) {
+    setDefaultLabel();
+  } else {
+    setActive('Mane redaktitaj datumoj', '', '');
+  }
+});
 
-        function serchiLokon() {
-            var nomo = el('lokojNomo').value.trim();
-            var div = el('lokojRezulto');
+el('predictionForm').addEventListener('submit', e => {
+  e.preventDefault();
+  calculate();
+});
+el('previous').addEventListener('click', () => moveMonth(-1));
+el('next').addEventListener('click', () => moveMonth(1));
+el('month').addEventListener('change', changeView);
+el('year').addEventListener('change', changeView);
+el('hour').addEventListener('change', clearResults);
+el('minute').addEventListener('change', clearResults);
+el('now').addEventListener('click', useNow);
+el('resetButton').addEventListener('click', resetForm);
 
-            div.innerHTML = '<div class="card-panel">Serchante ...</div>';
+el('csvspektilo').addEventListener('toggle', () => {
+  // Kein unnötiger CSV-Download beim Aufruf des Rechners.
+  if (el('csvspektilo').open && !el('csvFrame').hasAttribute('src')) {
+    el('csvFrame').src = el('csvLink').href;
+  }
+});
 
-            google.script.run
-                .withSuccessHandler(montruLokon)
-                .withFailureHandler(function(err) {
-                    div.innerHTML =
-                        '<div class="card-panel red lighten-4">Eraro: ' +
-                        eskapuLokoj(err.message) +
-                        '</div>';
-                })
-                .serchiPegelon(nomo);
-        }
+document.querySelector('a[href="#maro"]').addEventListener('click', e => {
+  e.preventDefault();
+  el('maro').open = true;
+  el('maro').scrollIntoView({ behavior: 'smooth' });
+});
 
-        function montruLokon(rez) {
-            var div = el('lokojRezulto');
+lazyInfo('maro', 'triContent', runner => runner.getTri());
+lazyInfo('examples', 'duContent', runner => runner.getDu());
+lazyInfo('sources', 'kvinContent', runner => runner.getKvin());
 
-            if (!rez.sukcesa) {
-                div.innerHTML =
-                    '<div class="card-panel red lighten-4">' +
-                    eskapuLokoj(rez.mesagho) +
-                    '</div>';
-                return;
-            }
-
-            var html = '';
-
-            html += '<div class="card-panel">';
-            html += '<p class="green-text text-darken-2"><strong>Trovita:</strong> ' +
-                eskapuLokoj(rez.nomo) +
-                ' — ' +
-                eskapuLokoj(rez.nombro) +
-                ' linioj (fonto estas la antaue menciita retpagho); sekvas informoj prenitaj el ghi; amplitudoj en cm; nombro kaj valoroj de la konstituantoj eventuale diferencas de tiuj donitaj en la TICON-4-datumbazo</p>';
-
-            html += '<pre id="lokojPreTicon" style="white-space:pre-wrap; overflow-x:auto;">' +
-                eskapuLokoj(rez.teksto) +
-                '</pre>';
-
-            html += '<p><button class="waves-effect btn blue" type="button" onclick="kopiiLokojEl(\'lokojPreTicon\')">Kopii al tondejo</button></p>';
-            html += '<p>Per la kopiitaj datumoj anstatauigu la tutan enhavon de la supra kampo <b>TICON-4-datumoj au alternativaj datumoj</b>.</p>';
-            html += '</div>';
-
-            if (rez.alternativo && rez.alternativo.petita) {
-                html += '<div class="card-panel">';
-                html += '<h6>Alternativaj konstituantoj</h6>';
-
-                if (rez.alternativo.sukcesa) {
-                    html += '<p class="green-text text-darken-2"><strong>Trovitaj alternativaj datumoj:</strong> ' +
-                        eskapuLokoj(rez.alternativo.nombro) +
-                        ' linioj</p>';
-
-                    html += '<p>Fonto: <a href="' +
-                        eskapuLokoj(rez.alternativo.url) +
-                        '" target="_blank">' +
-                        eskapuLokoj(rez.alternativo.url) +
-                        '</a></p>';
-
-                    html += '<pre id="lokojPreAlt" style="white-space:pre-wrap; overflow-x:auto;">' +
-                        eskapuLokoj(rez.alternativo.teksto) +
-                        '</pre>';
-
-                    html += '<p><button class="waves-effect btn blue" type="button" onclick="kopiiLokojEl(\'lokojPreAlt\')">Kopii al tondejo</button></p>';
-                } else {
-                    html += '<p class="red-text text-darken-2">' +
-                        eskapuLokoj(rez.alternativo.mesagho) +
-                        '</p>';
-
-                    if (rez.alternativo.url) {
-                        html += '<p>Provita fonto: <a href="' +
-                            eskapuLokoj(rez.alternativo.url) +
-                            '" target="_blank">' +
-                            eskapuLokoj(rez.alternativo.url) +
-                            '</a></p>';
-                    }
-                }
-
-                html += '</div>';
-            }
-
-            div.innerHTML = html;
-        }
-
-        function kopiiLokojEl(preId) {
-            var elem = el(preId);
-
-            if (!elem) {
-                alert('Nenio kopiebla.');
-                return;
-            }
-
-            var teksto = elem.textContent;
-
-            navigator.clipboard.writeText(teksto).then(function() {
-                alert('Kopiita!');
-            }).catch(function() {
-                alert('Kopiado malsukcesis.');
-            });
-        }
-
-        function eskapuLokoj(s) {
-            return String(s ?? '').replace(/[&<>"']/g, function(ch) {
-                return {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#39;'
-                }[ch];
-            });
-        }
-
-        function closeWelcome() {
-            localStorage.setItem('welcomeShown', 'yes');
-            el('welcomeModal').style.display = 'none';
-        }
-
-        el('urlShortener').addEventListener('submit', function(event) {
-            event.preventDefault();
-            uploadData();
-        });
-
-        el('previous').addEventListener('click', () => moveMonth(-1));
-        el('next').addEventListener('click', () => moveMonth(1));
-        el('month').addEventListener('change', changeCalendarView);
-        el('year').addEventListener('change', changeCalendarView);
-        el('hour').addEventListener('change', clearResults);
-        el('minute').addEventListener('change', clearResults);
-        el('povumo').addEventListener('input', clearResults);
-        el('now').addEventListener('click', useNow);
-        el('freshStart').addEventListener('click', clearForm);
-
-        el('lokojNomo').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                serchiLokon();
-            }
-        });
-
-        window.addEventListener('load', function() {
-            if (!localStorage.getItem('welcomeShown')) {
-                el('welcomeModal').style.display = 'block';
-            }
-        });
-
-        setupOptions();
-        useNow();
-
-        // Neniu kalkulo estas startigata dum la shargo de la pagho.
-    </script>
+setupOtherApps();
+setupCalendar();
+setDefaultLabel();
+useNow();
+</script>
 </body>
 </html>
