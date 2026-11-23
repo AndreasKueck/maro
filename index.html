@@ -285,6 +285,29 @@
   <section id="result" class="panel" aria-labelledby="resultTitle" hidden>
     <h2 id="resultTitle">Rezultoj</h2>
     <p id="resultStation" class="active"></p>
+    <section class="box" aria-labelledby="lensTitle">
+      <h3 id="lensTitle">Snapchat-lenso “Maro: sep horoj”</h3>
+      <label for="lensPlace">Loknomo por la lenso</label>
+      <input id="lensPlace" type="text" maxlength="200"
+             autocomplete="off" style="width:100%">
+      <p id="lensPlaceNote" class="small note"></p>
+      <div class="actions">
+        <button type="button" id="lensButton" class="primary" disabled>
+          Kopii kaj malfermi la lenson
+        </button>
+      </div>
+      <p id="lensStatus" role="status" aria-live="polite"></p>
+      <div id="lensManual" hidden>
+        <label for="lensText">Kompleta teksto por la lenso</label>
+        <textarea id="lensText" rows="5" readonly spellcheck="false"
+                  style="width:100%"></textarea>
+      </div>
+      <p id="lensLinkBox" hidden>
+        <a id="lensDirect"
+           href="https://www.snapchat.com/lens/33aa009364834fa48d113cd4aba5956c"
+           target="_blank" rel="noopener noreferrer">Malfermi la lenson en Snapchat</a>
+      </p>
+    </section>
     <div id="levelBox">
       <h3>Akvonivelo je la elektita horo</h3>
       <p><span id="levelTime"></span>: <strong id="levelValue"></strong></p>
@@ -306,6 +329,13 @@
     <div id="curveBox" hidden>
       <canvas id="waterCurve" width="900" height="340"
               aria-label="Akvonivela kurbo"></canvas>
+          <p style="margin: 8px 0 0;">
+            <strong id="curveReading"></strong>
+          </p>
+<p class="small note" style="margin: 2px 0 8px;">
+  Por legi la tempon kaj la akvonivelon, movu la musmontrilon
+  super la grafiko au tushu la deziratan lokon.
+</p>
       <p class="small">
         La kurbo montras la dek du horojn antau kaj post la elektita
         momento. Chiuj tempoj estas en UTK.
@@ -335,8 +365,7 @@
                    target="_blank">DOI: 10.17882/109129</a>.
       </p>
       <p>
-        La sercho mem ne shanghas la datumojn. Nur sukcesa shargo
-        de elektita stacio anstatauigas ilin. Por uzi aliajn datumojn,
+        Por uzi aliajn datumojn,
         malfermu <b>Montri au redakti datumojn</b>.
       </p>
     </details>
@@ -344,17 +373,14 @@
     <details>
       <summary>Tempo, referenca nivelo kaj limigoj</summary>
       <p>
-        La enigitaj kaj montrataj tempoj estas en UTK sen somera
-        tempo. La apo ne transformas loktempajn konstituantojn al UTK.
+        La enigitaj kaj montrataj tempoj estas en UTK.
         La referenca aldono estas 0 m. La akvoniveloj rilatas al la
-        loka meza akvonivelo, ne al alia referenca nulo.
+        loka meza akvonivelo.
       </p>
       <p>
-        Elektebla intervalo: 1900-03-01 ghis 2100-02-28.
+        Elektebla intervalo: de 1900-03-01 ghis 2100-02-28.
         Tiu teknika limo ne garantias precizecon.
         Kontrolu la fonton kaj komparu kun fidinda prognozo.
-        Se datumo estas optimumigita nur por la tempoj de maksimumoj
-        au minimumoj, atentu la koncernan rimarkon che la rezultoj.
       </p>
     </details>
 
@@ -363,7 +389,7 @@
       <p>
         Por trovi stacion geografie, uzu la
         <a href="https://openadb.dgfi.tum.de/en/ocean-tides/map/"
-           target="_blank">interagan mapon</a>.
+           target="_blank">interagan mapon</a> (<code>https://openadb.dgfi.tum.de/en/ocean-tides/map/</code>).
         Poste enigu la loknomon au la <code>tide_gauge_name</code>
         en la serchkampon de la formularo.
       </p>
@@ -397,13 +423,12 @@
     <details id="csvspektilo">
       <summary>CSV-spektilo por la originala TICON-4-datumbazo</summary>
       <p>
-        La CSV-spektilo estas aparta ret-apo por inspekti la
+        La CSV-spektilo estas aparta ret-apo montranta la
         <a href="https://www.seanoe.org/data/00980/109129/"
-           target="_blank">originalajn TICON-4-datumojn</a>.
-        Ghi ne estas bezonata por la supra loksercho.
+           target="_blank">originalajn TICON-4-datumojn</a>.        
         <a id="csvLink"
            href="https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMWhZWZArsRPscRsH5jdqqTxjdMq6KJu4U9w/exec"
-           target="_blank">Malfermi la CSV-spektilon en aparta pagho</a>.
+           target="_blank">Malfermi la CSV-spektilon en aparta pagho</a> (<code>https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMWhZWZArsRPscRsH5jdqqTxjdMq6KJu4U9w/exec</code>).
       </p>
       <p class="small">
         En la originalaj TICON-4-datumoj atentu la problemojn de
@@ -417,8 +442,7 @@
         <code>mazatlan-673-mex-unam_hist</code>.
       </p>
       <p class="small">
-        Por <b>Cape d'Or</b> oni uzu
-        <a href="https://script.google.com/a/~/macros/s/AKfycbwLg10h9pXC95lafWaZ0Z0hTJJ1rwtbXZUxCjPaH-pZIZ4-FBzaMgcHWz1mNVm-8ZkDsw/exec"
+        Por <b>Cape d'Or</b> oni povas uzi ankau <a href="https://script.google.com/a/~/macros/s/AKfycbwLg10h9pXC95lafWaZ0Z0hTJJ1rwtbXZUxCjPaH-pZIZ4-FBzaMgcHWz1mNVm-8ZkDsw/exec"
            target="_blank">la apartan ret-apon por Cape d'Or</a>
         surbaze de la harmona prezento de neegalajhoj.
       </p>
@@ -488,6 +512,7 @@ function setBusy(value) {
 }
 
 function clearResults() {
+  clearLens();
   el('result').hidden = true;
   el('curveBox').hidden = true;
   message('calcStatus', '');
@@ -605,10 +630,37 @@ function loadStation(name) {
 
       el('stationQuery').value = station.nomo;
       clearHits();
-      message('stationStatus',
-        'Shargitaj konstituantoj: ' + station.nombro +
-        '. Por kalkuli, premu Sendi.');
-      el('send').focus();
+message(
+  'stationStatus',
+  'Shargitaj konstituantoj: ' + station.nombro +
+  '. Por kalkuli, premu Sendi. Jen detala priskribo ('
+);
+
+const status = el('stationStatus');
+
+function statusLink(text, url) {
+  const a = document.createElement('a');
+  a.textContent = text;
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  return a;
+}
+
+status.append(
+  statusLink(
+    'originale angla',
+    'https://github.com/openwatersio/slackwater-database#modifications-to-source-data'
+  ),
+  ' / ',
+  statusLink(
+    'tradukita Esperanten',
+    'https://grok.com/share/c2hhcmQtNA_7175cdc6-2819-469d-a69a-a97658956773'
+  ),
+  '), kiel la konstituantoj de Open Waters estas modifitaj al tiuj de TICON-4.'
+);
+
+el('send').focus();
     })
     .withFailureHandler(err => {
       setBusy(false);
@@ -759,6 +811,7 @@ function renderResult(r) {
     li.textContent = text;
     warnings.append(li);
   });
+  showLens(r.lenso);
   el('result').hidden = false;
 }
 
@@ -819,7 +872,106 @@ function drawWaterCurve(data) {
   ctx.fillText(data.startLabel, left, h - 12);
   ctx.fillText(data.endLabel, w - right - ctx.measureText(data.endLabel).width, h - 12);
   box.hidden = false;
+  canvas.dispatchEvent(new CustomEvent('kurboPreta', { detail: { p, left, right, w } }));
 }
+
+// Der Export gehört nur zum aktuell sichtbaren Berechnungsergebnis.
+let lensBase = '';
+let lensGeneration = 0;
+
+function resetLensFeedback() {
+  ++lensGeneration;
+  el('lensText').value = '';
+  el('lensManual').hidden = true;
+  el('lensLinkBox').hidden = true;
+  message('lensStatus', '');
+  el('lensButton').disabled = !lensBase || !el('lensPlace').value.trim();
+}
+
+function clearLens() {
+  lensBase = '';
+  el('lensPlace').value = '';
+  el('lensPlaceNote').textContent = '';
+  resetLensFeedback();
+}
+
+function showLens(data) {
+  clearLens();
+  if (!data || !data.bazo) return;
+  lensBase = data.bazo;
+  el('lensPlace').value = data.loko || '';
+  el('lensPlaceNote').textContent = data.rimarko || '';
+  resetLensFeedback();
+}
+
+function selectLensText(text) {
+  const box = el('lensText');
+  el('lensManual').hidden = false;
+  box.value = text;
+  box.focus();
+  box.select();
+  box.setSelectionRange(0, box.value.length);
+}
+
+function copiedLens(version, openLink) {
+  if (version !== lensGeneration) return;
+  el('lensManual').hidden = true;
+  el('lensLinkBox').hidden = false;
+  el('lensButton').disabled = false;
+  message('lensStatus',
+    'Kopiite. Algluu la tekston en la lenson. Se ghi ne malfermighis, uzu la ligilon.');
+  if (openLink) el('lensDirect').click();
+}
+
+function manualLens(version, text) {
+  if (version !== lensGeneration) return;
+  selectLensText(text);
+  el('lensLinkBox').hidden = false;
+  el('lensButton').disabled = false;
+  message('lensStatus',
+    'La retumilo ne permesis automatan kopiadon. Kopiu la markitan tekston ' +
+    'kaj poste premu “Malfermi la lenson en Snapchat”.', true);
+}
+
+function copyAndOpenLens() {
+  const place = el('lensPlace').value.trim().replace(/\s+/g, ' ');
+  if (!lensBase || !place) return;
+
+  const version = ++lensGeneration;
+  const text = lensBase + ' ' + place;
+  el('lensButton').disabled = true;
+
+  // Im Apps-Script-Iframe ist navigator.clipboard häufig gesperrt.
+  // Zuerst synchron innerhalb des echten Nutzerklicks kopieren.
+  // Bei Erfolg liegt auch die Linkaktivierung noch im Klickereignis.
+  selectLensText(text);
+  let copied = false;
+  try { copied = document.execCommand('copy'); } catch (_) {}
+  if (copied) {
+    copiedLens(version, true);
+    return;
+  }
+
+  // Kein Serveraufruf zwischen Nutzerklick und Clipboard-API.
+  // Erst nach bestätigtem Kopieren versuchen, die Linse zu öffnen.
+  // Falls der Browser nach dem Promise einen zweiten Klick verlangt,
+  // bleibt der echte HTTPS-Link sichtbar.
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) {
+      manualLens(version, text);
+      return;
+    }
+    navigator.clipboard.writeText(text).then(
+      () => copiedLens(version, true),
+      () => manualLens(version, text)
+    );
+  } catch (_) {
+    manualLens(version, text);
+  }
+}
+
+el('lensPlace').addEventListener('input', resetLensFeedback);
+el('lensButton').addEventListener('click', copyAndOpenLens);
 
 function calculate() {
   if (busy) return;
@@ -992,6 +1144,62 @@ setupOtherApps();
 setupCalendar();
 setDefaultLabel();
 useNow();
+</script>
+<script>
+(function () {
+  'use strict';
+
+  const canvas = document.getElementById('waterCurve');
+  const reading = document.getElementById('curveReading');
+  if (!canvas || !reading) return;
+
+  let curve = null;
+  let lastIndex = -1;
+
+  // Horizontal mit dem Finger ablesen; vertikal darf die Seite scrollen.
+  canvas.style.touchAction = 'pan-y pinch-zoom';
+  canvas.style.cursor = 'crosshair';
+
+  function showPoint(index) {
+    if (!curve || index === lastIndex) return;
+
+    const point = curve.p[index];
+    const time = new Date(point.t).toISOString()
+      .slice(0, 16).replace('T', ' ');
+
+    reading.textContent = time + ' UTK · Akvonivelo: ' +
+      point.h.toFixed(2).replace('.', ',') + ' m';
+
+    lastIndex = index;
+  }
+
+  canvas.addEventListener('kurboPreta', function (event) {
+    curve = event.detail;
+    lastIndex = -1;
+
+    // Die Mitte der 24-Stunden-Kurve ist die gewählte Uhrzeit.
+    showPoint(Math.floor(curve.p.length / 2));
+  });
+
+  function readAt(event) {
+    if (!curve || event.isPrimary === false) return;
+
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width) return;
+
+    // Auf dem Smartphone ist das Canvas schmaler als seine interne
+    // Zeichenfläche. Erst umrechnen, dann die Achsenränder abziehen.
+    const x = (event.clientX - rect.left) * curve.w / rect.width;
+    const plotWidth = curve.w - curve.left - curve.right;
+    const fraction = Math.max(0, Math.min(1, (x - curve.left) / plotWidth));
+
+    // getCurve() liefert gleichmäßig verteilte Zehn-Minuten-Punkte.
+    showPoint(Math.round(fraction * (curve.p.length - 1)));
+  }
+
+  canvas.addEventListener('pointerdown', readAt);
+  canvas.addEventListener('pointermove', readAt);
+})();
 </script>
 </body>
 </html>
