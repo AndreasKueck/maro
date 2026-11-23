@@ -459,6 +459,7 @@ function addLink(shortStack) {
     nivelo: rezulto.nivelo,
     unuo: 'm',
     eventoj: rezulto.eventoj,
+    lenso: prepariLenson_(datumoj, tempo),
     avertoj: avertoj
   };
 }
@@ -614,35 +615,97 @@ function createDatumoj1(ticon4) {
     .join('\n');
 }
 
-function skribiKonstituantojnKajDoodson(input) {
-  var povumo = '';
-
-  if (typeof input === 'object' && input !== null) {
-    povumo = povumoOrDefault_(input?.povumo);
-  } else {
-    povumo = povumoOrDefault_(input);
-  }
-
-  povumo = puriguPovumon(povumo);
-  var teksto = createDatumoj1(povumo);
-
-  const spreadsheetId = '1qFDaJeq2zCPmwGbbxtswWhSrJvBJuNoch3vXrRmheDU';
-  const sheetName = 'konstituantojkajdoodson';
-
-  const ss = SpreadsheetApp.openById(spreadsheetId);
-  const sheet = ss.getSheetByName(sheetName);
-
-  if (!sheet) {
-    throw new Error('Tabellenblatt "' + sheetName + '" nicht gefunden.');
-  }
-
-  sheet.getRange('A5').setValue(teksto).setWrap(true);
-
-  return {
-    sukcesa: true,
-    nombro: teksto.trim() ? teksto.trim().split('\n').length : 0,
-    teksto: teksto
+/*
+ * Bildet den Linsentext aus GENAU den validierten Konstituenten,
+ * die addLink() an main() übergibt. Keine Tabelle, kein globaler
+ * Ergebniszustand und keine Vermischung verschiedener Nutzer.
+ */
+function prepariLenson_(datumoj, tempo) {
+  const momento = tempo.dato.replace(/-/g, '') + tempo.horo.replace(':', '');
+  const rezulto = {
+    bazo: datumoj.datumoj.trim() + ' ' + momento,
+    loko: '',
+    rimarko: ''
   };
+
+  // Nur Zeilen berücksichtigen, deren Konstituent auch in den
+  // Rechner übernommen wird. Die ersten beiden CSV-Spalten sind
+  // bei Original-TICON und bei shargiStacion() gleich aufgebaut.
+  let pozicio = null;
+  for (const line of datumoj.purigita.split('\n')) {
+    const p = line.trim().split(',');
+    if (!Object.prototype.hasOwnProperty.call(HARMONIC_DATA, p[2])) continue;
+
+    const a = (p[0] || '').trim();
+    const b = (p[1] || '').trim();
+    const lat = Number(a);
+    let lon = Number(b);
+    if (!a || !b || !Number.isFinite(lat) || !Number.isFinite(lon) ||
+        Math.abs(lat) > 90 || lon < -180 || lon > 360) {
+      rezulto.rimarko =
+        'Nevalidaj au mankantaj koordinatoj. Bonvolu enigi la loknomon.';
+      return rezulto;
+    }
+
+    // Auch Längengrade in der Schreibweise 0 bis 360 unterstützen.
+    if (lon > 180) lon -= 360;
+    if (pozicio && (Math.abs(lat - pozicio.lat) > 0.00001 ||
+                    Math.abs(lon - pozicio.lon) > 0.00001)) {
+      rezulto.rimarko =
+        'La datumoj enhavas plurajn poziciojn. Kontrolu la stacion antau kopiado.';
+      return rezulto;
+    }
+    pozicio = { lat: lat, lon: lon };
+  }
+
+  if (!pozicio) {
+    rezulto.rimarko = 'Koordinatoj ne trovitaj. Bonvolu enigi la loknomon.';
+    return rezulto;
+  }
+
+  const coords = pozicio.lat + ', ' + pozicio.lon;
+  try {
+    rezulto.loko = loknomoPorLenso_(pozicio.lat, pozicio.lon);
+    rezulto.rimarko = rezulto.loko
+      ? 'Loknomo lau la koordinatoj ' + coords + '. Vi povas korekti ghin.'
+      : 'Neniu loknomo trovita por ' + coords + '. Bonvolu enigi nomon.';
+  } catch (err) {
+    // Weder Google-Maps-Quoten noch ein Geocoder-Ausfall sollen
+    // eine ansonsten erfolgreiche Wasserstandsprognose verhindern.
+    console.warn('Reverse-Geocoding: ' + String(err));
+    rezulto.rimarko =
+      'Ne eblis serchi la loknomon por ' + coords + '. Bonvolu enigi nomon.';
+  }
+  return rezulto;
+}
+
+function loknomoPorLenso_(lat, lon) {
+  const cache = CacheService.getScriptCache();
+  const key = 'maro-place-v1:' + lat.toFixed(5) + ':' + lon.toFixed(5);
+  const cached = cache.get(key);
+  if (cached !== null) return cached;
+
+  const response = Maps.newGeocoder().reverseGeocode(lat, lon);
+  if (!response || response.status === 'ZERO_RESULTS') return '';
+  if (response.status !== 'OK') {
+    throw new Error(response.status || 'Geocoding failed');
+  }
+
+  const results = response.results || [];
+  // Bevorzugt Gemeinde/Stadt statt Straße, PLZ oder Land.
+  for (const typ of ['locality', 'postal_town', 'sublocality_level_1',
+                     'sublocality', 'administrative_area_level_3']) {
+    for (const result of results) {
+      for (const part of result.address_components || []) {
+        if ((part.types || []).indexOf(typ) < 0) continue;
+        const name = String(part.long_name || '').trim().replace(/\s+/g, ' ');
+        if (!name) continue;
+        cache.put(key, name, 21600);
+        return name;
+      }
+    }
+  }
+  return '';
 }
 
 function getCurve(shortStack) {
@@ -653,14 +716,6 @@ function getCurve(shortStack) {
   // kiel che la kalkulo de la tekstaj rezultoj.
   const limigoj = {};
   datumajRimarkoj_(datumoj.originalo, limigoj);
-
-  // Konservu la skribadon de la konstituantoj kaj Doodson-numeroj,
-  // ankau se pro optimumigo neniu kurbo estos montrata.
-  try {
-    skribiKonstituantojnKajDoodson({ povumo: datumoj.originalo });
-  } catch (e) {
-    console.error(e);
-  }
 
   // Konstituantoj optimumigitaj por maksimumoj au minimumoj
   // ne estas uzataj por kalkuli kaj montri akvonivelan kurbon.
