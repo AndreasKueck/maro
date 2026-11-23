@@ -806,11 +806,31 @@ function renderResult(r) {
 
   const warnings = el('warnings');
   warnings.replaceChildren();
-  r.avertoj.forEach(text => {
-    const li = document.createElement('li');
-    li.textContent = text;
-    warnings.append(li);
-  });
+r.avertoj.forEach(text => {
+  const li = document.createElement('li');
+  li.textContent = text;
+
+  if (text.endsWith('La apo ne faras automatan horzonan korekton.')) {
+    const code = document.createElement('code');
+    code.textContent = 'tide_gauge_name';
+
+    const link = document.createElement('a');
+    link.href = 'https://github.com/openwatersio/slackwater-database/issues/444';
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'tiu retpagho';
+
+    li.append(
+      ' Nepre povas temi pri loka horo okaze de loko, kies ',
+      code,
+      ' estas unu el la lokoj en Usono menciitaj en unu el la listoj donitaj en ',
+      link,
+      '.'
+    );
+  }
+
+  warnings.append(li);
+});
   showLens(r.lenso);
   el('result').hidden = false;
 }
