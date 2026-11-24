@@ -102,6 +102,16 @@
       margin-bottom: 4px;
       overflow-wrap: anywhere;
     }
+    #stationHits .preferred-hit {
+      padding: 8px 10px;
+      margin-bottom: 4px;
+      border: 1px solid #aab9c5;
+      border-left: 5px solid #075985;
+      border-radius: 7px;
+      background: #f0f9ff;
+      overflow-wrap: anywhere;
+    }
+    #stationHits .preferred-hit a { font-weight: 650; }
 
     #povumo {
       width: 100%;
@@ -185,7 +195,6 @@
 
   <form id="predictionForm" class="panel" novalidate>
     <fieldset id="controls">
-
       <section aria-labelledby="stationTitle">
         <h2 id="stationTitle">Loko kaj harmonaj konstituantoj</h2>
 
@@ -198,6 +207,9 @@
           Por alia stacio enigu loknomon, ekzemple
           <b>Portsmouth</b>, au kompletan <code>tide_gauge_name</code>.
           Poste elektu unu el la trovitaj stacioj.
+          Se por la enigita loko ekzistas aparta ret-apo surbaze de la
+          harmona prezento de neegalajhoj, ghia ligilo aperas unue,
+          kun la indiko “(preferinda)”.
         </p>
 
         <label for="stationQuery">Loko au tide_gauge_name</label>
@@ -210,7 +222,7 @@
         </div>
 
         <p id="stationStatus" role="status" aria-live="polite"></p>
-        <ul id="stationHits" aria-label="Trovitaj stacioj" hidden></ul>
+        <ul id="stationHits" aria-label="Trovitaj stacioj kaj ret-apoj" hidden></ul>
 
         <details id="dataDetails">
           <summary>Montri au redakti datumojn</summary>
@@ -329,13 +341,13 @@
     <div id="curveBox" hidden>
       <canvas id="waterCurve" width="900" height="340"
               aria-label="Akvonivela kurbo"></canvas>
-          <p style="margin: 8px 0 0;">
-            <strong id="curveReading"></strong>
-          </p>
-<p class="small note" style="margin: 2px 0 8px;">
-  Por legi la tempon kaj la akvonivelon, movu la musmontrilon
-  super la grafiko au tushu la deziratan lokon.
-</p>
+      <p style="margin: 8px 0 0;">
+        <strong id="curveReading"></strong>
+      </p>
+      <p class="small note" style="margin: 2px 0 8px;">
+        Por legi la tempon kaj la akvonivelon, movu la musmontrilon
+        super la grafiko au tushu la deziratan lokon.
+      </p>
       <p class="small">
         La kurbo montras la dek du horojn antau kaj post la elektita
         momento. Chiuj tempoj estas en UTK.
@@ -394,7 +406,6 @@
         en la serchkampon de la formularo.
       </p>
       <p>
-      <p>
         Pri
         <a href="https://eo.wikipedia.org/wiki/Ponto_de_Londono"
            target="_blank"><b>Ponto de Londono</b></a>
@@ -413,10 +424,10 @@
            target="_blank">la amplitudo de unu konstituanto lau la
            TICON-4-datumoj estas eksterordinare granda</a>.
         Tial jen
-        <a href="https://script.google.com/a/~/macros/s/AKfycbwLg10h9pXC95lafWaZ0Z0hTJJ1rwtbXZUxCjPaH-pZIZ4-FBzaMgcHWz1mNVm-8ZkDsw/exec"
+        <a id="capeDorApp"
+           href="https://script.google.com/a/~/macros/s/AKfycbwLg10h9pXC95lafWaZ0Z0hTJJ1rwtbXZUxCjPaH-pZIZ4-FBzaMgcHWz1mNVm-8ZkDsw/exec"
            target="_blank">ret-apo por Cape d'Or</a>
         surbaze de la harmona prezento de neegalajhoj.
-      </p>
       </p>
     </details>
 
@@ -425,7 +436,7 @@
       <p>
         La CSV-spektilo estas aparta ret-apo montranta la
         <a href="https://www.seanoe.org/data/00980/109129/"
-           target="_blank">originalajn TICON-4-datumojn</a>.        
+           target="_blank">originalajn TICON-4-datumojn</a>.
         <a id="csvLink"
            href="https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMWhZWZArsRPscRsH5jdqqTxjdMq6KJu4U9w/exec"
            target="_blank">Malfermi la CSV-spektilon en aparta pagho</a> (<code>https://script.google.com/a/~/macros/s/AKfycbweipvgiDOFo4SLTiY4eIKvNGP47MDaGZjMWhZWZArsRPscRsH5jdqqTxjdMq6KJu4U9w/exec</code>).
@@ -442,10 +453,14 @@
         <code>mazatlan-673-mex-unam_hist</code>.
       </p>
       <p class="small">
-        Krome: Al la respektiva loka horo rilatas la harmonaj konstituantoj de tiuj lokoj, kies <code>tide_gauge_name</code> estas menciita en <a href="https://github.com/openwatersio/slackwater-database/issues/444" target="_blank">tiu retpagho</a>.
+        Krome: Al la respektiva loka horo rilatas la harmonaj konstituantoj de tiuj lokoj,
+        kies <code>tide_gauge_name</code> estas menciita en
+        <a href="https://github.com/openwatersio/slackwater-database/issues/444"
+           target="_blank">tiu retpagho</a>.
       </p>
       <p class="small">
-        Por <b>Cape d'Or</b> oni povas uzi ankau <a href="https://script.google.com/a/~/macros/s/AKfycbwLg10h9pXC95lafWaZ0Z0hTJJ1rwtbXZUxCjPaH-pZIZ4-FBzaMgcHWz1mNVm-8ZkDsw/exec"
+        Por <b>Cape d'Or</b> oni povas uzi ankau
+        <a href="https://script.google.com/a/~/macros/s/AKfycbwLg10h9pXC95lafWaZ0Z0hTJJ1rwtbXZUxCjPaH-pZIZ4-FBzaMgcHWz1mNVm-8ZkDsw/exec"
            target="_blank">la apartan ret-apon por Cape d'Or</a>
         surbaze de la harmona prezento de neegalajhoj.
       </p>
@@ -465,7 +480,7 @@
     <details id="sources">
       <summary>Fontoj de datumoj kaj jura avizo</summary>
       <div id="kvinContent"></div>
-    </details>    
+    </details>
   </section>
 
   <footer>
@@ -488,6 +503,9 @@ const MONTHS = [
   'Januaro', 'Februaro', 'Marto', 'Aprilo', 'Majo', 'Junio',
   'Julio', 'Augusto', 'Septembro', 'Oktobro', 'Novembro', 'Decembro'
 ];
+
+// Wird in setupOtherApps() aus den vorhandenen Ortslinks befüllt.
+const preferredApps = new Map();
 
 let selectedDate = '';
 let viewYear;
@@ -553,6 +571,40 @@ function setDefaultLabel() {
             'TICON-4', 'https://doi.org/10.17882/109129');
 }
 
+function appPlaceKey(text) {
+  const key = text.trim().toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[.'’\s_-]+/g, '');
+
+  switch (key) {
+    case 'hamburg':
+    case 'pauli':
+    case 'stpauli':
+    case 'sanktpauli':
+    case 'stpaulitgstpdeucmems':
+      return 'hamburgo';
+    default:
+      return key;
+  }
+}
+
+function addPreferredHit(list, app) {
+  const li = document.createElement('li');
+  li.className = 'preferred-hit';
+
+  const link = document.createElement('a');
+  link.href = app.url;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.textContent = app.name + ': akvoniveloj';
+
+  // Der Zusatz ist absichtlich kein Bestandteil des Links.
+  li.append(link, ' (preferinda)');
+  list.prepend(li);
+  list.hidden = false;
+}
+
 function searchStations() {
   if (busy) return;
 
@@ -565,6 +617,12 @@ function searchStations() {
     return;
   }
 
+  const list = el('stationHits');
+  const preferred = preferredApps.get(appPlaceKey(query));
+
+  // Die Orts-App ist unabhängig vom Stationskatalog verfügbar.
+  if (preferred) addPreferredHit(list, preferred);
+
   setBusy(true);
   message('stationStatus', 'Serchado de stacioj…');
 
@@ -573,13 +631,18 @@ function searchStations() {
       setBusy(false);
 
       if (!result || !Array.isArray(result.nomoj) || !result.nomoj.length) {
-        message('stationStatus',
-          'Neniu stacio trovita. La aktivaj datumoj restas senshanghaj.');
-        el('stationQuery').focus();
+        if (preferred) {
+          message('stationStatus',
+            'Neniu stacio trovita en la katalogo. Vi povas malfermi la preferindan ret-apon.');
+          list.querySelector('a').focus();
+        } else {
+          message('stationStatus',
+            'Neniu stacio trovita. La aktivaj datumoj restas senshanghaj.');
+          el('stationQuery').focus();
+        }
         return;
       }
 
-      const list = el('stationHits');
       result.nomoj.forEach(name => {
         const li = document.createElement('li');
         const button = document.createElement('button');
@@ -596,8 +659,11 @@ function searchStations() {
         text += 'Montrataj: ' + result.nomoj.length +
           '. Por aliaj trafoj precizigu la serchon. ';
       }
-      message('stationStatus', text + 'Elektu la deziratan stacion.');
-      list.querySelector('button').focus();
+      text += preferred
+        ? 'Malfermu la preferindan ret-apon au elektu stacion.'
+        : 'Elektu la deziratan stacion.';
+      message('stationStatus', text);
+      list.querySelector('a, button').focus();
     })
     .withFailureHandler(err => {
       setBusy(false);
@@ -633,37 +699,37 @@ function loadStation(name) {
 
       el('stationQuery').value = station.nomo;
       clearHits();
-message(
-  'stationStatus',
-  'Shargitaj konstituantoj: ' + station.nombro +
-  '. Por kalkuli, premu Sendi. Jen detala priskribo ('
-);
+      message(
+        'stationStatus',
+        'Shargitaj konstituantoj: ' + station.nombro +
+        '. Por kalkuli, premu Sendi. Jen detala priskribo ('
+      );
 
-const status = el('stationStatus');
+      const status = el('stationStatus');
 
-function statusLink(text, url) {
-  const a = document.createElement('a');
-  a.textContent = text;
-  a.href = url;
-  a.target = '_blank';
-  a.rel = 'noopener noreferrer';
-  return a;
-}
+      function statusLink(text, url) {
+        const a = document.createElement('a');
+        a.textContent = text;
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        return a;
+      }
 
-status.append(
-  statusLink(
-    'originale angla',
-    'https://github.com/openwatersio/slackwater-database#modifications-to-source-data'
-  ),
-  ' / ',
-  statusLink(
-    'tradukita Esperanten',
-    'https://grok.com/share/c2hhcmQtNA_7175cdc6-2819-469d-a69a-a97658956773'
-  ),
-  '), kiel la konstituantoj de Open Waters estas modifitaj al tiuj de TICON-4.'
-);
+      status.append(
+        statusLink(
+          'originale angla',
+          'https://github.com/openwatersio/slackwater-database#modifications-to-source-data'
+        ),
+        ' / ',
+        statusLink(
+          'tradukita Esperanten',
+          'https://grok.com/share/c2hhcmQtNA_7175cdc6-2819-469d-a69a-a97658956773'
+        ),
+        '), kiel la konstituantoj de Open Waters estas modifitaj al tiuj de TICON-4.'
+      );
 
-el('send').focus();
+      el('send').focus();
     })
     .withFailureHandler(err => {
       setBusy(false);
@@ -809,31 +875,31 @@ function renderResult(r) {
 
   const warnings = el('warnings');
   warnings.replaceChildren();
-r.avertoj.forEach(text => {
-  const li = document.createElement('li');
-  li.textContent = text;
+  r.avertoj.forEach(text => {
+    const li = document.createElement('li');
+    li.textContent = text;
 
-  if (text.endsWith('La apo ne faras automatan horzonan korekton.')) {
-    const code = document.createElement('code');
-    code.textContent = 'tide_gauge_name';
+    if (text.endsWith('La apo ne faras automatan horzonan korekton.')) {
+      const code = document.createElement('code');
+      code.textContent = 'tide_gauge_name';
 
-    const link = document.createElement('a');
-    link.href = 'https://github.com/openwatersio/slackwater-database/issues/444';
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.textContent = 'tiu retpagho';
+      const link = document.createElement('a');
+      link.href = 'https://github.com/openwatersio/slackwater-database/issues/444';
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = 'tiu retpagho';
 
-    li.append(
-      ' Nepre povas temi pri loka horo okaze de loko, kies ',
-      code,
-      ' estas unu el la lokoj en Usono menciitaj en unu el la listoj donitaj en ',
-      link,
-      '.'
-    );
-  }
+      li.append(
+        ' Nepre povas temi pri loka horo okaze de loko, kies ',
+        code,
+        ' estas unu el la lokoj en Usono menciitaj en unu el la listoj donitaj en ',
+        link,
+        '.'
+      );
+    }
+    warnings.append(li);
+  });
 
-  warnings.append(li);
-});
   showLens(r.lenso);
   el('result').hidden = false;
 }
@@ -966,7 +1032,6 @@ function copyAndOpenLens() {
 
   // Im Apps-Script-Iframe ist navigator.clipboard häufig gesperrt.
   // Zuerst synchron innerhalb des echten Nutzerklicks kopieren.
-  // Bei Erfolg liegt auch die Linkaktivierung noch im Klickereignis.
   selectLensText(text);
   let copied = false;
   try { copied = document.execCommand('copy'); } catch (_) {}
@@ -975,10 +1040,7 @@ function copyAndOpenLens() {
     return;
   }
 
-  // Kein Serveraufruf zwischen Nutzerklick und Clipboard-API.
-  // Erst nach bestätigtem Kopieren versuchen, die Linse zu öffnen.
-  // Falls der Browser nach dem Promise einen zweiten Klick verlangt,
-  // bleibt der echte HTTPS-Link sichtbar.
+  // Bei Bedarf bleibt der echte HTTPS-Link für einen zweiten Klick sichtbar.
   try {
     if (!navigator.clipboard || !navigator.clipboard.writeText) {
       manualLens(version, text);
@@ -1098,14 +1160,26 @@ function setupOtherApps() {
     ['Rechtenfleth','AKfycbw1p6S3LyNaRTIcSu4myv3SP-ZzSX302erglMDh8R9wwq1ZRAHCwJ8Nb9q5t-Isl0aX'],
     ['Wilhelmshaven','AKfycbzAR1q8kD4qGaxGNSrn7D_kSkEik7XbE9Dy8Msd0a9DZZAi5XT6vH4JBXZ7ar432AIbdg']
   ];
+
   apps.forEach(([name, id], i) => {
     if (i) el('otherApps').append(document.createTextNode(' | '));
+
     const a = document.createElement('a');
     a.textContent = name;
     a.href = 'https://script.google.com/a/~/macros/s/' + id + '/exec';
     a.target = '_blank';
-    a.rel = 'noopener';
+    a.rel = 'noopener noreferrer';
     el('otherApps').append(a);
+
+    preferredApps.set(appPlaceKey(name), { name, url: a.href });
+  });
+
+  // Cape d'Or hat seinen eigenen Erläuterungsabschnitt. Dessen URL
+  // verwenden, ohne die Ortsliste im Kopfbereich zu verändern.
+  const capeName = "Cape d'Or";
+  preferredApps.set(appPlaceKey(capeName), {
+    name: capeName,
+    url: el('capeDorApp').href
   });
 }
 
@@ -1168,6 +1242,7 @@ setupCalendar();
 setDefaultLabel();
 useNow();
 </script>
+
 <script>
 (function () {
   'use strict';
