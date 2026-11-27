@@ -1,6 +1,278 @@
-<p class="small-note">Tiu chi apo uzas harmonajn konstituantojn kaj antaukalkulojn el pluraj fontoj. Uzighas interalie informoj donitaj en:<br>Hart-Davis Michael, Dettmering Denise, Seitz Florian (2025). TICON-4: TIdal CONstants based on GESLA-4 sea-level records. SEANOE. <a href="https://doi.org/10.17882/109129" target="_blank">https://doi.org/10.17882/109129</a><br>kaj<br>Piccioni Gaia, Dettmering Denise, Bosch Wolfgang, Seitz Florian (2019). TICON: TIdal CONstants based on GESLA sea-level records from globally located tide gauges. Geoscience Data Journal. 6 (2). 97-104. <a href="https://doi.org/10.1002/gdj3.72" target="_blank">https://doi.org/10.1002/gdj3.72</a>, <a href="https://archimer.ifremer.fr/doc/00838/94993/" target="_blank">https://archimer.ifremer.fr/doc/00838/94993/</a>.<br>Jen <a href="https://gist.github.com/AndreasKueck/984f2ef3b18620ba872a14fe44a58551#file-akvonivelo_ticon4-txt" target="_blank">pliaj informoj</a>. Parto de la datumoj devenas el <a href="https://www.seanoe.org/data/00980/109129/" target="_blank">TICON-4</a>, tio estas publikigita datumbazo de harmonaj konstituantoj. Aliaj datumoj estis rekalkulitaj au nove analizitaj de la autoro de tiu chi apo surbaze de publike alireblaj akvoniveloj mezuritaj interalie de hidrografiaj servoj en Britujo, Germanujo kaj Kanado.<br>
-Krome parto de la konstituantoj bazighas sur analizoj faritaj de <a href="https://github.com/openwatersio/" target="_blank">openwatersio</a>.<br>
-La datumoj kaj konstituantoj en tiu chi apo povas do havi malsamajn devenojn kaj malsamajn jurajn kondichojn lau stacio (loko) au fonto.<br>
-La originalaj rajtoj pri la fontaj datumoj restas che la respektivaj datumprovizantoj au rajtposedantoj. La inkluzivigo de datumoj en tiu chi apo ne signifas, ke chiuj datumoj estas senlime au universale libere reuzeblaj.<br>
-Se vi intencas reuzi, redistribui au komerce utiligi la datumojn au harmonajn konstantituantojn, vi mem respondecas pri kontrolo de la respektivaj permesoj, uzkondichoj kaj eventualaj limigoj de la originalaj fontoj.<br>
-La datumoj estas provizitaj nur por informa uzo. Neniu garantio estas donata pri ghusteco, kompleteco, taugeco au jura uzebleco. Chiu uzo okazas je propra respondeco.</p>
+<section aria-labelledby="pri-retapo">
+  <h3 id="pri-retapo">Pri la ret-apo kaj ghia autoro</h3>
+
+  <p>
+    <strong>Autoro de la ret-apo: Andreas Kück.</strong>
+    La ret-apo kalkulas akvonivelojn kaj la tempojn de maksimumoj kaj
+    minimumoj per la harmona metodo. La kalkulon faras la propra
+    programo de la ret-apo en Google Apps Script.
+  </p>
+
+  <p>
+    Kontraste al <a href="https://github.com/AndreasKueck/flupauzo"
+      target="_blank" rel="noopener noreferrer">Flupauzo</a>, tiu chi
+    ret-apo ne uzas Slackwater kiel kalkulilon. Ghi tamen uzas
+    <strong>staciajn datumojn publikigitajn de Open Waters</strong>,
+    kiam vi elektas stacion per la loksercho.
+  </p>
+
+  <p>
+    <a href="https://github.com/AndreasKueck/maro"
+       target="_blank" rel="noopener noreferrer">GitHub-deponejo de
+       la projekto</a>
+  </p>
+</section>
+
+<section aria-labelledby="fonto-stacio">
+  <h3 id="fonto-stacio">Fonto kaj licenco de la staciaj datumoj</h3>
+
+  <p>
+    La fonto dependas ne nur de la loko, sed ankau de la maniero,
+    kiel la konstituantoj estis elektitaj. Super la serchkampo la apo
+    montras, chu estas aktivaj la komencaj datumoj, stacio shargita
+    per la sercho au mane redaktitaj datumoj.
+  </p>
+
+  <h4>1. Komencaj datumoj de Bulonjo che Maro</h4>
+
+  <p>
+    Kiam vi malfermas la apon au premas <b>Forvishi</b>, la
+    konstituantoj devenas el <b>TICON-4</b>. La identigilo de la
+    stacio estas <code>boulogne_sur_mer-111-fra-refmar</code>.
+    La fonta mezurserio estas indikita kiel <code>gesla4.REFMAR</code>.
+    La programo enhavas la konstituantojn por tiu stacio, ne la tutan
+    TICON-4-datumbazon. Se la datumkampo estas malplena, la kalkulo
+    ankau uzas tiujn komencajn datumojn.
+  </p>
+
+  <p>
+    <strong>Fonto:</strong> Michael Hart-Davis, Denise Dettmering kaj
+    Florian Seitz (2025).
+    <cite>TICON-4: TIdal CONstants based on GESLA-4 sea-level records.</cite>
+    SEANOE.
+    <a href="https://doi.org/10.17882/109129"
+       target="_blank" rel="noopener noreferrer">DOI: 10.17882/109129</a>.
+  </p>
+
+  <p>
+    <strong>Permesilo de la TICON-4-datumoj:</strong>
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/"
+       target="_blank" rel="noopener noreferrer">Creative Commons
+       Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</a>.
+    Se vi kunhavigas tiujn datumojn lau la permesilo, nomu la autorojn
+    kaj la fonton, ligu al la permesilo kaj indiku eventualajn
+    modifojn. La permesilo rajtigas nekomercan uzon; ghi ne donas
+    permeson por komerca uzo. <b>Tio estas datuma permesilo, ne la
+    permesilo de la programkodo.</b>
+  </p>
+
+  <h4>2. Stacio shargita per la loksercho</h4>
+
+  <p>
+    Post elekto de serchrezulto, la ligilo <b>Open Waters</b> apud la
+    stacia nomo malfermas la JSON-dosieron, el kiu la apo legis la
+    konstituantojn. La dosiero apartenas al la
+    <a href="https://github.com/openwatersio/slackwater-database/tree/main/data/ticon"
+       target="_blank" rel="noopener noreferrer">stacia kolekto de
+       Open Waters</a>. La publikiganto de la dosiero, la liveranto de
+    la originalaj mezuroj kaj la autoro de la harmona analizo ne
+    nepre estas la sama.
+  </p>
+
+  <p>
+    Ech se vi serchas <code>boulogne_sur_mer-111-fra-refmar</code>,
+    elekto de la serchrezulto shargas la dosieron de Open Waters;
+    ghi ne simple restarigas la komencajn datumojn. La nombro kaj la
+    valoroj de la konstituantoj povas diferenci de tiuj en TICON-4.
+    Vidu la
+    <a href="https://github.com/openwatersio/slackwater-database#modifications-to-source-data"
+       target="_blank" rel="noopener noreferrer">priskribon de la
+       modifoj faritaj de Open Waters</a>.
+  </p>
+
+  <p>
+    <strong>Prilaborado fare de la ret-apo:</strong> por stacio
+    shargita per la sercho, la apo konvertas la amplitudojn de metroj
+    al centimetroj, uzas nur konstituantojn rekonatajn de la
+    kalkulilo kaj preterlasas <code>MKS2</code>. Ghi ne faras novan
+    harmonan analizon de la mezurserio dum tiu shargado.
+  </p>
+
+  <p>
+    <strong>Por reuzo:</strong> konsultu la konkretan stacian dosieron,
+    la fontindikojn de la kolekto kaj la kondichojn de la koncerna
+    datumprovizanto. La dosieruja nomo <code>data/ticon</code> kaj
+    la stacia identigilo solaj ne pruvas, ke unu sama permesilo
+    validas por chiuj stacioj. Manko de licencindiko ne signifas
+    senliman permeson reuzi la datumojn.
+  </p>
+
+  <h4>3. Datumoj mane enigitaj au modifitaj</h4>
+
+  <p>
+    Se vi anstatauigas au redaktas la konstituantojn, iliaj fonto
+    kaj uzkondichoj dependas de la datumoj, kiujn vi efektive uzas.
+    La apo ne povas rekoni la permesilon lau la koordinatoj,
+    amplitudoj au fazoj. Konservu la originalajn fontindikojn kaj
+    notu viajn shanghojn. Tio gravas ankau kiam vi transdonas
+    konstituantojn al Snapchat-lenso: la kopiita kalkulteksto ne
+    enhavas kompletan font- kaj licencindikon.
+  </p>
+</section>
+
+<section aria-labelledby="aliaj-datumoj">
+  <h3 id="aliaj-datumoj">Aliaj fontoj kaj propraj analizoj</h3>
+
+  <p>
+    Por kelkaj lokoj Andreas Kück rekalkulis konstituantojn au faris
+    novajn analizojn surbaze de publike alireblaj akvonivelaj mezuroj,
+    interalie de hidrografiaj servoj en Britujo, Germanujo kaj Kanado.
+    Vidu la
+    <a href="https://gist.github.com/AndreasKueck/984f2ef3b18620ba872a14fe44a58551#file-akvonivelo_ticon4-txt"
+       target="_blank" rel="noopener noreferrer">notojn pri la fontoj
+       kaj la prilaborado</a>. La indiko pri la autoro de analizo ne
+    anstatauigas la fontindikon por la originalaj mezuroj.
+  </p>
+
+  <p>
+    Ekzemple, la
+    <a href="https://andreaskueck.github.io/tc4a/ponto_de_londono/index.html"
+       target="_blank" rel="noopener noreferrer">alternativaj
+       konstituantoj por la Ponto de Londono</a>
+    havas apartan fonton: <cite>Gezeitentafeln für das Jahr 1948</cite>,
+    Deutsches Hydrographisches Institut, Hamburg, 1948, pagho 168.
+    Ili ne estas TICON-4-datumoj.
+  </p>
+</section>
+
+<section aria-labelledby="metodaj-fontoj">
+  <h3 id="metodaj-fontoj">Fontoj pri la harmona metodo kaj TICON</h3>
+
+  <p>
+    La jenaj verkoj estas fakaj referencoj. Ilia citado ne signifas,
+    ke ili estas publikigitaj lau la programara permesilo de la ret-apo.
+  </p>
+
+  <ul>
+    <li>
+      Werner Kumm: <cite>Gezeitenkunde: Theorie und Praxis</cite>.
+      Delius-Klasing, Bielefeld, 1992, paghoj 126–129.
+    </li>
+    <li>
+      <a href="https://refmar.shom.fr/sites/default/files/2024-01/TIPE_formulation.pdf"
+         target="_blank" rel="noopener noreferrer">Dokumento pri la
+         harmona metodo</a> (REFMAR / SHOM, PDF).
+    </li>
+    <li>
+      <a href="https://legacy.iho.int/mtg_docs/com_wg/IHOTC/IHOTC8/Product_Spec_for_Exchange_of_HCs.pdf"
+         target="_blank" rel="noopener noreferrer">Dokumento de IHO
+         pri la intershangho de harmonaj konstituantoj</a> (PDF).
+    </li>
+    <li>
+      Gaia Piccioni, Denise Dettmering, Wolfgang Bosch kaj Florian
+      Seitz (2019).
+      <cite>TICON: TIdal CONstants based on GESLA sea-level records
+      from globally located tide gauges.</cite>
+      Geoscience Data Journal, 6(2), 97–104.
+      <a href="https://doi.org/10.1002/gdj3.72"
+         target="_blank" rel="noopener noreferrer">DOI: 10.1002/gdj3.72</a>;
+      <a href="https://archimer.ifremer.fr/doc/00838/94993/"
+         target="_blank" rel="noopener noreferrer">artikolo en Archimer</a>.
+      Tiu artikolo priskribas TICON. Por la uzata versio TICON-4,
+      vidu la apartan fontindikon de 2025 supre.
+    </li>
+  </ul>
+</section>
+
+<section aria-labelledby="permesilo-kodo">
+  <h3 id="permesilo-kodo">Permesilo de la propra programkodo</h3>
+
+  <p>
+    <strong>Kopirajto (c) 2026 AndreasKueck.</strong>
+    La kodo verkita de Andreas Kück por tiu chi ret-apo estas
+    disponebla lau la MIT-permesilo. La
+    <a href="https://github.com/AndreasKueck/maro/blob/HEAD/LICENSE"
+       target="_blank" rel="noopener noreferrer">dosiero LICENSE de
+       la projekto</a> enhavas la Esperanto-tradukon. La angla
+    originalo estas la lauleghe deviga versio.
+  </p>
+
+  <p>
+    La MIT-permesilo de la propra kodo ne shanghas la permesilojn
+    de la staciaj datumoj, mezurserioj au aliaj verkoj de triaj
+    personoj. Tio validas ankau por datumoj konservitaj rekte en
+    programdosiero, kiel la TICON-4-konstituantoj de Bulonjo che Maro.
+  </p>
+
+  <details>
+    <summary>MIT License — angla teksto por la propra kodo</summary>
+    <div lang="en">
+      <p>MIT License</p>
+      <p>Copyright (c) 2026 AndreasKueck</p>
+
+      <p>
+        Permission is hereby granted, free of charge, to any person obtaining
+        a copy of this software and associated documentation files (the
+        "Software"), to deal in the Software without restriction, including
+        without limitation the rights to use, copy, modify, merge, publish,
+        distribute, sublicense, and/or sell copies of the Software, and to
+        permit persons to whom the Software is furnished to do so, subject to
+        the following conditions:
+      </p>
+
+      <p>
+        The above copyright notice and this permission notice shall be
+        included in all copies or substantial portions of the Software.
+      </p>
+
+      <p>
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+        EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+        IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+        CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+        TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+        SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+      </p>
+    </div>
+  </details>
+</section>
+
+<section aria-labelledby="eksteraj-servoj">
+  <h3 id="eksteraj-servoj">Eksteraj servoj kaj ligiloj</h3>
+
+  <p>
+    La ret-apo funkcias per Google Apps Script. Por proponi loknomon
+    por la Snapchat-lenso, ghi uzas la geokodigan servon de Google
+    Maps. Vi povas korekti la proponitan nomon. La loknomo ne estas
+    fontindiko por la harmonaj konstituantoj.
+  </p>
+
+  <p>
+    La ligiloj al SHOM, NOAA kaj la tajdoprognoza servo de Venecio
+    en la ekzempla tabelo kondukas al prognozoj de tiuj organizajhoj.
+    Ili ne signifas, ke tiuj organizajhoj verkis au aprobis la
+    prognozon de tiu chi ret-apo. Por la eksteraj servoj kaj la
+    ligitaj Snapchat-lensoj validas iliaj respektivaj uzkondichoj.
+  </p>
+</section>
+
+<section aria-labelledby="uzo-prognozoj">
+  <h3 id="uzo-prognozoj">Uzo de la prognozoj</h3>
+
+  <p>
+    <strong>La prognozoj estas neoficialaj taksoj.
+    La ret-apo ne taugas por navigacio.</strong>
+    La efektivaj akvoniveloj kaj la tempoj de maksimumoj kaj minimumoj
+    povas diferenci de la prognozoj. Ne bazu decidojn pri sekureco
+    nur sur tiuj rezultoj. Konsultu aktualajn oficialajn lokajn
+    informojn.
+  </p>
+
+  <p>
+    Antau ol kompari prognozojn, kontrolu, chu ili rilatas al la sama
+    temporeferenco kaj al la sama referenca nivelo. La apo ne faras
+    automatan horzonan korekton. La unuminuta tempokrado por serchi
+    maksimumojn kaj minimumojn ne signifas precizecon de unu minuto.
+  </p>
+</section>
